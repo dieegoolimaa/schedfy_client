@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -123,6 +124,11 @@ export function Header({ user }: HeaderProps) {
                             {item.label}
                         </Button>
                     ))}
+                    <ThemeToggle 
+                        variant="ghost" 
+                        size="sm"
+                        showLabel={false}
+                    />
                     <Button
                         variant="outline"
                         size="sm"
@@ -204,7 +210,13 @@ export function Header({ user }: HeaderProps) {
                                 </nav>
                             </div>
 
-                            <div className="p-4 border-t">
+                            <div className="p-4 border-t space-y-2">
+                                <ThemeToggle 
+                                    variant="ghost" 
+                                    size="default"
+                                    showLabel={true}
+                                    className="w-full"
+                                />
                                 <Button
                                     variant="outline"
                                     onClick={handleLogout}
