@@ -33,10 +33,10 @@ const AnalyticsPage = () => {
   const CustomTooltip = ({ active, payload, label, formatter }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-3">
-          <p className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">{label}</p>
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-lg p-3">
+          <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 mb-1">{label}</p>
           {payload.map((entry: any, index: number) => (
-            <p key={index} className="text-sm text-gray-600 dark:text-gray-400">
+            <p key={index} className="text-sm text-neutral-600 dark:text-neutral-400">
               <span className="inline-block w-2 h-2 rounded-full mr-2" style={{ backgroundColor: entry.color }}></span>
               {entry.name}: {formatter ? formatter(entry.value, entry.name) : entry.value}
             </p>
@@ -49,14 +49,14 @@ const AnalyticsPage = () => {
 
   // Cores personalizadas para gráficos
   const chartColors = {
-    primary: '#2563eb',    // blue-600
-    secondary: '#059669',  // emerald-600  
-    tertiary: '#7c3aed',   // violet-600
-    quaternary: '#dc2626', // red-600
-    accent: '#ea580c',     // orange-600
-    success: '#16a34a',    // green-600
-    warning: '#ca8a04',    // yellow-600
-    info: '#0891b2',       // cyan-600
+    primary: '#a3a3a3',    // neutral-400
+    secondary: '#737373',  // neutral-500  
+    tertiary: '#525252',   // neutral-600
+    quaternary: '#404040', // neutral-700
+    accent: '#262626',     // neutral-800
+    success: '#16a34a',    // green-600 (keep for positive metrics)
+    warning: '#ca8a04',    // yellow-600 (keep for warnings)
+    info: '#525252',       // neutral-600
   };
 
   // Estatísticas gerais
@@ -106,8 +106,8 @@ const AnalyticsPage = () => {
   const statusData = [
     { name: 'Concluídos', value: appointments.filter(apt => apt.status === 'completed').length, color: chartColors.success },
     { name: 'Agendados', value: appointments.filter(apt => apt.status === 'scheduled').length, color: chartColors.primary },
-    { name: 'Cancelados', value: appointments.filter(apt => apt.status === 'canceled').length, color: chartColors.quaternary },
-    { name: 'Em Andamento', value: appointments.filter(apt => apt.status === 'in_progress').length, color: chartColors.warning }
+    { name: 'Cancelados', value: appointments.filter(apt => apt.status === 'canceled').length, color: '#ef4444' }, // red-500 (keep for canceled)
+    { name: 'Em Andamento', value: appointments.filter(apt => apt.status === 'in_progress').length, color: chartColors.secondary }
   ];
 
   // Dados para gráfico de serviços mais populares
@@ -138,10 +138,10 @@ const AnalyticsPage = () => {
   return (
     <div className="container mx-auto px-4 py-6 max-w-7xl">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">
+        <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-1">
           Análises e Relatórios
         </h1>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">
           Insights detalhados sobre performance e crescimento do negócio
         </p>
       </div>
@@ -150,7 +150,7 @@ const AnalyticsPage = () => {
       <Card className="mb-4">
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Filtros</h3>
+            <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">Filtros</h3>
             <div className="flex gap-2">
               <Button variant="outline" size="sm" className="h-8 px-3 text-xs">
                 Exportar CSV
@@ -163,7 +163,7 @@ const AnalyticsPage = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 block">Período</label>
+              <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1 block">Período</label>
               <Select value={periodFilter} onValueChange={setPeriodFilter}>
                 <SelectTrigger className="mt-1">
                   <SelectValue />
@@ -187,11 +187,11 @@ const AnalyticsPage = () => {
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         <Card className="p-4">
           <div className="flex flex-col">
-            <span className="text-xs text-gray-600 dark:text-gray-400 mb-1">Receita Total</span>
-            <span className="text-xl font-bold text-green-600">
+            <span className="text-xs text-neutral-600 dark:text-neutral-400 mb-1">Receita Total</span>
+            <span className="text-xl font-bold text-neutral-300">
               {formatCurrency(totalRevenue)}
             </span>
-            <span className="text-xs text-green-600 mt-2">
+            <span className="text-xs text-neutral-400 mt-2">
               +12% vs mês anterior
             </span>
           </div>
@@ -199,11 +199,11 @@ const AnalyticsPage = () => {
 
         <Card className="p-4">
           <div className="flex flex-col">
-            <span className="text-xs text-gray-600 dark:text-gray-400 mb-1">Comissões</span>
-            <span className="text-xl font-bold text-blue-600">
+            <span className="text-xs text-neutral-600 dark:text-neutral-400 mb-1">Comissões</span>
+            <span className="text-xl font-bold text-neutral-300">
               {formatCurrency(totalCommissions)}
             </span>
-            <span className="text-xs text-blue-600 mt-2">
+            <span className="text-xs text-neutral-400 mt-2">
               {((totalCommissions / totalRevenue) * 100).toFixed(1)}% da receita
             </span>
           </div>
@@ -211,11 +211,11 @@ const AnalyticsPage = () => {
 
         <Card className="p-4">
           <div className="flex flex-col">
-            <span className="text-xs text-gray-600 dark:text-gray-400 mb-1">Ticket Médio</span>
-            <span className="text-xl font-bold text-purple-600">
+            <span className="text-xs text-neutral-600 dark:text-neutral-400 mb-1">Ticket Médio</span>
+            <span className="text-xl font-bold text-neutral-300">
               {formatCurrency(averageTicket)}
             </span>
-            <span className="text-xs text-purple-600 mt-2">
+            <span className="text-xs text-neutral-400 mt-2">
               +5% vs período anterior
             </span>
           </div>
@@ -223,11 +223,11 @@ const AnalyticsPage = () => {
 
         <Card className="p-4">
           <div className="flex flex-col">
-            <span className="text-xs text-gray-600 dark:text-gray-400 mb-1">Taxa Conversão</span>
-            <span className="text-xl font-bold text-orange-600">
+            <span className="text-xs text-neutral-600 dark:text-neutral-400 mb-1">Taxa Conversão</span>
+            <span className="text-xl font-bold text-neutral-300">
               {conversionRate.toFixed(1)}%
             </span>
-            <span className="text-xs text-orange-600 mt-2">
+            <span className="text-xs text-neutral-400 mt-2">
               Meta: 85%
             </span>
           </div>
@@ -235,8 +235,8 @@ const AnalyticsPage = () => {
 
         <Card className="p-4">
           <div className="flex flex-col">
-            <span className="text-xs text-gray-600 dark:text-gray-400 mb-1">Descontos</span>
-            <span className="text-xl font-bold text-red-600">
+            <span className="text-xs text-neutral-600 dark:text-neutral-400 mb-1">Descontos</span>
+            <span className="text-xl font-bold text-neutral-300">
               {formatCurrency(totalDiscounts)}
             </span>
             <span className="text-xs text-red-600 mt-2">

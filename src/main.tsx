@@ -8,7 +8,7 @@ import { ThemeProvider } from '@/contexts/ThemeContext'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <ThemeProvider defaultTheme="light">
+      <ThemeProvider defaultTheme="dark">
         <App />
       </ThemeProvider>
     </BrowserRouter>

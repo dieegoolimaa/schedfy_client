@@ -22,7 +22,7 @@ interface ThemeProviderProps {
   defaultTheme?: Theme;
 }
 
-export function ThemeProvider({ children, defaultTheme = 'light' }: ThemeProviderProps) {
+export function ThemeProvider({ children, defaultTheme = 'dark' }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => {
     // Verificar se há tema salvo no localStorage
     const savedTheme = localStorage.getItem('schedfy-theme') as Theme;
