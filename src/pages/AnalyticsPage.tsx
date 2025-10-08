@@ -545,9 +545,9 @@ const AnalyticsPage = () => {
                   <span className="text-xs font-medium">Receita Mensal</span>
                   <span className="text-xs">{formatCurrency(totalRevenue)} / {formatCurrency(15000)}</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2">
                   <div 
-                    className="bg-green-600 h-2 rounded-full" 
+                    className="bg-neutral-600 dark:bg-neutral-400 h-2 rounded-full" 
                     style={{ width: `${(totalRevenue / 15000) * 100}%` }}
                   ></div>
                 </div>
@@ -561,9 +561,9 @@ const AnalyticsPage = () => {
                   <span className="text-xs font-medium">Taxa de Conversão</span>
                   <span className="text-xs">{conversionRate.toFixed(1)}% / 85%</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2">
                   <div 
-                    className="bg-blue-600 h-2 rounded-full" 
+                    className="bg-neutral-600 dark:bg-neutral-400 h-2 rounded-full" 
                     style={{ width: `${(conversionRate / 85) * 100}%` }}
                   ></div>
                 </div>
@@ -577,9 +577,9 @@ const AnalyticsPage = () => {
                   <span className="text-xs font-medium">Ticket Médio</span>
                   <span className="text-xs">{formatCurrency(averageTicket)} / {formatCurrency(100)}</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2">
                   <div 
-                    className="bg-purple-600 h-2 rounded-full" 
+                    className="bg-neutral-600 dark:bg-neutral-400 h-2 rounded-full" 
                     style={{ width: `${(averageTicket / 100) * 100}%` }}
                   ></div>
                 </div>

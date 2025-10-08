@@ -14,7 +14,7 @@ const CreateBusinessPage = () => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-950">
+        <div className="flex items-center justify-center min-h-screen bg-neutral-100 dark:bg-neutral-950">
             <Card className="w-full max-w-md">
                 <CardHeader>
                     <CardTitle className="text-2xl">Crie a conta do seu negócio</CardTitle>

@@ -286,10 +286,10 @@ const VoucherManagementPage = () => {
       <div className="mb-6">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">
+            <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-1">
               Gerenciamento de Vouchers
             </h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-neutral-600 dark:text-neutral-400">
               Crie e distribua códigos de desconto para seus clientes
             </p>
           </div>
@@ -661,9 +661,9 @@ const VoucherManagementPage = () => {
                     <span>Progresso de Uso</span>
                     <span>{getUsagePercentage(voucher).toFixed(1)}%</span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2">
                     <div 
-                      className="bg-blue-600 h-2 rounded-full transition-all" 
+                      className="bg-neutral-600 dark:bg-neutral-400 h-2 rounded-full transition-all" 
                       style={{ width: `${Math.min(getUsagePercentage(voucher), 100)}%` }}
                     ></div>
                   </div>

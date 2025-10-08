@@ -52,7 +52,7 @@ export default function ServiceCompletionDemo() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 p-8">
       <div className="max-w-md mx-auto">
         <Card>
           <CardHeader>
