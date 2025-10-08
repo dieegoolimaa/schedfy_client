@@ -114,49 +114,51 @@ export function ServiceCompletionDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 text-lg">
             <CheckCircle className="h-5 w-5 text-green-600" />
             Finalizar Serviço
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-sm">
             Complete o processo de finalização do serviço para {appointment.customer}
           </DialogDescription>
         </DialogHeader>
 
         {/* Indicador de etapas */}
-        <div className="flex items-center justify-center mb-6">
+        <div className="flex items-center justify-center mb-4">
           <div className="flex items-center space-x-2">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
-              step >= 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+            <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs ${
+              step >= 1 ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'
             }`}>
-              1
+              <User className="h-3 w-3" />
+              Perfil
             </div>
-            <div className={`w-8 h-1 ${step >= 2 ? 'bg-blue-600' : 'bg-gray-200'}`} />
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
-              step >= 2 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+            <div className={`h-0.5 w-6 ${step >= 2 ? 'bg-blue-500' : 'bg-neutral-300 dark:bg-neutral-600'}`} />
+            <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs ${
+              step >= 2 ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'
             }`}>
-              2
+              <CreditCard className="h-3 w-3" />
+              Pagamento
             </div>
           </div>
         </div>
 
         {/* Resumo do serviço */}
-        <Card className="mb-6">
-          <CardContent className="p-4">
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Serviço:</span>
-                <span className="font-medium">{appointment.serviceName}</span>
+        <Card className="mb-4">
+          <CardContent className="p-3">
+            <div className="grid grid-cols-3 gap-3 text-sm">
+              <div>
+                <span className="text-neutral-600 dark:text-neutral-400 text-xs">Serviço</span>
+                <p className="font-medium text-sm">{appointment.serviceName}</p>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Cliente:</span>
-                <span className="font-medium">{appointment.customer}</span>
+              <div>
+                <span className="text-neutral-600 dark:text-neutral-400 text-xs">Cliente</span>
+                <p className="font-medium text-sm">{appointment.customer}</p>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Valor Total:</span>
-                <span className="font-medium text-green-600">{formatCurrency(appointment.finalPrice)}</span>
+              <div>
+                <span className="text-neutral-600 dark:text-neutral-400 text-xs">Total</span>
+                <p className="font-medium text-green-600 text-sm">{formatCurrency(appointment.finalPrice)}</p>
               </div>
             </div>
           </CardContent>
@@ -192,56 +194,56 @@ export function ServiceCompletionDialog({
             </div>
 
             {createProfile && (
-              <div className="space-y-4 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
-                <h5 className="font-medium flex items-center gap-2">
+              <div className="space-y-3 p-3 bg-blue-50 dark:bg-blue-950/50 rounded-lg">
+                <h5 className="font-medium flex items-center gap-2 text-sm">
                   <User className="h-4 w-4" />
                   Dados do Perfil
                 </h5>
                 
-                <div className="space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <Label htmlFor="profile-name">Nome Completo *</Label>
+                    <Label htmlFor="profile-name" className="text-xs">Nome Completo *</Label>
                     <Input
                       id="profile-name"
                       value={profileData.name}
                       onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
-                      placeholder="Nome completo do cliente"
-                      className="mt-2"
+                      placeholder="Nome completo"
+                      className="mt-1 h-9"
                     />
                   </div>
                   
                   <div>
-                    <Label htmlFor="profile-email">Email *</Label>
+                    <Label htmlFor="profile-email" className="text-xs">Email *</Label>
                     <Input
                       id="profile-email"
                       type="email"
                       value={profileData.email}
                       onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))}
                       placeholder="email@cliente.com"
-                      className="mt-2"
+                      className="mt-1 h-9"
                     />
                   </div>
                   
                   <div>
-                    <Label htmlFor="profile-phone">Telefone *</Label>
+                    <Label htmlFor="profile-phone" className="text-xs">Telefone *</Label>
                     <MaskedInput
                       id="profile-phone"
                       mask="phone"
                       value={profileData.phone}
                       onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
                       placeholder="(11) 99999-9999"
-                      className="mt-2"
+                      className="mt-1 h-9"
                     />
                   </div>
                   
                   <div>
-                    <Label htmlFor="profile-notes">Observações (opcional)</Label>
+                    <Label htmlFor="profile-notes" className="text-xs">Observações (opcional)</Label>
                     <Input
                       id="profile-notes"
                       value={profileData.notes}
                       onChange={(e) => setProfileData(prev => ({ ...prev, notes: e.target.value }))}
                       placeholder="Preferências, alergias, etc."
-                      className="mt-2"
+                      className="mt-1 h-9"
                     />
                   </div>
                 </div>

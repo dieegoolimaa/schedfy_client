@@ -17,7 +17,7 @@ export function Layout({ children }: LayoutProps) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
       {user && <Header user={user} />}
       <main className={user ? "pt-20" : ""}>
         {children}

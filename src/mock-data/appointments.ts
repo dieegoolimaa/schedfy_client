@@ -266,6 +266,170 @@ const appointments: Appointment[] = [
         confirmedAt: "2025-10-11T11:00:00Z",
         
         professionalNotes: "Cliente regular, sempre pontual"
+    },
+    // Mais appointments para José da Silva (ID: 1) para os gráficos
+    {
+        id: "apt_006",
+        serviceId: "service_manicure_002",
+        serviceName: "Manicure + Pedicure",
+        professionalId: "1",
+        professionalName: "José da Silva",
+        customer: "Fernanda Lima",
+        email: "fernanda@email.com",
+        phone: "(11) 98765-4321",
+        date: "2025-10-15T14:00:00Z",
+        time: "14:00",
+        duration: 90,
+        originalPrice: 80,
+        finalPrice: 80,
+        totalDiscountAmount: 0,
+        status: "completed",
+        commission: {
+            professionalPercentage: 40,
+            establishmentPercentage: 60,
+            baseAmount: 80,
+            professionalAmount: 32,
+            establishmentAmount: 48
+        },
+        rating: {
+            score: 5,
+            comment: "Excelente trabalho!",
+            ratedAt: "2025-10-15T16:00:00Z"
+        },
+        payment: {
+            method: 'card',
+            status: 'paid'
+        },
+        createdAt: "2025-10-15T14:00:00Z",
+        updatedAt: "2025-10-15T15:30:00Z",
+        completedAt: "2025-10-15T15:30:00Z"
+    },
+    {
+        id: "apt_007",
+        serviceId: "service_manicure_003",
+        serviceName: "Esmaltação em Gel",
+        professionalId: "1",
+        professionalName: "José da Silva",
+        customer: "Carla Santos",
+        email: "carla@email.com",
+        phone: "(11) 91234-5678",
+        date: "2025-10-16T10:00:00Z",
+        time: "10:00",
+        duration: 60,
+        originalPrice: 45,
+        finalPrice: 45,
+        totalDiscountAmount: 0,
+        status: "completed",
+        commission: {
+            professionalPercentage: 40,
+            establishmentPercentage: 60,
+            baseAmount: 45,
+            professionalAmount: 18,
+            establishmentAmount: 27
+        },
+        rating: {
+            score: 4,
+            comment: "Muito bom!",
+            ratedAt: "2025-10-16T11:30:00Z"
+        },
+        payment: {
+            method: 'pix',
+            status: 'paid'
+        },
+        createdAt: "2025-10-16T10:00:00Z",
+        updatedAt: "2025-10-16T11:00:00Z",
+        completedAt: "2025-10-16T11:00:00Z"
+    },
+    {
+        id: "apt_008",
+        serviceId: "service_manicure_001",
+        serviceName: "Manicure Simples",
+        professionalId: "1",
+        professionalName: "José da Silva",
+        customer: "Julia Costa",
+        email: "julia@email.com",
+        phone: "(11) 95555-1234",
+        date: "2025-10-17T09:00:00Z",
+        time: "09:00",
+        duration: 60,
+        originalPrice: 30,
+        finalPrice: 30,
+        totalDiscountAmount: 0,
+        status: "scheduled",
+        commission: {
+            professionalPercentage: 40,
+            establishmentPercentage: 60,
+            baseAmount: 30,
+            professionalAmount: 12,
+            establishmentAmount: 18
+        },
+        payment: {
+            method: 'pending',
+            status: 'pending'
+        },
+        createdAt: "2025-10-17T09:00:00Z",
+        updatedAt: "2025-10-17T09:00:00Z"
+    },
+    {
+        id: "apt_009",
+        serviceId: "service_manicure_002",
+        serviceName: "Manicure + Pedicure",
+        professionalId: "1",
+        professionalName: "José da Silva",
+        customer: "Patricia Rocha",
+        email: "patricia@email.com",
+        phone: "(11) 94444-5678",
+        date: "2025-10-18T15:00:00Z",
+        time: "15:00",
+        duration: 90,
+        originalPrice: 80,
+        finalPrice: 80,
+        totalDiscountAmount: 0,
+        status: "canceled",
+        commission: {
+            professionalPercentage: 40,
+            establishmentPercentage: 60,
+            baseAmount: 80,
+            professionalAmount: 32,
+            establishmentAmount: 48
+        },
+        payment: {
+            method: 'pending',
+            status: 'pending'
+        },
+        createdAt: "2025-10-18T15:00:00Z",
+        updatedAt: "2025-10-18T15:00:00Z",
+        canceledAt: "2025-10-18T15:00:00Z"
+    },
+    {
+        id: "apt_010",
+        serviceId: "service_manicure_001",
+        serviceName: "Manicure Simples",
+        professionalId: "1",
+        professionalName: "José da Silva",
+        customer: "Sandra Oliveira",
+        email: "sandra@email.com",
+        phone: "(11) 93333-9999",
+        date: "2025-10-19T11:00:00Z",
+        time: "11:00",
+        duration: 60,
+        originalPrice: 30,
+        finalPrice: 30,
+        totalDiscountAmount: 0,
+        status: "no_show",
+        commission: {
+            professionalPercentage: 40,
+            establishmentPercentage: 60,
+            baseAmount: 30,
+            professionalAmount: 12,
+            establishmentAmount: 18
+        },
+        payment: {
+            method: 'pending',
+            status: 'pending'
+        },
+        createdAt: "2025-10-19T11:00:00Z",
+        updatedAt: "2025-10-19T11:00:00Z"
     }
 ];
 

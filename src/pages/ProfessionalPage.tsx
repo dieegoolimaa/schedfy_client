@@ -20,7 +20,7 @@ const ProfessionalPage = () => {
 
   const handleViewAnalytics = (professionalId: string, professionalName: string) => {
     toast.info(`Visualizando análises de ${professionalName}`);
-    navigate(`/analytics/professional/${professionalId}`);
+    navigate(`/admin/analytics/professional/${professionalId}`);
   };
 
   return (
