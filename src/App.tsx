@@ -12,8 +12,6 @@ import AppointmentManagementPage from './pages/AppointmentManagementPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import PromotionManagementPage from './pages/PromotionManagementPage';
 import VoucherManagementPage from './pages/VoucherManagementPage';
-import DatePickerShowcase from './pages/DatePickerShowcase';
-import CalendarTestPage from './pages/CalendarTestPage';
 import ServiceCompletionDemo from './pages/ServiceCompletionDemo';
 import ProfessionalAppointmentDemo from './pages/ProfessionalAppointmentDemo';
 import CreateBusinessPage from './pages/CreateBusinessPage';
@@ -39,8 +37,6 @@ function App() {
         <Route path="/book-appointment" element={<BookAppointmentPage />} />
         
         {/* Páginas de demonstração */}
-        <Route path="/date-picker-showcase" element={<DatePickerShowcase />} />
-        <Route path="/calendar-test" element={<CalendarTestPage />} />
         <Route path="/professional-demo" element={
           <Layout>
             <ProfessionalAppointmentDemo />
