@@ -2,7 +2,7 @@ import type { Profissional } from "@/interfaces/professional.interface";
 
 const professionals: Profissional[] = [
     {
-        id: 1,
+        id: "1",
         name: "José da Silva",
         specialty: "Manicure",
         commerce: 123456,
@@ -11,7 +11,7 @@ const professionals: Profissional[] = [
         photo: "https://randomuser.me/api/portraits/men/1.jpg",
     },
     {
-        id: 2,
+        id: "2",
         name: "Maria Oliveira",
         specialty: "Cabeleireira",
         commerce: 654321,
@@ -20,7 +20,7 @@ const professionals: Profissional[] = [
         photo: "https://randomuser.me/api/portraits/women/2.jpg",
     },
     {
-        id: 3,
+        id: "3",
         name: "Ana Costa",
         specialty: "Esteticista",
         commerce: 112233,
@@ -29,7 +29,7 @@ const professionals: Profissional[] = [
         photo: "https://randomuser.me/api/portraits/women/3.jpg",
     },
     {
-        id: 4,
+        id: "4",
         name: "Carlos Pereira",
         specialty: "Barbeiro",
         commerce: 445566,
@@ -38,7 +38,7 @@ const professionals: Profissional[] = [
         photo: "https://randomuser.me/api/portraits/men/4.jpg",
     },
     {
-        id: 5,
+        id: "5",
         name: "Beatriz Santos",
         specialty: "Massagista",
         commerce: 778899,
@@ -47,7 +47,7 @@ const professionals: Profissional[] = [
         photo: "https://randomuser.me/api/portraits/women/5.jpg",
     },
     {
-        id: 6,
+        id: "6",
         name: "Ricardo Lima",
         specialty: "Podólogo",
         commerce: 101010,
@@ -56,7 +56,7 @@ const professionals: Profissional[] = [
         photo: "https://randomuser.me/api/portraits/men/6.jpg",
     },
     {
-        id: 7,
+        id: "7",
         name: "Sarkan Bolat",
         specialty: "Proprietário",
         commerce: 1,

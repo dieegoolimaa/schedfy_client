@@ -1,14 +1,33 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MaskedInput } from "@/components/ui/masked-input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle, CreditCard, DollarSign, User, UserPlus } from "lucide-react";
+import {
+  CheckCircle,
+  CreditCard,
+  DollarSign,
+  User,
+  UserPlus,
+} from "lucide-react";
 import { toast } from "sonner";
+import { useI18n } from "@/contexts/I18nContext";
 import type { Appointment } from "@/interfaces/appointment.interface";
 
 interface ServiceCompletionDialogProps {
@@ -27,18 +46,18 @@ export interface ServiceCompletionData {
     notes?: string;
   };
   payment: {
-    method: 'cash' | 'card' | 'pix' | 'pending';
+    method: "cash" | "card" | "pix" | "pending";
     amount: number;
-    status: 'completed' | 'pending';
+    status: "completed" | "pending";
     notes?: string;
   };
 }
 
-export function ServiceCompletionDialog({ 
-  isOpen, 
-  onClose, 
-  appointment, 
-  onComplete 
+export function ServiceCompletionDialog({
+  isOpen,
+  onClose,
+  appointment,
+  onComplete,
 }: ServiceCompletionDialogProps) {
   const [step, setStep] = useState(1);
   const [createProfile, setCreateProfile] = useState(false);
@@ -46,21 +65,22 @@ export function ServiceCompletionDialog({
     name: appointment.customer,
     email: appointment.email,
     phone: appointment.phone,
-    notes: ""
+    notes: "",
   });
   const [paymentData, setPaymentData] = useState({
-    method: 'cash' as const,
+    method: "cash" as const,
     amount: appointment.finalPrice,
-    status: 'completed' as const,
-    notes: ""
+    status: "completed" as const,
+    notes: "",
   });
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
+  const { t } = useI18n();
 
   const handleNext = () => {
     if (step === 1) {
@@ -78,13 +98,13 @@ export function ServiceCompletionDialog({
     const completionData: ServiceCompletionData = {
       createCustomerProfile: createProfile,
       customerProfileData: createProfile ? profileData : undefined,
-      payment: paymentData
+      payment: paymentData,
     };
 
     onComplete(completionData);
-    toast.success("Serviço finalizado com sucesso!");
+    toast.success(t("completion.success"));
     onClose();
-    
+
     // Reset form
     setStep(1);
     setCreateProfile(false);
@@ -92,22 +112,34 @@ export function ServiceCompletionDialog({
       name: appointment.customer,
       email: appointment.email,
       phone: appointment.phone,
-      notes: ""
+      notes: "",
     });
     setPaymentData({
-      method: 'cash',
+      method: "cash",
       amount: appointment.finalPrice,
-      status: 'completed',
-      notes: ""
+      status: "completed",
+      notes: "",
     });
+    // Persist customer if required (mock) in localStorage
+    if (createProfile) {
+      try {
+        const existing = JSON.parse(
+          localStorage.getItem("mock_customers") || "[]"
+        );
+        existing.push({ id: `cust_${Date.now()}`, ...profileData });
+        localStorage.setItem("mock_customers", JSON.stringify(existing));
+      } catch (e) {
+        console.error("Failed to save mock customer", e);
+      }
+    }
   };
 
   const getPaymentMethodText = (method: string) => {
     const methods = {
-      cash: 'Dinheiro',
-      card: 'Cartão',
-      pix: 'PIX',
-      pending: 'Pagamento Pendente'
+      cash: "Dinheiro",
+      card: "Cartão",
+      pix: "PIX",
+      pending: "Pagamento Pendente",
     };
     return methods[method as keyof typeof methods] || method;
   };
@@ -117,27 +149,42 @@ export function ServiceCompletionDialog({
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-lg">
-            <CheckCircle className="h-5 w-5 text-green-600" />
+            <CheckCircle className="h-5 w-5 text-[var(--color-accent)]" />
             Finalizar Serviço
           </DialogTitle>
           <DialogDescription className="text-sm">
-            Complete o processo de finalização do serviço para {appointment.customer}
+            Complete o processo de finalização do serviço para{" "}
+            {appointment.customer}
           </DialogDescription>
         </DialogHeader>
 
         {/* Indicador de etapas */}
         <div className="flex items-center justify-center mb-4">
           <div className="flex items-center space-x-2">
-            <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs ${
-              step >= 1 ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'
-            }`}>
+            <div
+              className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs ${
+                step >= 1
+                  ? "bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
+                  : "bg-[var(--color-muted)] text-[var(--color-muted-foreground)]"
+              }`}
+            >
               <User className="h-3 w-3" />
               Perfil
             </div>
-            <div className={`h-0.5 w-6 ${step >= 2 ? 'bg-blue-500' : 'bg-neutral-300 dark:bg-neutral-600'}`} />
-            <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs ${
-              step >= 2 ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400'
-            }`}>
+            <div
+              className={`h-0.5 w-6 ${
+                step >= 2
+                  ? "bg-[var(--color-primary)]"
+                  : "bg-[var(--color-border)]"
+              }`}
+            />
+            <div
+              className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs ${
+                step >= 2
+                  ? "bg-[var(--color-primary)]/10 text-[var(--color-primary)]"
+                  : "bg-[var(--color-muted)] text-[var(--color-muted-foreground)]"
+              }`}
+            >
               <CreditCard className="h-3 w-3" />
               Pagamento
             </div>
@@ -149,16 +196,24 @@ export function ServiceCompletionDialog({
           <CardContent className="p-3">
             <div className="grid grid-cols-3 gap-3 text-sm">
               <div>
-                <span className="text-neutral-600 dark:text-neutral-400 text-xs">Serviço</span>
+                <span className="text-neutral-600 dark:text-neutral-400 text-xs">
+                  Serviço
+                </span>
                 <p className="font-medium text-sm">{appointment.serviceName}</p>
               </div>
               <div>
-                <span className="text-neutral-600 dark:text-neutral-400 text-xs">Cliente</span>
+                <span className="text-neutral-600 dark:text-neutral-400 text-xs">
+                  Cliente
+                </span>
                 <p className="font-medium text-sm">{appointment.customer}</p>
               </div>
               <div>
-                <span className="text-neutral-600 dark:text-neutral-400 text-xs">Total</span>
-                <p className="font-medium text-green-600 text-sm">{formatCurrency(appointment.finalPrice)}</p>
+                <span className="text-neutral-600 dark:text-neutral-400 text-xs">
+                  Total
+                </span>
+                <p className="font-medium text-[var(--color-accent)] text-sm">
+                  {formatCurrency(appointment.finalPrice)}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -194,54 +249,82 @@ export function ServiceCompletionDialog({
             </div>
 
             {createProfile && (
-              <div className="space-y-3 p-3 bg-blue-50 dark:bg-blue-950/50 rounded-lg">
+              <div className="space-y-3 p-3 bg-[var(--color-card)] rounded-lg">
                 <h5 className="font-medium flex items-center gap-2 text-sm">
                   <User className="h-4 w-4" />
                   Dados do Perfil
                 </h5>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <Label htmlFor="profile-name" className="text-xs">Nome Completo *</Label>
+                    <Label htmlFor="profile-name" className="text-xs">
+                      Nome Completo *
+                    </Label>
                     <Input
                       id="profile-name"
                       value={profileData.name}
-                      onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
+                      onChange={(e) =>
+                        setProfileData((prev) => ({
+                          ...prev,
+                          name: e.target.value,
+                        }))
+                      }
                       placeholder="Nome completo"
                       className="mt-1 h-9"
                     />
                   </div>
-                  
+
                   <div>
-                    <Label htmlFor="profile-email" className="text-xs">Email *</Label>
+                    <Label htmlFor="profile-email" className="text-xs">
+                      Email *
+                    </Label>
                     <Input
                       id="profile-email"
                       type="email"
                       value={profileData.email}
-                      onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))}
+                      onChange={(e) =>
+                        setProfileData((prev) => ({
+                          ...prev,
+                          email: e.target.value,
+                        }))
+                      }
                       placeholder="email@cliente.com"
                       className="mt-1 h-9"
                     />
                   </div>
-                  
+
                   <div>
-                    <Label htmlFor="profile-phone" className="text-xs">Telefone *</Label>
+                    <Label htmlFor="profile-phone" className="text-xs">
+                      Telefone *
+                    </Label>
                     <MaskedInput
                       id="profile-phone"
                       mask="phone"
                       value={profileData.phone}
-                      onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
+                      onChange={(e) =>
+                        setProfileData((prev) => ({
+                          ...prev,
+                          phone: e.target.value,
+                        }))
+                      }
                       placeholder="(11) 99999-9999"
                       className="mt-1 h-9"
                     />
                   </div>
-                  
+
                   <div>
-                    <Label htmlFor="profile-notes" className="text-xs">Observações (opcional)</Label>
+                    <Label htmlFor="profile-notes" className="text-xs">
+                      Observações (opcional)
+                    </Label>
                     <Input
                       id="profile-notes"
                       value={profileData.notes}
-                      onChange={(e) => setProfileData(prev => ({ ...prev, notes: e.target.value }))}
+                      onChange={(e) =>
+                        setProfileData((prev) => ({
+                          ...prev,
+                          notes: e.target.value,
+                        }))
+                      }
                       placeholder="Preferências, alergias, etc."
                       className="mt-1 h-9"
                     />
@@ -251,9 +334,7 @@ export function ServiceCompletionDialog({
             )}
 
             <div className="flex justify-end">
-              <Button onClick={handleNext}>
-                Próximo: Pagamento
-              </Button>
+              <Button onClick={handleNext}>Próximo: Pagamento</Button>
             </div>
           </div>
         )}
@@ -269,9 +350,11 @@ export function ServiceCompletionDialog({
             <div className="space-y-4">
               <div>
                 <Label htmlFor="payment-method">Método de Pagamento</Label>
-                <Select 
-                  value={paymentData.method} 
-                  onValueChange={(value: any) => setPaymentData(prev => ({ ...prev, method: value }))}
+                <Select
+                  value={paymentData.method}
+                  onValueChange={(value: any) =>
+                    setPaymentData((prev) => ({ ...prev, method: value }))
+                  }
                 >
                   <SelectTrigger className="mt-2">
                     <SelectValue placeholder="Selecione o método" />
@@ -280,7 +363,9 @@ export function ServiceCompletionDialog({
                     <SelectItem value="cash">💵 Dinheiro</SelectItem>
                     <SelectItem value="card">💳 Cartão</SelectItem>
                     <SelectItem value="pix">📱 PIX</SelectItem>
-                    <SelectItem value="pending">⏳ Pagamento Pendente</SelectItem>
+                    <SelectItem value="pending">
+                      ⏳ Pagamento Pendente
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -294,7 +379,12 @@ export function ServiceCompletionDialog({
                     type="number"
                     step="0.01"
                     value={paymentData.amount}
-                    onChange={(e) => setPaymentData(prev => ({ ...prev, amount: Number(e.target.value) }))}
+                    onChange={(e) =>
+                      setPaymentData((prev) => ({
+                        ...prev,
+                        amount: Number(e.target.value),
+                      }))
+                    }
                     placeholder="0.00"
                     className="pl-10"
                   />
@@ -303,9 +393,11 @@ export function ServiceCompletionDialog({
 
               <div>
                 <Label htmlFor="payment-status">Status do Pagamento</Label>
-                <Select 
-                  value={paymentData.status} 
-                  onValueChange={(value: any) => setPaymentData(prev => ({ ...prev, status: value }))}
+                <Select
+                  value={paymentData.status}
+                  onValueChange={(value: any) =>
+                    setPaymentData((prev) => ({ ...prev, status: value }))
+                  }
                 >
                   <SelectTrigger className="mt-2">
                     <SelectValue />
@@ -322,7 +414,12 @@ export function ServiceCompletionDialog({
                 <Input
                   id="payment-notes"
                   value={paymentData.notes}
-                  onChange={(e) => setPaymentData(prev => ({ ...prev, notes: e.target.value }))}
+                  onChange={(e) =>
+                    setPaymentData((prev) => ({
+                      ...prev,
+                      notes: e.target.value,
+                    }))
+                  }
                   placeholder="Troco, observações sobre o pagamento..."
                   className="mt-2"
                 />
@@ -332,8 +429,10 @@ export function ServiceCompletionDialog({
             <Separator />
 
             {/* Resumo final */}
-            <div className="bg-green-50 dark:bg-green-950 p-4 rounded-lg">
-              <h5 className="font-medium text-green-800 dark:text-green-200 mb-2">Resumo da Finalização</h5>
+            <div className="bg-[var(--color-card)] p-4 rounded-lg">
+              <h5 className="font-medium text-[var(--color-accent)] mb-2">
+                Resumo da Finalização
+              </h5>
               <div className="space-y-1 text-sm">
                 <div className="flex justify-between">
                   <span>Perfil do cliente:</span>
@@ -344,13 +443,16 @@ export function ServiceCompletionDialog({
                 <div className="flex justify-between">
                   <span>Pagamento:</span>
                   <span className="font-medium">
-                    {getPaymentMethodText(paymentData.method)} - {formatCurrency(paymentData.amount)}
+                    {getPaymentMethodText(paymentData.method)} -{" "}
+                    {formatCurrency(paymentData.amount)}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span>Status:</span>
                   <span className="font-medium">
-                    {paymentData.status === 'completed' ? '✅ Pago' : '⏳ Pendente'}
+                    {paymentData.status === "completed"
+                      ? "✅ Pago"
+                      : "⏳ Pendente"}
                   </span>
                 </div>
               </div>
@@ -360,7 +462,10 @@ export function ServiceCompletionDialog({
               <Button variant="outline" onClick={handleBack}>
                 Voltar
               </Button>
-              <Button onClick={handleComplete} className="bg-green-600 hover:bg-green-700">
+              <Button
+                onClick={handleComplete}
+                className="bg-[var(--color-accent)] hover:brightness-90"
+              >
                 Finalizar Serviço
               </Button>
             </div>

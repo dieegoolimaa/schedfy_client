@@ -1,26 +1,25 @@
-
 import * as React from "react";
 import { IMaskInput } from "react-imask";
 import { cn } from "@/lib/utils";
 
 export interface MaskedInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
-  mask: "phone" | "cnpj";
+  // allow string identifiers for masks; concrete mask passed to IMaskInput
+  mask: string;
 }
 
 const MaskedInput = React.forwardRef<HTMLInputElement, MaskedInputProps>(
   ({ className, mask, ...props }, ref) => {
-
     const getMask = () => {
-        switch (mask) {
-            case "phone":
-                return { mask: "(00) 00000-0000" };
-            case "cnpj":
-                return { mask: "00.000.000/0000-00" };
-            default:
-                return { mask: "" };
-        }
-    }
+      switch (mask) {
+        case "phone":
+          return { mask: "(00) 00000-0000" } as any;
+        case "cnpj":
+          return { mask: "00.000.000/0000-00" } as any;
+        default:
+          return { mask: "" } as any;
+      }
+    };
 
     return (
       <IMaskInput

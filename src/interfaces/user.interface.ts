@@ -2,5 +2,5 @@ export interface User {
   id?: number;
   username: string;
   password: string;
-  role: "admin" | "professional";
+  role: "admin" | "professional" | "owner" | "simple";
 }

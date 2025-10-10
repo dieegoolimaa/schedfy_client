@@ -5,7 +5,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AppointmentCard } from "@/components/AppointmentCard";
 import appointments from "@/mock-data/appointments";
@@ -19,23 +25,25 @@ const AppointmentManagementPage = () => {
   const [professionalFilter, setProfessionalFilter] = useState<string>("all");
 
   // Filtros
-  const filteredAppointments = appointments.filter(appointment => {
-    const matchesSearch = 
+  const filteredAppointments = appointments.filter((appointment) => {
+    const matchesSearch =
       appointment.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
       appointment.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       appointment.phone.includes(searchTerm) ||
       appointment.serviceName.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = statusFilter === "all" || appointment.status === statusFilter;
-    
-    const matchesProfessional = professionalFilter === "all" || 
+
+    const matchesStatus =
+      statusFilter === "all" || appointment.status === statusFilter;
+
+    const matchesProfessional =
+      professionalFilter === "all" ||
       appointment.professionalId === professionalFilter;
 
     const matchesDate = () => {
       if (dateFilter === "all") return true;
       const appointmentDate = new Date(appointment.date);
       const today = new Date();
-      
+
       switch (dateFilter) {
         case "today":
           return appointmentDate.toDateString() === today.toDateString();
@@ -44,71 +52,75 @@ const AppointmentManagementPage = () => {
           weekFromNow.setDate(today.getDate() + 7);
           return appointmentDate >= today && appointmentDate <= weekFromNow;
         case "month":
-          return appointmentDate.getMonth() === today.getMonth() && 
-                 appointmentDate.getFullYear() === today.getFullYear();
+          return (
+            appointmentDate.getMonth() === today.getMonth() &&
+            appointmentDate.getFullYear() === today.getFullYear()
+          );
         default:
           return true;
       }
     };
 
-    return matchesSearch && matchesStatus && matchesProfessional && matchesDate();
+    return (
+      matchesSearch && matchesStatus && matchesProfessional && matchesDate()
+    );
   });
 
   // Estatísticas
   const stats = {
     total: appointments.length,
-    scheduled: appointments.filter(apt => apt.status === 'scheduled').length,
-    confirmed: appointments.filter(apt => apt.status === 'confirmed').length,
-    completed: appointments.filter(apt => apt.status === 'completed').length,
-    canceled: appointments.filter(apt => apt.status === 'canceled').length,
+    scheduled: appointments.filter((apt) => apt.status === "scheduled").length,
+    confirmed: appointments.filter((apt) => apt.status === "confirmed").length,
+    completed: appointments.filter((apt) => apt.status === "completed").length,
+    canceled: appointments.filter((apt) => apt.status === "canceled").length,
     revenue: appointments
-      .filter(apt => apt.status === 'completed')
+      .filter((apt) => apt.status === "completed")
       .reduce((sum, apt) => sum + apt.finalPrice, 0),
     commission: appointments
-      .filter(apt => apt.status === 'completed')
-      .reduce((sum, apt) => sum + apt.commission.establishmentAmount, 0)
+      .filter((apt) => apt.status === "completed")
+      .reduce((sum, apt) => sum + apt.commission.establishmentAmount, 0),
   };
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
 
-  const handleStatusChange = async (appointmentId: string, newStatus: Appointment['status']) => {
+  const handleStatusChange = async (
+    appointmentId: string,
+    newStatus: Appointment["status"]
+  ) => {
     console.log(`Admin updating appointment ${appointmentId} to ${newStatus}`);
     toast(`Agendamento ${appointmentId} atualizado para: ${newStatus}`);
   };
 
-  const handleBulkAction = (action: string, selectedIds: string[]) => {
-    console.log(`Bulk action ${action} for appointments:`, selectedIds);
-    toast(`Ação ${action} aplicada a ${selectedIds.length} agendamento(s)`);
-  };
+  // bulk actions will be implemented later
 
   // Profissionais únicos para filtro
   const professionals = Array.from(
-    new Set(appointments.map(apt => apt.professionalId))
-  ).map(id => {
-    const appointment = appointments.find(apt => apt.professionalId === id);
+    new Set(appointments.map((apt) => apt.professionalId))
+  ).map((id) => {
+    const appointment = appointments.find((apt) => apt.professionalId === id);
     return {
       id,
-      name: appointment?.professionalName || `Profissional ${id}`
+      name: appointment?.professionalName || `Profissional ${id}`,
     };
   });
 
   // Separar appointments por categoria para as tabs
-  const todayAppointments = filteredAppointments.filter(apt => {
+  const todayAppointments = filteredAppointments.filter((apt) => {
     const appointmentDate = new Date(apt.date).toDateString();
     const today = new Date().toDateString();
     return appointmentDate === today;
   });
 
-  const pendingAppointments = filteredAppointments.filter(apt => 
-    apt.status === 'scheduled'
+  const pendingAppointments = filteredAppointments.filter(
+    (apt) => apt.status === "scheduled"
   );
 
-  const upcomingAppointments = filteredAppointments.filter(apt => {
+  const upcomingAppointments = filteredAppointments.filter((apt) => {
     const appointmentDate = new Date(apt.date);
     const today = new Date();
     return appointmentDate > today;
@@ -129,8 +141,12 @@ const AppointmentManagementPage = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <Card className="p-4">
           <div className="flex flex-col">
-            <span className="text-xs text-gray-600 dark:text-gray-400 mb-1">Total Agendamentos</span>
-            <span className="text-xl font-bold text-gray-900 dark:text-gray-100">{stats.total}</span>
+            <span className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+              Total Agendamentos
+            </span>
+            <span className="text-xl font-bold text-gray-900 dark:text-gray-100">
+              {stats.total}
+            </span>
             <div className="text-xs text-gray-500 mt-2 space-y-0.5">
               <div>✅ {stats.completed} concluídos</div>
               <div>⏳ {stats.scheduled} agendados</div>
@@ -141,7 +157,9 @@ const AppointmentManagementPage = () => {
 
         <Card className="p-4">
           <div className="flex flex-col">
-            <span className="text-xs text-gray-600 dark:text-gray-400 mb-1">Receita Total</span>
+            <span className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+              Receita Total
+            </span>
             <span className="text-xl font-bold text-green-600">
               {formatCurrency(stats.revenue)}
             </span>
@@ -153,7 +171,9 @@ const AppointmentManagementPage = () => {
 
         <Card className="p-4">
           <div className="flex flex-col">
-            <span className="text-xs text-gray-600 dark:text-gray-400 mb-1">Comissão Casa</span>
+            <span className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+              Comissão Casa
+            </span>
             <span className="text-xl font-bold text-blue-600">
               {formatCurrency(stats.commission)}
             </span>
@@ -165,7 +185,9 @@ const AppointmentManagementPage = () => {
 
         <Card className="p-4">
           <div className="flex flex-col">
-            <span className="text-xs text-gray-600 dark:text-gray-400 mb-1">Taxa Conversão</span>
+            <span className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+              Taxa Conversão
+            </span>
             <span className="text-xl font-bold text-purple-600">
               {((stats.completed / stats.total) * 100).toFixed(1)}%
             </span>
@@ -180,15 +202,20 @@ const AppointmentManagementPage = () => {
       <Card className="mb-4">
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">Filtros</h3>
+            <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+              Filtros
+            </h3>
             <span className="text-xs text-gray-500">
-              {filteredAppointments.length} de {appointments.length} agendamentos
+              {filteredAppointments.length} de {appointments.length}{" "}
+              agendamentos
             </span>
           </div>
-          
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
             <div>
-              <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1 block">Buscar</label>
+              <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1 block">
+                Buscar
+              </label>
               <Input
                 placeholder="Nome, email, telefone ou serviço..."
                 value={searchTerm}
@@ -196,9 +223,11 @@ const AppointmentManagementPage = () => {
                 className="h-8 text-sm"
               />
             </div>
-            
+
             <div>
-              <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1 block">Status</label>
+              <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1 block">
+                Status
+              </label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="h-8 text-sm">
                   <SelectValue placeholder="Todos" />
@@ -216,7 +245,9 @@ const AppointmentManagementPage = () => {
             </div>
 
             <div>
-              <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1 block">Período</label>
+              <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1 block">
+                Período
+              </label>
               <Select value={dateFilter} onValueChange={setDateFilter}>
                 <SelectTrigger className="h-8 text-sm">
                   <SelectValue placeholder="Todos" />
@@ -231,8 +262,13 @@ const AppointmentManagementPage = () => {
             </div>
 
             <div>
-              <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1 block">Profissional</label>
-              <Select value={professionalFilter} onValueChange={setProfessionalFilter}>
+              <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1 block">
+                Profissional
+              </label>
+              <Select
+                value={professionalFilter}
+                onValueChange={setProfessionalFilter}
+              >
                 <SelectTrigger className="h-8 text-sm">
                   <SelectValue placeholder="Todos" />
                 </SelectTrigger>
@@ -288,7 +324,11 @@ const AppointmentManagementPage = () => {
           {filteredAppointments.length > 0 ? (
             <div className="space-y-3">
               {filteredAppointments
-                .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                .sort(
+                  (a, b) =>
+                    new Date(b.createdAt).getTime() -
+                    new Date(a.createdAt).getTime()
+                )
                 .map((appointment) => (
                   <AppointmentCard
                     key={appointment.id}
@@ -370,7 +410,10 @@ const AppointmentManagementPage = () => {
           {upcomingAppointments.length > 0 ? (
             <div className="space-y-3">
               {upcomingAppointments
-                .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                .sort(
+                  (a, b) =>
+                    new Date(a.date).getTime() - new Date(b.date).getTime()
+                )
                 .map((appointment) => (
                   <AppointmentCard
                     key={appointment.id}

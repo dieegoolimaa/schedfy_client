@@ -1,12 +1,27 @@
-import { useParams } from "react-router";
+import { useParams } from "react-router-dom";
 import { useState, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalendarDays, Clock, User, MapPin, Phone, Mail, MessageSquare, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  CalendarDays,
+  Clock,
+  User,
+  Mail,
+  Phone,
+  MessageSquare,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import professionals from "@/mock-data/professional";
 import type { Appointment } from "@/interfaces/appointment.interface";
 
@@ -33,15 +48,15 @@ const mockAppointments: Appointment[] = [
       establishmentPercentage: 30,
       baseAmount: 50,
       professionalAmount: 35,
-      establishmentAmount: 15
+      establishmentAmount: 15,
     },
     payment: {
       method: "card",
-      status: "pending"
+      status: "pending",
     },
     customerNotes: "Cliente prefere bem curto",
     createdAt: "2024-12-01T00:00:00.000Z",
-    updatedAt: "2024-12-01T00:00:00.000Z"
+    updatedAt: "2024-12-01T00:00:00.000Z",
   },
   {
     id: "2",
@@ -64,17 +79,17 @@ const mockAppointments: Appointment[] = [
       establishmentPercentage: 30,
       baseAmount: 80,
       professionalAmount: 56,
-      establishmentAmount: 24
+      establishmentAmount: 24,
     },
     payment: {
       method: "pix",
       status: "paid",
       paidAmount: 80,
-      paymentDate: "2024-12-01T00:00:00.000Z"
+      paymentDate: "2024-12-01T00:00:00.000Z",
     },
     customerNotes: "Primeira vez, explicar procedimentos",
     createdAt: "2024-12-02T00:00:00.000Z",
-    updatedAt: "2024-12-02T00:00:00.000Z"
+    updatedAt: "2024-12-02T00:00:00.000Z",
   },
   {
     id: "3",
@@ -97,15 +112,15 @@ const mockAppointments: Appointment[] = [
       establishmentPercentage: 30,
       baseAmount: 120,
       professionalAmount: 84,
-      establishmentAmount: 36
+      establishmentAmount: 36,
     },
     payment: {
       method: "card",
-      status: "pending"
+      status: "pending",
     },
     customerNotes: "Cliente tem pele sensível",
     createdAt: "2024-12-03T00:00:00.000Z",
-    updatedAt: "2024-12-03T00:00:00.000Z"
+    updatedAt: "2024-12-03T00:00:00.000Z",
   },
   {
     id: "4",
@@ -128,15 +143,15 @@ const mockAppointments: Appointment[] = [
       establishmentPercentage: 30,
       baseAmount: 50,
       professionalAmount: 35,
-      establishmentAmount: 15
+      establishmentAmount: 15,
     },
     payment: {
       method: "cash",
-      status: "pending"
+      status: "pending",
     },
     createdAt: "2024-12-04T00:00:00.000Z",
-    updatedAt: "2024-12-04T00:00:00.000Z"
-  }
+    updatedAt: "2024-12-04T00:00:00.000Z",
+  },
 ];
 
 // Componente de Card Compacto
@@ -146,62 +161,94 @@ interface CompactAppointmentCardProps {
   onToggleExpand: () => void;
 }
 
-const CompactAppointmentCard = ({ appointment, isExpanded, onToggleExpand }: CompactAppointmentCardProps) => {
+const CompactAppointmentCard = ({
+  appointment,
+  isExpanded,
+  onToggleExpand,
+}: CompactAppointmentCardProps) => {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "confirmed": return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
-      case "scheduled": return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
-      case "in_progress": return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200";
-      case "completed": return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200";
-      case "canceled": return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
-      case "no_show": return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200";
-      default: return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200";
+      case "confirmed":
+        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
+      case "scheduled":
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
+      case "in_progress":
+        return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200";
+      case "completed":
+        return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200";
+      case "canceled":
+        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
+      case "no_show":
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200";
+      default:
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200";
     }
   };
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case "confirmed": return "Confirmado";
-      case "scheduled": return "Agendado";
-      case "in_progress": return "Em Andamento";
-      case "completed": return "Finalizado";
-      case "canceled": return "Cancelado";
-      case "no_show": return "Não Compareceu";
-      default: return status;
+      case "confirmed":
+        return "Confirmado";
+      case "scheduled":
+        return "Agendado";
+      case "in_progress":
+        return "Em Andamento";
+      case "completed":
+        return "Finalizado";
+      case "canceled":
+        return "Cancelado";
+      case "no_show":
+        return "Não Compareceu";
+      default:
+        return status;
     }
   };
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
+    return new Date(dateString).toLocaleDateString("pt-BR");
   };
 
   return (
-    <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={onToggleExpand}>
+    <Card
+      className="hover:shadow-md transition-shadow cursor-pointer"
+      onClick={onToggleExpand}
+    >
       <CardContent className="p-4">
         {/* Visualização Compacta */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <Avatar className="size-10 shrink-0">
               <AvatarFallback className="bg-blue-500 text-white text-sm">
-                {appointment.customer.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)}
+                {appointment.customer
+                  .split(" ")
+                  .map((n: string) => n[0])
+                  .join("")
+                  .toUpperCase()
+                  .slice(0, 2)}
               </AvatarFallback>
             </Avatar>
-            
+
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <h3 className="font-medium text-sm truncate">{appointment.customer}</h3>
-                <Badge className={`text-xs px-2 py-0.5 ${getStatusColor(appointment.status)}`}>
+                <h3 className="font-medium text-sm truncate">
+                  {appointment.customer}
+                </h3>
+                <Badge
+                  className={`text-xs px-2 py-0.5 ${getStatusColor(
+                    appointment.status
+                  )}`}
+                >
                   {getStatusText(appointment.status)}
                 </Badge>
               </div>
-              
+
               <div className="flex items-center gap-4 text-xs text-gray-600 dark:text-gray-400">
                 <div className="flex items-center gap-1">
                   <CalendarDays className="size-3" />
@@ -217,12 +264,16 @@ const CompactAppointmentCard = ({ appointment, isExpanded, onToggleExpand }: Com
               </div>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-2 shrink-0">
             <span className="text-sm font-medium text-gray-900 dark:text-gray-100 hidden sm:block">
               {formatCurrency(appointment.finalPrice)}
             </span>
-            {isExpanded ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
+            {isExpanded ? (
+              <ChevronUp className="size-4" />
+            ) : (
+              <ChevronDown className="size-4" />
+            )}
           </div>
         </div>
 
@@ -247,7 +298,7 @@ const CompactAppointmentCard = ({ appointment, isExpanded, onToggleExpand }: Com
                   <span>{appointment.phone}</span>
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <span className="font-medium">Serviço:</span>
@@ -259,27 +310,40 @@ const CompactAppointmentCard = ({ appointment, isExpanded, onToggleExpand }: Com
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="font-medium">Valor:</span>
-                  <span className="font-bold text-green-600">{formatCurrency(appointment.finalPrice)}</span>
+                  <span className="font-bold text-green-600">
+                    {formatCurrency(appointment.finalPrice)}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="font-medium">Pagamento:</span>
-                  <Badge variant={appointment.payment.status === "paid" ? "default" : "secondary"} className="text-xs">
-                    {appointment.payment.status === "paid" ? "Pago" : "Pendente"}
+                  <Badge
+                    variant={
+                      appointment.payment.status === "paid"
+                        ? "default"
+                        : "secondary"
+                    }
+                    className="text-xs"
+                  >
+                    {appointment.payment.status === "paid"
+                      ? "Pago"
+                      : "Pendente"}
                   </Badge>
                 </div>
               </div>
             </div>
-            
+
             {appointment.customerNotes && (
               <div className="flex items-start gap-2">
                 <MessageSquare className="size-4 text-gray-400 mt-0.5" />
                 <div>
                   <span className="font-medium text-sm">Observações:</span>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{appointment.customerNotes}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    {appointment.customerNotes}
+                  </p>
                 </div>
               </div>
             )}
-            
+
             <div className="flex gap-2 pt-2">
               <Button size="sm" variant="outline" className="text-xs">
                 Editar
@@ -308,47 +372,53 @@ const Appointments = () => {
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
 
   // Encontrar o profissional
-  const professional = professionals.find(p => p.id?.toString() === id);
+  const professional = professionals.find((p) => p.id?.toString() === id);
 
   // Filtrar agendamentos por profissional
   const professionalAppointments = useMemo(() => {
-    return mockAppointments.filter(appointment => 
-      appointment.professionalId === id
+    return mockAppointments.filter(
+      (appointment) => appointment.professionalId === id
     );
   }, [id]);
 
   // Aplicar filtros
   const filteredAppointments = useMemo(() => {
-    return professionalAppointments.filter(appointment => {
-      const matchesSearch = appointment.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           appointment.serviceName.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesStatus = statusFilter === "all" || appointment.status === statusFilter;
-      
+    return professionalAppointments.filter((appointment) => {
+      const matchesSearch =
+        appointment.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        appointment.serviceName
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+
+      const matchesStatus =
+        statusFilter === "all" || appointment.status === statusFilter;
+
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const appointmentDate = new Date(appointment.date);
       appointmentDate.setHours(0, 0, 0, 0);
-      
+
       let matchesDate = true;
       if (dateFilter === "today") {
         matchesDate = appointmentDate.getTime() === today.getTime();
       } else if (dateFilter === "week") {
         const weekFromNow = new Date(today);
         weekFromNow.setDate(today.getDate() + 7);
-        matchesDate = appointmentDate >= today && appointmentDate <= weekFromNow;
+        matchesDate =
+          appointmentDate >= today && appointmentDate <= weekFromNow;
       } else if (dateFilter === "month") {
         const monthFromNow = new Date(today);
         monthFromNow.setMonth(today.getMonth() + 1);
-        matchesDate = appointmentDate >= today && appointmentDate <= monthFromNow;
+        matchesDate =
+          appointmentDate >= today && appointmentDate <= monthFromNow;
       }
-      
+
       return matchesSearch && matchesStatus && matchesDate;
     });
   }, [professionalAppointments, searchTerm, statusFilter, dateFilter]);
 
   const toggleCardExpansion = (appointmentId: string) => {
-    setExpandedCards(prev => {
+    setExpandedCards((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(appointmentId)) {
         newSet.delete(appointmentId);
@@ -382,7 +452,12 @@ const Appointments = () => {
           <Avatar className="size-12">
             <AvatarImage src={professional.photo} alt={professional.name} />
             <AvatarFallback className="bg-blue-500 text-white">
-              {professional.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+              {professional.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")
+                .toUpperCase()
+                .slice(0, 2)}
             </AvatarFallback>
           </Avatar>
           <div>
@@ -390,7 +465,8 @@ const Appointments = () => {
               Agendamentos - {professional.name}
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              {professional.specialty} • {filteredAppointments.length} agendamento(s)
+              {professional.specialty} • {filteredAppointments.length}{" "}
+              agendamento(s)
             </p>
           </div>
         </div>
@@ -420,7 +496,7 @@ const Appointments = () => {
                 <SelectItem value="no_show">Não Compareceu</SelectItem>
               </SelectContent>
             </Select>
-            
+
             <Select value={dateFilter} onValueChange={setDateFilter}>
               <SelectTrigger className="w-32">
                 <SelectValue placeholder="Período" />
@@ -449,8 +525,7 @@ const Appointments = () => {
                 <p className="text-gray-600 dark:text-gray-400">
                   {searchTerm || statusFilter !== "all" || dateFilter !== "all"
                     ? "Tente ajustar os filtros para ver mais resultados."
-                    : "Este profissional ainda não possui agendamentos."
-                  }
+                    : "Este profissional ainda não possui agendamentos."}
                 </p>
               </div>
             </CardContent>

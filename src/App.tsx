@@ -1,48 +1,61 @@
-import './App.css'
-import { Routes, Route } from "react-router";
-import LoginPage from './pages/LoginPage';
-import Appointments from './pages/Appointments';
+import "./App.css";
+import { Routes, Route } from "react-router-dom";
+import LoginPage from "./pages/LoginPage";
+import HomePage from "./pages/HomePage";
+import Appointments from "./pages/Appointments";
 import { Toaster } from "@/components/ui/sonner";
-import ProfessionalsPage from './pages/ProfessionalPage';
+import ProfessionalsPage from "./pages/ProfessionalPage";
 import { Layout } from "@/components/Layout";
-import OnGoingServicesPage from './pages/OnGoingServicesPage';
-import BookAppointmentPage from './pages/BookAppointmentPage';
-import ProfessionalDashboard from './pages/ProfessionalDashboard';
-import AppointmentManagementPage from './pages/AppointmentManagementPage';
-import AnalyticsPage from './pages/AnalyticsPage';
-import PromotionManagementPage from './pages/PromotionManagementPage';
-import VoucherManagementPage from './pages/VoucherManagementPage';
-import ServiceCompletionDemo from './pages/ServiceCompletionDemo';
-import ProfessionalAppointmentDemo from './pages/ProfessionalAppointmentDemo';
-import CreateBusinessPage from './pages/CreateBusinessPage';
-import CreateUserPage from './pages/CreateUserPage';
-import CreateProfessionalProfilePage from './pages/CreateProfessionalProfilePage';
-import ProfessionalAnalyticsPage from './pages/ProfessionalAnalyticsPage';
+import OnGoingServicesPage from "./pages/OnGoingServicesPage";
+import BookAppointmentPage from "./pages/BookAppointmentPage";
+import ProfessionalDashboard from "./pages/ProfessionalDashboard";
+import AppointmentManagementPage from "./pages/AppointmentManagementPage";
+import AnalyticsPage from "./pages/AnalyticsPage";
+import PromotionManagementPage from "./pages/PromotionManagementPage";
+import VoucherManagementPage from "./pages/VoucherManagementPage";
+import ServiceCompletionDemo from "./pages/ServiceCompletionDemo";
+import ProfessionalAppointmentDemo from "./pages/ProfessionalAppointmentDemo";
+import CreateBusinessPage from "./pages/CreateBusinessPage";
+import CreateUserPage from "./pages/CreateUserPage";
+import CreateProfessionalProfilePage from "./pages/CreateProfessionalProfilePage";
+import ProfessionalAnalyticsPage from "./pages/ProfessionalAnalyticsPage";
+import PublicBookingLanding from "./pages/PublicBookingLanding";
 
 function App() {
-
-
   return (
     <>
       <Routes>
+        {/* Home page pública */}
+        <Route path="/" element={<HomePage />} />
+
         {/* Página de Login - sem layout */}
-        <Route path="/" element={<LoginPage />} />
+        <Route path="/login" element={<LoginPage />} />
 
         {/* Fluxo de Criação de Conta - sem layout */}
         <Route path="/create-business" element={<CreateBusinessPage />} />
         <Route path="/create-user" element={<CreateUserPage />} />
-        <Route path="/create-professional-profile" element={<CreateProfessionalProfilePage />} />
+        <Route
+          path="/create-professional-profile"
+          element={<CreateProfessionalProfilePage />}
+        />
+        <Route path="/public-booking" element={<PublicBookingLanding />} />
 
         {/* Páginas Públicas/Clientes */}
         <Route path="/book-appointment" element={<BookAppointmentPage />} />
-        
+
         {/* Páginas de demonstração */}
-        <Route path="/professional-demo" element={
-          <Layout>
-            <ProfessionalAppointmentDemo />
-          </Layout>
-        } />
-        <Route path="/service-completion-demo" element={<ServiceCompletionDemo />} />
+        <Route
+          path="/professional-demo"
+          element={
+            <Layout>
+              <ProfessionalAppointmentDemo />
+            </Layout>
+          }
+        />
+        <Route
+          path="/service-completion-demo"
+          element={<ServiceCompletionDemo />}
+        />
 
         {/* Páginas para Profissionais */}
         <Route
@@ -121,19 +134,24 @@ function App() {
         />
 
         {/* Página 404 */}
-        <Route path="*" element={
-          <div className="flex items-center justify-center min-h-screen">
-            <div className="text-center">
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
-              <p className="text-gray-600 mb-4">Página não encontrada</p>
-              <a href="/" className="text-blue-600 hover:underline">Voltar ao início</a>
+        <Route
+          path="*"
+          element={
+            <div className="flex items-center justify-center min-h-screen">
+              <div className="text-center">
+                <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
+                <p className="text-gray-600 mb-4">Página não encontrada</p>
+                <a href="/" className="text-blue-600 hover:underline">
+                  Voltar ao início
+                </a>
+              </div>
             </div>
-          </div>
-        } />
+          }
+        />
       </Routes>
       <Toaster />
     </>
-  )
+  );
 }
 
-export default App
+export default App;

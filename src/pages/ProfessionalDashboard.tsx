@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AppointmentCard } from "@/components/AppointmentCard";
@@ -12,83 +18,91 @@ import type { Appointment } from "@/interfaces/appointment.interface";
 import { toast } from "sonner";
 
 const ProfessionalDashboard = () => {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    new Date()
+  );
+
   // Obter usuário logado e encontrar profissional correspondente
   const loggedUser = localStorage.getItem("loggedInUser");
   const currentUser = loggedUser ? JSON.parse(loggedUser) : null;
-  const currentProfessional = professionals.find(p => p.email === currentUser?.username);
+  const currentProfessional = professionals.find(
+    (p) => p.email === currentUser?.username
+  );
   const currentProfessionalId = currentProfessional?.id?.toString() || "1";
-  
+
   // Filtrar appointments do profissional atual
   const professionalAppointments = appointments.filter(
-    apt => apt.professionalId === currentProfessionalId
+    (apt) => apt.professionalId === currentProfessionalId
   );
 
   // Separar appointments por status
-  const todayAppointments = professionalAppointments.filter(apt => {
+  const todayAppointments = professionalAppointments.filter((apt) => {
     const appointmentDate = new Date(apt.date).toDateString();
     const today = new Date().toDateString();
     return appointmentDate === today;
   });
 
-  const upcomingAppointments = professionalAppointments.filter(apt => {
+  const upcomingAppointments = professionalAppointments.filter((apt) => {
     const appointmentDate = new Date(apt.date);
     const today = new Date();
     return appointmentDate > today;
   });
 
   const pendingAppointments = professionalAppointments.filter(
-    apt => apt.status === 'scheduled'
+    (apt) => apt.status === "scheduled"
   );
 
-  const completedAppointments = professionalAppointments.filter(
-    apt => apt.status === 'completed'
-  );
+  // completed appointments derived where needed
 
   // Calcular estatísticas do dia
   const todayStats = {
     total: todayAppointments.length,
-    completed: todayAppointments.filter(apt => apt.status === 'completed').length,
-    pending: todayAppointments.filter(apt => apt.status === 'scheduled').length,
+    completed: todayAppointments.filter((apt) => apt.status === "completed")
+      .length,
+    pending: todayAppointments.filter((apt) => apt.status === "scheduled")
+      .length,
     revenue: todayAppointments
-      .filter(apt => apt.status === 'completed')
-      .reduce((sum, apt) => sum + apt.commission.professionalAmount, 0)
+      .filter((apt) => apt.status === "completed")
+      .reduce((sum, apt) => sum + apt.commission.professionalAmount, 0),
   };
 
   // Calcular estatísticas do mês
   const currentMonth = new Date().getMonth();
-  const monthlyAppointments = professionalAppointments.filter(apt => {
+  const monthlyAppointments = professionalAppointments.filter((apt) => {
     return new Date(apt.date).getMonth() === currentMonth;
   });
 
   const monthlyStats = {
     total: monthlyAppointments.length,
-    completed: monthlyAppointments.filter(apt => apt.status === 'completed').length,
+    completed: monthlyAppointments.filter((apt) => apt.status === "completed")
+      .length,
     revenue: monthlyAppointments
-      .filter(apt => apt.status === 'completed')
+      .filter((apt) => apt.status === "completed")
       .reduce((sum, apt) => sum + apt.commission.professionalAmount, 0),
     commission: monthlyAppointments
-      .filter(apt => apt.status === 'completed')
-      .reduce((sum, apt) => sum + apt.commission.professionalAmount, 0)
+      .filter((apt) => apt.status === "completed")
+      .reduce((sum, apt) => sum + apt.commission.professionalAmount, 0),
   };
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
 
-  const handleStatusChange = async (appointmentId: string, newStatus: Appointment['status']) => {
+  const handleStatusChange = async (
+    appointmentId: string,
+    newStatus: Appointment["status"]
+  ) => {
     // Simular atualização no backend
     console.log(`Updating appointment ${appointmentId} to ${newStatus}`);
     toast(`Agendamento atualizado para: ${newStatus}`);
   };
 
   // Appointments do dia selecionado no calendário
-  const selectedDayAppointments = selectedDate 
-    ? professionalAppointments.filter(apt => {
+  const selectedDayAppointments = selectedDate
+    ? professionalAppointments.filter((apt) => {
         const appointmentDate = new Date(apt.date).toDateString();
         const selectedDateString = selectedDate.toDateString();
         return appointmentDate === selectedDateString;
@@ -110,8 +124,12 @@ const ProfessionalDashboard = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <Card className="p-4">
           <div className="flex flex-col">
-            <span className="text-xs text-gray-600 dark:text-gray-400 mb-1">Hoje</span>
-            <span className="text-xl font-bold text-gray-900 dark:text-gray-100">{todayStats.total}</span>
+            <span className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+              Hoje
+            </span>
+            <span className="text-xl font-bold text-gray-900 dark:text-gray-100">
+              {todayStats.total}
+            </span>
             <div className="text-xs text-gray-500 mt-2 space-y-0.5">
               <div>✅ {todayStats.completed} concluídos</div>
               <div>⏳ {todayStats.pending} pendentes</div>
@@ -121,7 +139,9 @@ const ProfessionalDashboard = () => {
 
         <Card className="p-4">
           <div className="flex flex-col">
-            <span className="text-xs text-gray-600 dark:text-gray-400 mb-1">Receita Hoje</span>
+            <span className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+              Receita Hoje
+            </span>
             <span className="text-xl font-bold text-green-600">
               {formatCurrency(todayStats.revenue)}
             </span>
@@ -133,8 +153,12 @@ const ProfessionalDashboard = () => {
 
         <Card className="p-4">
           <div className="flex flex-col">
-            <span className="text-xs text-gray-600 dark:text-gray-400 mb-1">Este Mês</span>
-            <span className="text-xl font-bold text-gray-900 dark:text-gray-100">{monthlyStats.total}</span>
+            <span className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+              Este Mês
+            </span>
+            <span className="text-xl font-bold text-gray-900 dark:text-gray-100">
+              {monthlyStats.total}
+            </span>
             <span className="text-xs text-gray-500 mt-2">
               {monthlyStats.completed} agendamentos concluídos
             </span>
@@ -143,7 +167,9 @@ const ProfessionalDashboard = () => {
 
         <Card className="p-4">
           <div className="flex flex-col">
-            <span className="text-xs text-gray-600 dark:text-gray-400 mb-1">Receita Mensal</span>
+            <span className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+              Receita Mensal
+            </span>
             <span className="text-xl font-bold text-green-600">
               {formatCurrency(monthlyStats.revenue)}
             </span>
@@ -214,7 +240,10 @@ const ProfessionalDashboard = () => {
               {upcomingAppointments.length > 0 ? (
                 <div className="space-y-4">
                   {upcomingAppointments
-                    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                    .sort(
+                      (a, b) =>
+                        new Date(a.date).getTime() - new Date(b.date).getTime()
+                    )
                     .map((appointment) => (
                       <AppointmentCard
                         key={appointment.id}
@@ -268,7 +297,9 @@ const ProfessionalDashboard = () => {
             <Card className="lg:col-span-1">
               <CardHeader>
                 <CardTitle>Calendário</CardTitle>
-                <CardDescription>Selecione uma data para ver os agendamentos</CardDescription>
+                <CardDescription>
+                  Selecione uma data para ver os agendamentos
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <Calendar
@@ -277,14 +308,16 @@ const ProfessionalDashboard = () => {
                   onSelect={setSelectedDate}
                   className="rounded-md border-0"
                   modifiers={{
-                    hasAppointments: professionalAppointments.map(apt => new Date(apt.date))
+                    hasAppointments: professionalAppointments.map(
+                      (apt) => new Date(apt.date)
+                    ),
                   }}
                   modifiersStyles={{
-                    hasAppointments: { 
-                      backgroundColor: '#3b82f6', 
-                      color: 'white',
-                      fontWeight: 'bold'
-                    }
+                    hasAppointments: {
+                      backgroundColor: "#3b82f6",
+                      color: "white",
+                      fontWeight: "bold",
+                    },
                   }}
                 />
               </CardContent>
@@ -294,7 +327,7 @@ const ProfessionalDashboard = () => {
             <Card className="lg:col-span-2">
               <CardHeader>
                 <CardTitle>
-                  Agendamentos - {selectedDate?.toLocaleDateString('pt-BR')}
+                  Agendamentos - {selectedDate?.toLocaleDateString("pt-BR")}
                 </CardTitle>
                 <CardDescription>
                   {selectedDayAppointments.length} agendamento(s) neste dia
@@ -334,19 +367,24 @@ const ProfessionalDashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">
-                {((monthlyStats.completed / monthlyStats.total) * 100 || 0).toFixed(1)}%
+                {(
+                  (monthlyStats.completed / monthlyStats.total) * 100 || 0
+                ).toFixed(1)}
+                %
               </div>
               <div className="text-sm text-gray-600">Taxa de Conclusão</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">
-                {formatCurrency(monthlyStats.revenue / monthlyStats.completed || 0)}
+                {formatCurrency(
+                  monthlyStats.revenue / monthlyStats.completed || 0
+                )}
               </div>
               <div className="text-sm text-gray-600">Ticket Médio</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-purple-600">
-                {Math.round(monthlyStats.total / 30 * 7)}
+                {Math.round((monthlyStats.total / 30) * 7)}
               </div>
               <div className="text-sm text-gray-600">Agendamentos/Semana</div>
             </div>

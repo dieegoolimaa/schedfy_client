@@ -14,6 +14,19 @@ const users: User[] = [
         role: "professional",
     },
 
+    {
+        id: 4,
+        username: "owner@example.com",
+        password: "P@ssw0rd",
+        role: "owner",
+    },
+    {
+        id: 5,
+        username: "simple@example.com",
+        password: "P@ssw0rd",
+        role: "simple",
+    }
+
 ];
 
 export default users;

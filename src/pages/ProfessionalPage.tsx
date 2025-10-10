@@ -1,13 +1,15 @@
-
 import { ProfessionalCard } from "@/components/ProfessionalCard";
 import { toast } from "sonner";
 import professionals from "@/mock-data/professional";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 const ProfessionalPage = () => {
   const navigate = useNavigate();
 
-  const handleViewSchedule = (professionalId: string, professionalName: string) => {
+  const handleViewSchedule = (
+    professionalId: string,
+    professionalName: string
+  ) => {
     toast.info(`Visualizando agenda de ${professionalName}`);
     navigate(`/appointments/${professionalId}`);
   };
@@ -15,10 +17,13 @@ const ProfessionalPage = () => {
   const handleContact = (professionalName: string, email: string) => {
     toast.success(`Entrando em contato com ${professionalName}`);
     // Aqui você poderia abrir o cliente de email ou um modal de contato
-    window.open(`mailto:${email}`, '_blank');
+    window.open(`mailto:${email}`, "_blank");
   };
 
-  const handleViewAnalytics = (professionalId: string, professionalName: string) => {
+  const handleViewAnalytics = (
+    professionalId: string,
+    professionalName: string
+  ) => {
     toast.info(`Visualizando análises de ${professionalName}`);
     navigate(`/admin/analytics/professional/${professionalId}`);
   };
@@ -33,15 +38,21 @@ const ProfessionalPage = () => {
           Conheça nossa equipe de especialistas prontos para atendê-lo
         </p>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {professionals.map((professional) => (
           <ProfessionalCard
             key={professional.id}
             professional={professional}
-            onViewSchedule={() => handleViewSchedule(professional.id, professional.name)}
-            onContact={() => handleContact(professional.name, professional.email)}
-            onViewAnalytics={() => handleViewAnalytics(professional.id, professional.name)}
+            onViewSchedule={() =>
+              handleViewSchedule(professional.id, professional.name)
+            }
+            onContact={() =>
+              handleContact(professional.name, professional.email)
+            }
+            onViewAnalytics={() =>
+              handleViewAnalytics(professional.id, professional.name)
+            }
           />
         ))}
       </div>
