@@ -3,7 +3,9 @@
 ## ✅ Mudanças Implementadas
 
 ### 1. ✅ Remover PaymentDialog do agendamento
+
 **Arquivos modificados:**
+
 - `src/pages/BookAppointmentPage.tsx`
   - Removido import de `PaymentDialog`
   - Removido estado `showPayment`
@@ -18,10 +20,13 @@
 ---
 
 ### 2. ✅ Página de Gerenciamento de Negócios
+
 **Novo arquivo criado:**
+
 - `src/pages/BusinessManagementPage.tsx`
 
 **Características:**
+
 - 4 tabs usando componente `Tabs` do shadcn/ui:
   1. **Serviços** - Gerenciar serviços oferecidos
   2. **Vouchers** - Criar e gerenciar vouchers
@@ -29,7 +34,9 @@
   4. **Comissões** - Gerenciar percentuais de comissão (padrão: 30% estabelecimento, 70% profissional)
 
 **Arquivos modificados:**
+
 - `src/App.tsx`:
+
   - Adicionado import de `BusinessManagementPage`
   - Nova rota `/business-management` protegida com `RequireRole` (admin/owner apenas)
 
@@ -48,7 +55,9 @@
 ---
 
 ### 3. ✅ Remover /public-booking da HomePage
+
 **Arquivos modificados:**
+
 - `src/pages/HomePage.tsx`:
   - Removido botão "Book now" do header da HomePage
   - Removido botão "Agende agora" dos CTAs principais
@@ -60,12 +69,16 @@
 ---
 
 ### 4. 🚧 HomePage Melhorada (Nova Versão Criada)
+
 **Novo arquivo criado:**
+
 - `src/pages/HomePage_new.tsx`
 
 **Melhorias implementadas:**
+
 - ✅ **Header sticky** com backdrop blur
 - ✅ **Hero section** completo com:
+
   - Badge "New Platform"
   - Título e subtítulo impactantes
   - 2 CTAs (primário e secundário)
@@ -73,6 +86,7 @@
   - Ilustração hero (gradient card com ícone)
 
 - ✅ **Features section** com 6 features:
+
   - Smart Scheduling
   - Professional Management
   - Reports & Analytics
@@ -83,17 +97,20 @@
   - Hover effects e animações
 
 - ✅ **Benefits section**:
+
   - Grid 2 colunas (texto + ilustração)
   - 4 benefícios principais com checkmarks
   - Ilustração com ícone TrendingUp
 
 - ✅ **Plans section** com 3 planos:
+
   - Simple (básico)
   - Individual (popular - destacado)
   - Business (completo)
   - Cada plano com lista de features e CTA
 
 - ✅ **CTA final** section:
+
   - Card com gradient background
   - Título, subtítulo e botão de conversão
 
@@ -103,6 +120,7 @@
   - Copyright e links de Privacy/Terms
 
 **Traduções:**
+
 - ✅ Todas as strings extraídas para chaves i18n
 - ✅ Arquivo `src/i18n/en_complete.json` criado com ~80 chaves novas
 
@@ -111,7 +129,9 @@
 ## 🔨 Próximos Passos Necessários
 
 ### 5. ⏳ Substituir HomePage antiga pela nova
+
 **Ação necessária:**
+
 1. Fazer backup da HomePage antiga (se necessário)
 2. Renomear `HomePage_new.tsx` para `HomePage.tsx` (substituir arquivo existente)
 3. Copiar o conteúdo de `en_complete.json` para os 4 arquivos de tradução:
@@ -121,6 +141,7 @@
    - `src/i18n/es.json` (traduzir para espanhol)
 
 **Comando para substituir:**
+
 ```bash
 cd /Users/dieegoolimaa/Documents/GitHub/schedfy_client/src/pages
 mv HomePage.tsx HomePage_old.tsx
@@ -130,10 +151,12 @@ mv HomePage_new.tsx HomePage.tsx
 ---
 
 ### 6. ⏳ Traduzir todas as chaves i18n
+
 **Ação necessária:**
 Traduzir as ~80 chaves criadas em `en_complete.json` para os outros 3 idiomas.
 
 **Exemplo de chaves que precisam de tradução:**
+
 ```json
 // PT-BR
 "home.hero.title": "Simplifique o agendamento do seu negócio"
@@ -151,9 +174,11 @@ Traduzir as ~80 chaves criadas em `en_complete.json` para os outros 3 idiomas.
 ---
 
 ### 7. ⏳ Agrupar menus na navbar (Header)
+
 **Objetivo:** Usar dropdowns para agrupar menus relacionados e reduzir o número de itens.
 
 **Sugestão de agrupamento:**
+
 ```typescript
 // Owner/Admin menu com dropdowns:
 - Gerenciar Negócio (link direto para /business-management)
@@ -167,6 +192,7 @@ Traduzir as ~80 chaves criadas em `en_complete.json` para os outros 3 idiomas.
 ```
 
 **Implementação necessária:**
+
 - Usar `DropdownMenu` do shadcn/ui
 - Refatorar `getMenuItems()` em `Header.tsx`
 - Criar componente de menu agrupado para desktop e mobile
@@ -174,9 +200,11 @@ Traduzir as ~80 chaves criadas em `en_complete.json` para os outros 3 idiomas.
 ---
 
 ### 8. ⏳ Reorganizar estrutura de pastas por serviços
+
 **Objetivo:** Migrar de estrutura por tipo de arquivo para estrutura por domínio/feature.
 
 **Estrutura atual:**
+
 ```
 src/
 ├── components/
@@ -188,6 +216,7 @@ src/
 ```
 
 **Estrutura proposta:**
+
 ```
 src/
 ├── features/
@@ -214,6 +243,7 @@ src/
 ```
 
 **Benefícios:**
+
 - Melhor coesão e encapsulamento
 - Facilita reutilização
 - Escalabilidade
@@ -224,6 +254,7 @@ src/
 ## 📊 Status do Build
 
 **Último build:** ✅ Sucesso
+
 ```
 ✓ 3645 modules transformed.
 dist/assets/index-D5K7kvYs.js   1,134.91 kB │ gzip: 328.04 kB
@@ -252,6 +283,7 @@ dist/assets/index-D5K7kvYs.js   1,134.91 kB │ gzip: 328.04 kB
 ## 📝 Comandos Úteis
 
 ### Substituir HomePage:
+
 ```bash
 cd src/pages
 mv HomePage.tsx HomePage_old.tsx
@@ -259,11 +291,13 @@ mv HomePage_new.tsx HomePage.tsx
 ```
 
 ### Testar build após mudanças:
+
 ```bash
 npm run build
 ```
 
 ### Iniciar dev server:
+
 ```bash
 npm run dev
 ```
@@ -273,17 +307,21 @@ npm run dev
 ## 🐛 Possíveis Problemas e Soluções
 
 ### Problema: Chaves i18n faltando
+
 **Sintoma:** Textos aparecem como chaves (ex: "home.hero.title")
 **Solução:** Copiar chaves de `en_complete.json` para `en.json` e traduzir para outros idiomas
 
 ### Problema: HomePage não carrega
+
 **Sintoma:** Tela branca ou erro no console
-**Solução:** 
+**Solução:**
+
 1. Verificar se todas as dependências estão importadas corretamente
 2. Verificar se as chaves i18n existem nos arquivos de tradução
 3. Verificar console do navegador para erros específicos
 
 ### Problema: Build falha após reorganização
+
 **Sintoma:** Erros de import não encontrado
 **Solução:** Atualizar todos os paths de import após mover arquivos
 

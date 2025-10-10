@@ -20,11 +20,11 @@ import CreateProfessionalProfilePage from "./pages/CreateProfessionalProfilePage
 import ProfessionalAnalyticsPage from "./pages/ProfessionalAnalyticsPage";
 import PublicBookingLanding from "./pages/PublicBookingLanding";
 import HomePage from "./pages/HomePage";
-import RequireRole from './components/RequireRole';
-import AdminServicesPage from './pages/admin/services';
-import AdminCommissionPage from './pages/admin/commission';
-import AdminHorariosPage from './pages/admin/horarios';
-import BusinessManagementPage from './pages/BusinessManagementPage';
+import RequireRole from "./components/RequireRole";
+import AdminServicesPage from "./pages/admin/services";
+import AdminCommissionPage from "./pages/admin/commission";
+import AdminHorariosPage from "./pages/admin/horarios";
+import BusinessManagementPage from "./pages/BusinessManagementPage";
 
 function App() {
   return (
@@ -49,7 +49,7 @@ function App() {
         <Route
           path="/business-management"
           element={
-            <RequireRole roles={['admin', 'owner']}>
+            <RequireRole roles={["admin", "owner"]}>
               <BusinessManagementPage />
             </RequireRole>
           }
@@ -118,7 +118,7 @@ function App() {
         <Route
           path="/admin/promotions"
           element={
-            <RequireRole roles={["admin","owner"]}>
+            <RequireRole roles={["admin", "owner"]}>
               <Layout>
                 <PromotionManagementPage />
               </Layout>
@@ -128,7 +128,7 @@ function App() {
         <Route
           path="/admin/vouchers"
           element={
-            <RequireRole roles={["admin","owner"]}>
+            <RequireRole roles={["admin", "owner"]}>
               <Layout>
                 <VoucherManagementPage />
               </Layout>
@@ -138,7 +138,7 @@ function App() {
         <Route
           path="/admin/services"
           element={
-            <RequireRole roles={["admin","owner"]}>
+            <RequireRole roles={["admin", "owner"]}>
               <AdminServicesPage />
             </RequireRole>
           }
@@ -146,7 +146,7 @@ function App() {
         <Route
           path="/admin/commission"
           element={
-            <RequireRole roles={["admin","owner"]}>
+            <RequireRole roles={["admin", "owner"]}>
               <AdminCommissionPage />
             </RequireRole>
           }
@@ -154,7 +154,7 @@ function App() {
         <Route
           path="/admin/horarios"
           element={
-            <RequireRole roles={["admin","owner"]}>
+            <RequireRole roles={["admin", "owner"]}>
               <AdminHorariosPage />
             </RequireRole>
           }

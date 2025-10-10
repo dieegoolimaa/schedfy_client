@@ -219,15 +219,16 @@ const BookAppointmentPage = () => {
     });
 
     // build appointments array
-    const appointments = (isProfessional && selectedDates.length > 0)
-      ? selectedDates.map(d => makeAppointmentForDate(d))
-      : [makeAppointmentForDate(selectedDate)];
+    const appointments =
+      isProfessional && selectedDates.length > 0
+        ? selectedDates.map((d) => makeAppointmentForDate(d))
+        : [makeAppointmentForDate(selectedDate)];
 
     try {
       const existing = JSON.parse(
         localStorage.getItem("mock_appointments") || "[]"
       );
-      appointments.forEach(a => existing.push(a));
+      appointments.forEach((a) => existing.push(a));
       localStorage.setItem("mock_appointments", JSON.stringify(existing));
     } catch (e) {
       console.error("Failed to save appointment", e);
@@ -428,7 +429,9 @@ const BookAppointmentPage = () => {
                         <Button
                           type="button"
                           variant="outline"
-                          onClick={() => setSelectedDates((s) => [...s, undefined as any])}
+                          onClick={() =>
+                            setSelectedDates((s) => [...s, undefined as any])
+                          }
                         >
                           {t("booking.addAnotherDate")}
                         </Button>
@@ -451,7 +454,8 @@ const BookAppointmentPage = () => {
                       />
                       {selectedDate && (
                         <p className="text-sm text-muted-foreground">
-                          Data selecionada: {selectedDate.toLocaleDateString("pt-BR")}
+                          Data selecionada:{" "}
+                          {selectedDate.toLocaleDateString("pt-BR")}
                         </p>
                       )}
                     </>
@@ -649,8 +653,8 @@ const BookAppointmentPage = () => {
           </Card>
         )}
 
-        {/* Resumo do Agendamento */}
-        {selectedTime && customerData.name && (
+        {/* Resumo do Agendamento - Só aparece quando todos os campos obrigatórios estão preenchidos */}
+        {selectedService && selectedProfessional && selectedDate && selectedTime && customerData.name && customerData.email && customerData.phone && (
           <Card>
             <CardHeader>
               <CardTitle>5. Resumo do Agendamento</CardTitle>
@@ -674,7 +678,9 @@ const BookAppointmentPage = () => {
                 <div className="flex justify-between">
                   <span className="text-gray-600">{t("book.date")}:</span>
                   <span className="font-medium">
-                    {selectedDate?.toLocaleDateString("pt-BR")}
+                    {isProfessional && selectedDates.length > 0
+                      ? `${selectedDates.length} data(s) selecionada(s)`
+                      : selectedDate?.toLocaleDateString("pt-BR")}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -691,7 +697,7 @@ const BookAppointmentPage = () => {
                   <div className="flex justify-between text-lg font-bold">
                     <span>{t("book.total")}:</span>
                     <span>
-                      {formatCurrency(selectedServiceData?.price || 0)}
+                      {formatCurrency((selectedServiceData?.price || 0) * (isProfessional && selectedDates.length > 0 ? selectedDates.length : 1))}
                     </span>
                   </div>
                 </div>

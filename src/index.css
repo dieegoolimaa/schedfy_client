@@ -80,55 +80,55 @@
   /* Neutral Background Colors - Mais claros para melhor visibilidade */
   --background: oklch(0.13 0.008 240); /* neutral-900 em vez de 950 */
   --foreground: oklch(0.98 0.002 240); /* neutral-50 */
-  
+
   /* Neutral Card Colors - Mais claros */
   --card: oklch(0.17 0.008 240); /* neutral-850 */
   --card-foreground: oklch(0.95 0.002 240); /* neutral-100 */
-  
+
   /* Neutral Popover Colors */
   --popover: oklch(0.17 0.008 240); /* neutral-850 */
   --popover-foreground: oklch(0.95 0.002 240); /* neutral-100 */
-  
+
   /* Primary Colors - Mais visível */
-  --primary: oklch(0.70 0.015 220); /* azul mais suave */
+  --primary: oklch(0.7 0.015 220); /* azul mais suave */
   --primary-foreground: oklch(0.95 0.002 240); /* neutral-100 */
-  
+
   /* Secondary Colors - Melhor contraste */
-  --secondary: oklch(0.25 0.010 240); /* neutral-750 */
-  --secondary-foreground: oklch(0.90 0.005 240); /* neutral-150 */
-  
+  --secondary: oklch(0.25 0.01 240); /* neutral-750 */
+  --secondary-foreground: oklch(0.9 0.005 240); /* neutral-150 */
+
   /* Muted Colors - Mais claros */
-  --muted: oklch(0.25 0.010 240); /* neutral-750 */
+  --muted: oklch(0.25 0.01 240); /* neutral-750 */
   --muted-foreground: oklch(0.65 0.008 240); /* neutral-400 mais claro */
-  
+
   /* Accent Colors - Melhor visibilidade */
-  --accent: oklch(0.30 0.012 240); /* neutral-650 */
+  --accent: oklch(0.3 0.012 240); /* neutral-650 */
   --accent-foreground: oklch(0.95 0.002 240); /* neutral-100 */
-  
+
   /* Destructive - Keep red for errors */
-  --destructive: oklch(0.65 0.20 15); /* red-400 mais claro */
-  
+  --destructive: oklch(0.65 0.2 15); /* red-400 mais claro */
+
   /* Border and Input - Mais visível */
   --border: oklch(0.35 0.012 240); /* neutral-600 */
-  --input: oklch(0.22 0.010 240); /* neutral-800 */
-  --ring: oklch(0.60 0.015 220); /* azul suave */
-  
+  --input: oklch(0.22 0.01 240); /* neutral-800 */
+  --ring: oklch(0.6 0.015 220); /* azul suave */
+
   /* Chart Colors - Melhor contraste */
-  --chart-1: oklch(0.70 0.015 220); /* azul suave */
+  --chart-1: oklch(0.7 0.015 220); /* azul suave */
   --chart-2: oklch(0.65 0.015 160); /* verde suave */
   --chart-3: oklch(0.65 0.015 300); /* roxo suave */
   --chart-4: oklch(0.65 0.015 50); /* laranja suave */
-  --chart-5: oklch(0.70 0.015 280); /* violeta suave */
-  
+  --chart-5: oklch(0.7 0.015 280); /* violeta suave */
+
   /* Sidebar Colors - Melhor contraste */
   --sidebar: oklch(0.17 0.008 240); /* neutral-850 */
   --sidebar-foreground: oklch(0.95 0.002 240); /* neutral-100 */
-  --sidebar-primary: oklch(0.70 0.015 220); /* azul suave */
+  --sidebar-primary: oklch(0.7 0.015 220); /* azul suave */
   --sidebar-primary-foreground: oklch(0.95 0.002 240); /* neutral-100 */
-  --sidebar-accent: oklch(0.25 0.010 240); /* neutral-750 */
-  --sidebar-accent-foreground: oklch(0.90 0.005 240); /* neutral-150 */
+  --sidebar-accent: oklch(0.25 0.01 240); /* neutral-750 */
+  --sidebar-accent-foreground: oklch(0.9 0.005 240); /* neutral-150 */
   --sidebar-border: oklch(0.35 0.012 240); /* neutral-600 */
-  --sidebar-ring: oklch(0.60 0.015 220); /* azul suave */
+  --sidebar-ring: oklch(0.6 0.015 220); /* azul suave */
 }
 
 @layer base {
@@ -160,15 +160,20 @@
     border: 2px solid transparent;
     background-clip: padding-box;
   }
-  
+
   .gradient-border::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     border-radius: inherit;
     padding: 2px;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    background: linear-gradient(
+      135deg,
+      var(--color-primary),
+      var(--color-accent)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     pointer-events: none;

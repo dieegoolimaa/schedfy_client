@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Package, Gift, Ticket, Percent } from "lucide-react";
 
@@ -20,7 +26,11 @@ const BusinessManagementPage = () => {
           </p>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-6"
+        >
           <TabsList className="grid w-full grid-cols-4 lg:w-auto">
             <TabsTrigger value="services" className="flex items-center gap-2">
               <Package className="h-4 w-4" />
@@ -149,7 +159,9 @@ const BusinessManagementPage = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Card>
                       <CardHeader>
-                        <CardTitle className="text-sm">Padrão Estabelecimento</CardTitle>
+                        <CardTitle className="text-sm">
+                          Padrão Estabelecimento
+                        </CardTitle>
                       </CardHeader>
                       <CardContent>
                         <div className="text-3xl font-bold text-[var(--color-primary)]">
@@ -162,7 +174,9 @@ const BusinessManagementPage = () => {
                     </Card>
                     <Card>
                       <CardHeader>
-                        <CardTitle className="text-sm">Padrão Profissional</CardTitle>
+                        <CardTitle className="text-sm">
+                          Padrão Profissional
+                        </CardTitle>
                       </CardHeader>
                       <CardContent>
                         <div className="text-3xl font-bold text-[var(--color-primary)]">
@@ -176,7 +190,10 @@ const BusinessManagementPage = () => {
                   </div>
                   <div className="text-center py-8 text-[var(--color-muted-foreground)]">
                     <Percent className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>Configure regras de comissão personalizadas por serviço ou profissional.</p>
+                    <p>
+                      Configure regras de comissão personalizadas por serviço ou
+                      profissional.
+                    </p>
                   </div>
                 </div>
               </CardContent>

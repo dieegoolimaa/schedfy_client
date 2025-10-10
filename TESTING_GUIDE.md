@@ -3,12 +3,15 @@
 ## 🚀 Início Rápido
 
 ### Executar a Aplicação
+
 ```bash
 npm run dev
 ```
+
 O servidor será iniciado em `http://localhost:5173` (ou 5174 se a porta estiver ocupada).
 
 ### Build para Produção
+
 ```bash
 npm run build
 ```
@@ -19,18 +22,19 @@ npm run build
 
 Todos os usuários têm a senha: `P@ssw0rd`
 
-| Email | Role | Acesso |
-|-------|------|--------|
-| `owner@example.com` | owner | Acesso completo (Business tier) |
-| `admin@gmail.com` | admin | Acesso completo (Business tier) |
-| `jose.silva@example.com` | professional | Dashboard profissional + agendamentos |
-| `simple@example.com` | simple | Análises, serviços, agendamentos (Simple tier) |
+| Email                    | Role         | Acesso                                         |
+| ------------------------ | ------------ | ---------------------------------------------- |
+| `owner@example.com`      | owner        | Acesso completo (Business tier)                |
+| `admin@gmail.com`        | admin        | Acesso completo (Business tier)                |
+| `jose.silva@example.com` | professional | Dashboard profissional + agendamentos          |
+| `simple@example.com`     | simple       | Análises, serviços, agendamentos (Simple tier) |
 
 ---
 
 ## 🧪 Fluxos de Teste
 
 ### 1. Fluxo Público de Agendamento
+
 1. Acesse a **HomePage** (`/`)
 2. Clique em **"Agende agora"** ou **"Book now"**
 3. Siga o fluxo multi-step:
@@ -45,14 +49,16 @@ Todos os usuários têm a senha: `P@ssw0rd`
 7. ✅ Agendamento salvo em `localStorage.mock_appointments`
 
 **Verificação:**
+
 ```javascript
 // No console do navegador
-JSON.parse(localStorage.getItem('mock_appointments'))
+JSON.parse(localStorage.getItem("mock_appointments"));
 ```
 
 ---
 
 ### 2. Fluxo Profissional Multi-Data
+
 1. Faça login com `jose.silva@example.com`
 2. Acesse `/book-appointment`
 3. Preencha serviço, profissional e horário
@@ -66,9 +72,10 @@ JSON.parse(localStorage.getItem('mock_appointments'))
 9. ✅ **Múltiplos agendamentos** criados (um para cada data selecionada)
 
 **Verificação:**
+
 ```javascript
 // No console do navegador
-JSON.parse(localStorage.getItem('mock_appointments'))
+JSON.parse(localStorage.getItem("mock_appointments"));
 // Deve conter um agendamento para cada data selecionada
 ```
 
@@ -77,9 +84,11 @@ JSON.parse(localStorage.getItem('mock_appointments'))
 ### 3. Teste de Visibilidade por Role
 
 #### Owner / Admin (Business Tier)
+
 **Login:** `owner@example.com` ou `admin@gmail.com`
 
 **Menu disponível:**
+
 - ✅ Gerenciar Negócio
 - ✅ Horários
 - ✅ Serviços
@@ -92,6 +101,7 @@ JSON.parse(localStorage.getItem('mock_appointments'))
 - ✅ Agendar (público)
 
 **Rotas protegidas acessíveis:**
+
 - `/admin/horarios`
 - `/admin/services`
 - `/admin/commission`
@@ -101,29 +111,35 @@ JSON.parse(localStorage.getItem('mock_appointments'))
 ---
 
 #### Professional
+
 **Login:** `jose.silva@example.com`
 
 **Menu disponível:**
+
 - ✅ Dashboard
 - ✅ Agendamentos
 - ✅ Agendar (com suporte multi-data)
 
 **Diferencial:**
+
 - Pode agendar múltiplas datas de uma vez
 - Dados do profissional pré-preenchidos
 
 ---
 
 #### Simple Admin
+
 **Login:** `simple@example.com`
 
 **Menu disponível:**
+
 - ✅ Análises
 - ✅ Serviços
 - ✅ Agendamentos
 - ✅ Agendar
 
 **Limitações:**
+
 - ❌ Não acessa Vouchers, Promoções, Comissão
 - ❌ Não acessa Gerenciar Negócio
 
@@ -143,6 +159,7 @@ JSON.parse(localStorage.getItem('mock_appointments'))
    - Mensagens do fluxo de agendamento
 
 **Chaves traduzidas incluem:**
+
 - `home.*` (HomePage CTAs)
 - `book.*` (Formulários de agendamento)
 - `booking.addAnotherDate`, `booking.clearDates` (Multi-data)
@@ -153,11 +170,14 @@ JSON.parse(localStorage.getItem('mock_appointments'))
 ### 5. Teste de Estilo e Design Tokens
 
 #### Verificar backgrounds consistentes:
+
 - **HomePage**: `bg-[var(--color-background)]`
 - **PublicBookingLanding**: `bg-[var(--color-background)]`
 
 #### Verificar bordas gradientes:
+
 Na **HomePage**, os seguintes cards devem ter bordas gradiente (primary → accent):
+
 - Card "Agendamento público"
 - Card "Gestão de profissionais"
 - Card "Pagamentos mock"
@@ -166,6 +186,7 @@ Na **HomePage**, os seguintes cards devem ter bordas gradiente (primary → acce
 **CSS utility:** `.gradient-border`
 
 #### Testar Dark Mode:
+
 1. Clique no ícone de tema no Header (sol/lua)
 2. Verifique que todas as cores se adaptam usando variáveis CSS
 3. Verifique legibilidade de textos e contraste
@@ -174,17 +195,18 @@ Na **HomePage**, os seguintes cards devem ter bordas gradiente (primary → acce
 
 ## 🗂️ LocalStorage Keys
 
-| Key | Conteúdo |
-|-----|----------|
-| `loggedInUser` | Usuário autenticado atual |
-| `mock_appointments` | Array de agendamentos |
-| `mock_customers` | Array de clientes criados |
+| Key                 | Conteúdo                  |
+| ------------------- | ------------------------- |
+| `loggedInUser`      | Usuário autenticado atual |
+| `mock_appointments` | Array de agendamentos     |
+| `mock_customers`    | Array de clientes criados |
 
 ---
 
 ## 🎨 Design Tokens (CSS Variables)
 
 ### Variáveis principais:
+
 ```css
 --color-background
 --color-foreground
@@ -202,11 +224,13 @@ Na **HomePage**, os seguintes cards devem ter bordas gradiente (primary → acce
 ## 📱 Responsividade
 
 ### Breakpoints testados:
+
 - **Mobile**: < 640px (menu mobile com Sheet)
 - **Tablet**: 640px - 1024px
 - **Desktop**: > 1024px (menu desktop completo)
 
 **Teste:**
+
 1. Abra DevTools (F12)
 2. Ative "Toggle device toolbar" (Ctrl+Shift+M)
 3. Teste nos presets: iPhone SE, iPad, Desktop HD
@@ -216,23 +240,27 @@ Na **HomePage**, os seguintes cards devem ter bordas gradiente (primary → acce
 ## 🐛 Debugging
 
 ### Ver agendamentos salvos:
+
 ```javascript
-console.table(JSON.parse(localStorage.getItem('mock_appointments')))
+console.table(JSON.parse(localStorage.getItem("mock_appointments")));
 ```
 
 ### Ver clientes salvos:
+
 ```javascript
-console.table(JSON.parse(localStorage.getItem('mock_customers')))
+console.table(JSON.parse(localStorage.getItem("mock_customers")));
 ```
 
 ### Limpar localStorage:
+
 ```javascript
-localStorage.clear()
+localStorage.clear();
 ```
 
 ### Ver usuário logado:
+
 ```javascript
-JSON.parse(localStorage.getItem('loggedInUser'))
+JSON.parse(localStorage.getItem("loggedInUser"));
 ```
 
 ---
@@ -258,6 +286,7 @@ JSON.parse(localStorage.getItem('loggedInUser'))
 ## 📝 Notas Técnicas
 
 ### Tecnologias:
+
 - **React 19** + **TypeScript**
 - **Vite** (build tool)
 - **Tailwind CSS** (utilitários)
@@ -266,6 +295,7 @@ JSON.parse(localStorage.getItem('loggedInUser'))
 - **sonner** (toasts/notificações)
 
 ### Estrutura de Pastas:
+
 ```
 src/
 ├── components/       # Componentes reutilizáveis + UI
@@ -282,10 +312,12 @@ src/
 ## 🚨 Problemas Conhecidos
 
 ### Avisos de Build:
+
 - **Chunk size warning**: Bundle > 500KB (normal para app React completo)
   - Solução futura: code-splitting com dynamic imports
 
 ### CSS Lint Warnings:
+
 - `@custom-variant`, `@theme`, `@apply` — avisos de Tailwind v4 moderno (pode ignorar)
 
 ---
@@ -305,6 +337,7 @@ src/
 ## 📞 Suporte
 
 Para dúvidas ou problemas, verifique:
+
 - `README.md` (instruções gerais)
 - `README_COMPLETE.md` (documentação completa do projeto)
 - Este arquivo (`TESTING_GUIDE.md`)

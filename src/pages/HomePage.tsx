@@ -49,10 +49,7 @@ const HomePage: React.FC = () => {
           </p>
 
           <div className="flex flex-wrap gap-3">
-            <Button
-              size="lg"
-              onClick={() => navigate("/create-business")}
-            >
+            <Button size="lg" onClick={() => navigate("/create-business")}>
               {t("home.cta_business") || "Criar meu negócio"}
             </Button>
             <Button
@@ -93,7 +90,8 @@ const HomePage: React.FC = () => {
             </div>
             <h2 className="text-2xl font-bold mt-2">Gerencie seu negócio</h2>
             <p className="mt-3 text-[var(--color-primary-foreground)]/90">
-              Sistema completo de agendamentos com gestão de profissionais, serviços e análises.
+              Sistema completo de agendamentos com gestão de profissionais,
+              serviços e análises.
             </p>
             <div className="mt-6">
               <button

@@ -1,16 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import { useI18n } from "@/contexts/I18nContext";
 import { Button } from "@/components/ui/button";
-import { 
-  Calendar, 
-  Users, 
-  TrendingUp, 
-  Clock, 
-  Check, 
+import {
+  Calendar,
+  Users,
+  TrendingUp,
+  Clock,
+  Check,
   ArrowRight,
   Sparkles,
   Shield,
-  Zap
+  Zap,
 } from "lucide-react";
 
 const HomePage = () => {
@@ -21,40 +21,40 @@ const HomePage = () => {
     {
       icon: <Calendar className="h-6 w-6" />,
       titleKey: "home.features.scheduling.title",
-      descKey: "home.features.scheduling.desc"
+      descKey: "home.features.scheduling.desc",
     },
     {
       icon: <Users className="h-6 w-6" />,
       titleKey: "home.features.professionals.title",
-      descKey: "home.features.professionals.desc"
+      descKey: "home.features.professionals.desc",
     },
     {
       icon: <TrendingUp className="h-6 w-6" />,
       titleKey: "home.features.analytics.title",
-      descKey: "home.features.analytics.desc"
+      descKey: "home.features.analytics.desc",
     },
     {
       icon: <Clock className="h-6 w-6" />,
       titleKey: "home.features.availability.title",
-      descKey: "home.features.availability.desc"
+      descKey: "home.features.availability.desc",
     },
     {
       icon: <Sparkles className="h-6 w-6" />,
       titleKey: "home.features.promotions.title",
-      descKey: "home.features.promotions.desc"
+      descKey: "home.features.promotions.desc",
     },
     {
       icon: <Shield className="h-6 w-6" />,
       titleKey: "home.features.security.title",
-      descKey: "home.features.security.desc"
-    }
+      descKey: "home.features.security.desc",
+    },
   ];
 
   const benefits = [
     { textKey: "home.benefits.reduce_noshows" },
     { textKey: "home.benefits.increase_revenue" },
     { textKey: "home.benefits.save_time" },
-    { textKey: "home.benefits.improve_experience" }
+    { textKey: "home.benefits.improve_experience" },
   ];
 
   const plans = [
@@ -64,8 +64,8 @@ const HomePage = () => {
       features: [
         "home.plans.simple.feature1",
         "home.plans.simple.feature2",
-        "home.plans.simple.feature3"
-      ]
+        "home.plans.simple.feature3",
+      ],
     },
     {
       nameKey: "home.plans.individual.name",
@@ -74,9 +74,9 @@ const HomePage = () => {
         "home.plans.individual.feature1",
         "home.plans.individual.feature2",
         "home.plans.individual.feature3",
-        "home.plans.individual.feature4"
+        "home.plans.individual.feature4",
       ],
-      popular: true
+      popular: true,
     },
     {
       nameKey: "home.plans.business.name",
@@ -86,9 +86,9 @@ const HomePage = () => {
         "home.plans.business.feature2",
         "home.plans.business.feature3",
         "home.plans.business.feature4",
-        "home.plans.business.feature5"
-      ]
-    }
+        "home.plans.business.feature5",
+      ],
+    },
   ];
 
   return (
@@ -107,7 +107,7 @@ const HomePage = () => {
               </div>
             </div>
           </div>
-          
+
           <nav className="flex items-center gap-2 sm:gap-3">
             <Button
               variant="ghost"
@@ -117,13 +117,10 @@ const HomePage = () => {
             >
               {t("home.nav.create_business")}
             </Button>
-            <Button
-              size="sm"
-              onClick={() => navigate("/login")}
-            >
+            <Button size="sm" onClick={() => navigate("/login")}>
               {t("home.nav.login")}
             </Button>
-            
+
             {/* Language selector */}
             <select
               value={locale}
@@ -142,7 +139,7 @@ const HomePage = () => {
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/5 via-transparent to-[var(--color-accent)]/5 pointer-events-none" />
-        
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
@@ -150,11 +147,11 @@ const HomePage = () => {
                 <Zap className="h-4 w-4" />
                 {t("home.hero.badge")}
               </div>
-              
+
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight">
                 {t("home.hero.title")}
               </h1>
-              
+
               <p className="text-lg sm:text-xl text-[var(--color-muted-foreground)] max-w-2xl">
                 {t("home.hero.subtitle")}
               </p>
@@ -181,18 +178,30 @@ const HomePage = () => {
               {/* Social Proof */}
               <div className="pt-8 flex items-center gap-8 text-sm">
                 <div>
-                  <div className="text-2xl font-bold text-[var(--color-primary)]">500+</div>
-                  <div className="text-[var(--color-muted-foreground)]">{t("home.hero.stats.businesses")}</div>
+                  <div className="text-2xl font-bold text-[var(--color-primary)]">
+                    500+
+                  </div>
+                  <div className="text-[var(--color-muted-foreground)]">
+                    {t("home.hero.stats.businesses")}
+                  </div>
                 </div>
                 <div className="h-12 w-px bg-[var(--color-border)]" />
                 <div>
-                  <div className="text-2xl font-bold text-[var(--color-primary)]">50k+</div>
-                  <div className="text-[var(--color-muted-foreground)]">{t("home.hero.stats.bookings")}</div>
+                  <div className="text-2xl font-bold text-[var(--color-primary)]">
+                    50k+
+                  </div>
+                  <div className="text-[var(--color-muted-foreground)]">
+                    {t("home.hero.stats.bookings")}
+                  </div>
                 </div>
                 <div className="h-12 w-px bg-[var(--color-border)]" />
                 <div>
-                  <div className="text-2xl font-bold text-[var(--color-primary)]">98%</div>
-                  <div className="text-[var(--color-muted-foreground)]">{t("home.hero.stats.satisfaction")}</div>
+                  <div className="text-2xl font-bold text-[var(--color-primary)]">
+                    98%
+                  </div>
+                  <div className="text-[var(--color-muted-foreground)]">
+                    {t("home.hero.stats.satisfaction")}
+                  </div>
                 </div>
               </div>
             </div>
@@ -253,7 +262,7 @@ const HomePage = () => {
               <p className="text-lg text-[var(--color-muted-foreground)] mb-8">
                 {t("home.benefits.subtitle")}
               </p>
-              
+
               <div className="space-y-4">
                 {benefits.map((benefit, index) => (
                   <div key={index} className="flex items-start gap-3">
@@ -339,9 +348,7 @@ const HomePage = () => {
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
               {t("home.cta.title")}
             </h2>
-            <p className="text-lg opacity-90 mb-8">
-              {t("home.cta.subtitle")}
-            </p>
+            <p className="text-lg opacity-90 mb-8">{t("home.cta.subtitle")}</p>
             <Button
               size="lg"
               variant="secondary"
@@ -372,29 +379,69 @@ const HomePage = () => {
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4">{t("home.footer.product.title")}</h4>
+              <h4 className="font-semibold mb-4">
+                {t("home.footer.product.title")}
+              </h4>
               <ul className="space-y-2 text-sm text-[var(--color-muted-foreground)]">
-                <li><a href="#features" className="hover:text-[var(--color-foreground)]">{t("home.footer.product.features")}</a></li>
-                <li><a href="#plans" className="hover:text-[var(--color-foreground)]">{t("home.footer.product.plans")}</a></li>
+                <li>
+                  <a
+                    href="#features"
+                    className="hover:text-[var(--color-foreground)]"
+                  >
+                    {t("home.footer.product.features")}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#plans"
+                    className="hover:text-[var(--color-foreground)]"
+                  >
+                    {t("home.footer.product.plans")}
+                  </a>
+                </li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4">{t("home.footer.company.title")}</h4>
+              <h4 className="font-semibold mb-4">
+                {t("home.footer.company.title")}
+              </h4>
               <ul className="space-y-2 text-sm text-[var(--color-muted-foreground)]">
-                <li><a href="#about" className="hover:text-[var(--color-foreground)]">{t("home.footer.company.about")}</a></li>
-                <li><a href="#contact" className="hover:text-[var(--color-foreground)]">{t("home.footer.company.contact")}</a></li>
+                <li>
+                  <a
+                    href="#about"
+                    className="hover:text-[var(--color-foreground)]"
+                  >
+                    {t("home.footer.company.about")}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#contact"
+                    className="hover:text-[var(--color-foreground)]"
+                  >
+                    {t("home.footer.company.contact")}
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
 
           <div className="border-t border-[var(--color-border)] mt-8 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-sm text-[var(--color-muted-foreground)]">
-              © {new Date().getFullYear()} {t("home.brand.name")}. {t("home.footer.rights")}
+              © {new Date().getFullYear()} {t("home.brand.name")}.{" "}
+              {t("home.footer.rights")}
             </p>
             <div className="flex items-center gap-4 text-sm text-[var(--color-muted-foreground)]">
-              <a href="#privacy" className="hover:text-[var(--color-foreground)]">{t("home.footer.privacy")}</a>
-              <a href="#terms" className="hover:text-[var(--color-foreground)]">{t("home.footer.terms")}</a>
+              <a
+                href="#privacy"
+                className="hover:text-[var(--color-foreground)]"
+              >
+                {t("home.footer.privacy")}
+              </a>
+              <a href="#terms" className="hover:text-[var(--color-foreground)]">
+                {t("home.footer.terms")}
+              </a>
             </div>
           </div>
         </div>
