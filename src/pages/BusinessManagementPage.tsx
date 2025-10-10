@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Layout } from "@/components/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -10,9 +10,62 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Package, Gift, Ticket, Percent } from "lucide-react";
+import { CreateServiceDialog } from "@/components/dialogs/CreateServiceDialog";
+import { CreateVoucherDialog } from "@/components/dialogs/CreateVoucherDialog";
+import { CreatePromotionDialog } from "@/components/dialogs/CreatePromotionDialog";
+import { CommissionConfigDialog } from "@/components/dialogs/CommissionConfigDialog";
 
 const BusinessManagementPage = () => {
   const [activeTab, setActiveTab] = useState("services");
+
+  // Dialog states
+  const [showServiceDialog, setShowServiceDialog] = useState(false);
+  const [showVoucherDialog, setShowVoucherDialog] = useState(false);
+  const [showPromotionDialog, setShowPromotionDialog] = useState(false);
+  const [showCommissionDialog, setShowCommissionDialog] = useState(false);
+
+  // Data states
+  const [services, setServices] = useState<any[]>([]);
+  // @ts-ignore - Will be used when displaying lists
+  const [vouchers, setVouchers] = useState<any[]>([]);
+  // @ts-ignore - Will be used when displaying lists
+  const [promotions, setPromotions] = useState<any[]>([]);
+  // @ts-ignore - Will be used when displaying lists
+  const [commissions, setCommissions] = useState<any[]>([]);
+
+  // Load data from localStorage
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = () => {
+    setServices(JSON.parse(localStorage.getItem("mock_services") || "[]"));
+    setVouchers(JSON.parse(localStorage.getItem("mock_vouchers") || "[]"));
+    setPromotions(JSON.parse(localStorage.getItem("mock_promotions") || "[]"));
+    setCommissions(
+      JSON.parse(localStorage.getItem("mock_commissions") || "[]")
+    );
+  };
+
+  const handleServiceCreated = () => {
+    loadData();
+    setShowServiceDialog(false);
+  };
+
+  const handleVoucherCreated = () => {
+    loadData();
+    setShowVoucherDialog(false);
+  };
+
+  const handlePromotionCreated = () => {
+    loadData();
+    setShowPromotionDialog(false);
+  };
+
+  const handleCommissionCreated = () => {
+    loadData();
+    setShowCommissionDialog(false);
+  };
 
   return (
     <Layout>
@@ -61,7 +114,7 @@ const BusinessManagementPage = () => {
                       Gerencie os serviços oferecidos pelo seu negócio
                     </CardDescription>
                   </div>
-                  <Button>
+                  <Button onClick={() => setShowServiceDialog(true)}>
                     <PlusCircle className="mr-2 h-4 w-4" />
                     Novo Serviço
                   </Button>
@@ -90,7 +143,7 @@ const BusinessManagementPage = () => {
                       Crie e gerencie vouchers para seus clientes
                     </CardDescription>
                   </div>
-                  <Button>
+                  <Button onClick={() => setShowVoucherDialog(true)}>
                     <PlusCircle className="mr-2 h-4 w-4" />
                     Novo Voucher
                   </Button>
@@ -119,7 +172,7 @@ const BusinessManagementPage = () => {
                       Configure promoções e descontos especiais
                     </CardDescription>
                   </div>
-                  <Button>
+                  <Button onClick={() => setShowPromotionDialog(true)}>
                     <PlusCircle className="mr-2 h-4 w-4" />
                     Nova Promoção
                   </Button>
@@ -148,7 +201,7 @@ const BusinessManagementPage = () => {
                       Configure as comissões dos profissionais
                     </CardDescription>
                   </div>
-                  <Button>
+                  <Button onClick={() => setShowCommissionDialog(true)}>
                     <PlusCircle className="mr-2 h-4 w-4" />
                     Nova Regra
                   </Button>
@@ -200,6 +253,34 @@ const BusinessManagementPage = () => {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Dialogs */}
+        <CreateServiceDialog
+          open={showServiceDialog}
+          onClose={() => setShowServiceDialog(false)}
+          onSuccess={handleServiceCreated}
+        />
+
+        <CreateVoucherDialog
+          open={showVoucherDialog}
+          onClose={() => setShowVoucherDialog(false)}
+          onSuccess={handleVoucherCreated}
+          services={services.map((s) => ({ id: s.id, name: s.name }))}
+        />
+
+        <CreatePromotionDialog
+          open={showPromotionDialog}
+          onClose={() => setShowPromotionDialog(false)}
+          onSuccess={handlePromotionCreated}
+          services={services.map((s) => ({ id: s.id, name: s.name }))}
+        />
+
+        <CommissionConfigDialog
+          open={showCommissionDialog}
+          onClose={() => setShowCommissionDialog(false)}
+          onSuccess={handleCommissionCreated}
+          services={services.map((s) => ({ id: s.id, name: s.name }))}
+        />
       </div>
     </Layout>
   );

@@ -654,61 +654,72 @@ const BookAppointmentPage = () => {
         )}
 
         {/* Resumo do Agendamento - Só aparece quando todos os campos obrigatórios estão preenchidos */}
-        {selectedService && selectedProfessional && selectedDate && selectedTime && customerData.name && customerData.email && customerData.phone && (
-          <Card>
-            <CardHeader>
-              <CardTitle>5. Resumo do Agendamento</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">{t("book.service")}:</span>
-                  <span className="font-medium">
-                    {selectedServiceData?.name}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">
-                    {t("book.professional")}:
-                  </span>
-                  <span className="font-medium">
-                    {selectedProfessionalData?.name}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">{t("book.date")}:</span>
-                  <span className="font-medium">
-                    {isProfessional && selectedDates.length > 0
-                      ? `${selectedDates.length} data(s) selecionada(s)`
-                      : selectedDate?.toLocaleDateString("pt-BR")}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">{t("book.time")}:</span>
-                  <span className="font-medium">{selectedTime}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">{t("book.duration")}:</span>
-                  <span className="font-medium">
-                    {selectedServiceData?.duration} minutos
-                  </span>
-                </div>
-                <div className="border-t pt-3">
-                  <div className="flex justify-between text-lg font-bold">
-                    <span>{t("book.total")}:</span>
-                    <span>
-                      {formatCurrency((selectedServiceData?.price || 0) * (isProfessional && selectedDates.length > 0 ? selectedDates.length : 1))}
+        {selectedService &&
+          selectedProfessional &&
+          selectedDate &&
+          selectedTime &&
+          customerData.name &&
+          customerData.email &&
+          customerData.phone && (
+            <Card>
+              <CardHeader>
+                <CardTitle>5. Resumo do Agendamento</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">{t("book.service")}:</span>
+                    <span className="font-medium">
+                      {selectedServiceData?.name}
                     </span>
                   </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">
+                      {t("book.professional")}:
+                    </span>
+                    <span className="font-medium">
+                      {selectedProfessionalData?.name}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">{t("book.date")}:</span>
+                    <span className="font-medium">
+                      {isProfessional && selectedDates.length > 0
+                        ? `${selectedDates.length} data(s) selecionada(s)`
+                        : selectedDate?.toLocaleDateString("pt-BR")}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">{t("book.time")}:</span>
+                    <span className="font-medium">{selectedTime}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">{t("book.duration")}:</span>
+                    <span className="font-medium">
+                      {selectedServiceData?.duration} minutos
+                    </span>
+                  </div>
+                  <div className="border-t pt-3">
+                    <div className="flex justify-between text-lg font-bold">
+                      <span>{t("book.total")}:</span>
+                      <span>
+                        {formatCurrency(
+                          (selectedServiceData?.price || 0) *
+                            (isProfessional && selectedDates.length > 0
+                              ? selectedDates.length
+                              : 1)
+                        )}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
 
-              <Button type="submit" className="w-full mt-6" size="lg">
-                {t("book.confirm")}
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+                <Button type="submit" className="w-full mt-6" size="lg">
+                  {t("book.confirm")}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
       </form>
     </div>
   );

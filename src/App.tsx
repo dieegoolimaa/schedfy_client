@@ -21,14 +21,15 @@ import ProfessionalAnalyticsPage from "./pages/ProfessionalAnalyticsPage";
 import PublicBookingLanding from "./pages/PublicBookingLanding";
 import HomePage from "./pages/HomePage";
 import RequireRole from "./components/RequireRole";
-import AdminServicesPage from "./pages/admin/services";
-import AdminCommissionPage from "./pages/admin/commission";
-import AdminHorariosPage from "./pages/admin/horarios";
 import BusinessManagementPage from "./pages/BusinessManagementPage";
+import { PlanProvider } from "./contexts/PlanContext";
+import { RequirePlan } from "./components/RequirePlan";
+import SimpleBookingAppointmentsPage from "./pages/simple/AppointmentsPage";
+import SimpleBookingServicesPage from "./pages/simple/ServicesPage";
 
 function App() {
   return (
-    <>
+    <PlanProvider>
       <Routes>
         {/* Home page pública */}
         <Route path="/" element={<HomePage />} />
@@ -45,13 +46,33 @@ function App() {
         />
         <Route path="/public-booking" element={<PublicBookingLanding />} />
 
-        {/* Business Management - Protected route */}
+        {/* Business Management - Protected route for business/individual */}
         <Route
           path="/business-management"
           element={
             <RequireRole roles={["admin", "owner"]}>
-              <BusinessManagementPage />
+              <RequirePlan plans={["business", "individual"]}>
+                <BusinessManagementPage />
+              </RequirePlan>
             </RequireRole>
+          }
+        />
+
+        {/* Simple Booking Routes - Only for simple_booking plan */}
+        <Route
+          path="/simple/appointments"
+          element={
+            <RequirePlan plans={["simple_booking"]}>
+              <SimpleBookingAppointmentsPage />
+            </RequirePlan>
+          }
+        />
+        <Route
+          path="/simple/services"
+          element={
+            <RequirePlan plans={["simple_booking"]}>
+              <SimpleBookingServicesPage />
+            </RequirePlan>
           }
         />
 
@@ -136,30 +157,6 @@ function App() {
           }
         />
         <Route
-          path="/admin/services"
-          element={
-            <RequireRole roles={["admin", "owner"]}>
-              <AdminServicesPage />
-            </RequireRole>
-          }
-        />
-        <Route
-          path="/admin/commission"
-          element={
-            <RequireRole roles={["admin", "owner"]}>
-              <AdminCommissionPage />
-            </RequireRole>
-          }
-        />
-        <Route
-          path="/admin/horarios"
-          element={
-            <RequireRole roles={["admin", "owner"]}>
-              <AdminHorariosPage />
-            </RequireRole>
-          }
-        />
-        <Route
           path="/professionals"
           element={
             <Layout>
@@ -193,7 +190,7 @@ function App() {
         />
       </Routes>
       <Toaster />
-    </>
+    </PlanProvider>
   );
 }
 
