@@ -152,3 +152,25 @@
   @apply overflow-y-auto overscroll-contain;
 }
 
+/* Gradient border utility */
+@layer utilities {
+  .gradient-border {
+    position: relative;
+    background: var(--color-card);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}

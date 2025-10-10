@@ -8,6 +8,8 @@
   "book.duration": "Duration",
   "book.total": "Total",
   "book.confirm": "Confirm Appointment",
+  "booking.addAnotherDate": "Add another date",
+  "booking.clearDates": "Clear dates",
   "completion.title": "Complete Service",
   "completion.success": "Service completed successfully!",
   "payment.method.cash": "Cash",
@@ -20,5 +22,11 @@
   "select.service": "Select a service",
   "select.professional": "Select a professional",
   "select.datetime": "Select date and time",
-  "enter.contact": "Enter contact name and phone"
+  "enter.contact": "Enter contact name and phone",
+  "home.book_now": "Book now",
+  "home.create_business": "Create business",
+  "home.login": "Login",
+  "home.cta_book": "Book now",
+  "home.cta_business": "Create business",
+  "home.try_demo": "Try demo"
 }

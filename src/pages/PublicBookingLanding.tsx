@@ -68,10 +68,10 @@ const PublicBookingLanding: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
-      <div className="max-w-lg mx-auto bg-white rounded-lg shadow p-4">
+    <div className="min-h-screen bg-[var(--color-background)] p-4 sm:p-6">
+      <div className="max-w-lg mx-auto bg-[var(--color-card)] rounded-lg shadow p-4 border border-[var(--color-border)]">
         <h2 className="text-xl font-semibold mb-2">Agendar serviço</h2>
-        <p className="text-sm text-gray-500 mb-4">
+        <p className="text-sm text-[var(--color-muted-foreground)] mb-4">
           Fluxo público — escolha serviço, profissional e horário.
         </p>
 

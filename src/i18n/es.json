@@ -8,6 +8,8 @@
   "book.duration": "Duración",
   "book.total": "Total",
   "book.confirm": "Confirmar Reserva",
+  "booking.addAnotherDate": "Agregar otra fecha",
+  "booking.clearDates": "Limpiar fechas",
   "completion.title": "Finalizar Servicio",
   "completion.success": "¡Servicio finalizado con éxito!",
   "payment.method.cash": "Efectivo",
@@ -20,5 +22,11 @@
   "select.service": "Seleccione un servicio",
   "select.professional": "Seleccione un profesional",
   "select.datetime": "Seleccione fecha y hora",
-  "enter.contact": "Ingrese nombre y teléfono"
+  "enter.contact": "Ingrese nombre y teléfono",
+  "home.book_now": "Reservar ahora",
+  "home.create_business": "Crear negocio",
+  "home.login": "Iniciar sesión",
+  "home.cta_book": "Reservar ahora",
+  "home.cta_business": "Crear mi negocio",
+  "home.try_demo": "Probar demo"
 }

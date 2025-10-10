@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useI18n } from "@/contexts/I18nContext";
+import { Button } from "@/components/ui/button";
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -21,12 +22,6 @@ const HomePage: React.FC = () => {
           </div>
         </div>
         <nav className="flex items-center gap-3">
-          <button
-            onClick={() => navigate("/public-booking")}
-            className="px-3 py-2 rounded-md bg-[var(--color-primary)] text-[var(--color-primary-foreground)]"
-          >
-            {t("home.book_now") || "Book now"}
-          </button>
           <button
             onClick={() => navigate("/create-business")}
             className="px-3 py-2 rounded-md border border-[var(--color-border)] text-[var(--color-foreground)]"
@@ -54,34 +49,35 @@ const HomePage: React.FC = () => {
           </p>
 
           <div className="flex flex-wrap gap-3">
-            <button
-              onClick={() => navigate("/public-booking")}
-              className="px-5 py-3 rounded-md bg-[var(--color-primary)] text-[var(--color-primary-foreground)] font-semibold"
-            >
-              {t("home.cta_book") || "Agende agora"}
-            </button>
-            <button
+            <Button
+              size="lg"
               onClick={() => navigate("/create-business")}
-              className="px-5 py-3 rounded-md border border-[var(--color-border)] text-[var(--color-foreground)]"
             >
               {t("home.cta_business") || "Criar meu negócio"}
-            </button>
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => navigate("/login")}
+            >
+              {t("home.login") || "Login"}
+            </Button>
           </div>
 
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="p-4 bg-[var(--color-card)] rounded-md shadow-sm">
+            <div className="p-4 bg-[var(--color-card)] rounded-md shadow-sm gradient-border">
               <h3 className="font-semibold">Agendamento público</h3>
               <p className="text-sm text-[var(--color-muted-foreground)]">
                 Permita que clientes agendem sem precisar de conta.
               </p>
             </div>
-            <div className="p-4 bg-[var(--color-card)] rounded-md shadow-sm">
+            <div className="p-4 bg-[var(--color-card)] rounded-md shadow-sm gradient-border">
               <h3 className="font-semibold">Gestão de profissionais</h3>
               <p className="text-sm text-[var(--color-muted-foreground)]">
                 Controle agendas, comissões e disponibilidade.
               </p>
             </div>
-            <div className="p-4 bg-[var(--color-card)] rounded-md shadow-sm">
+            <div className="p-4 bg-[var(--color-card)] rounded-md shadow-sm gradient-border">
               <h3 className="font-semibold">Pagamentos mock</h3>
               <p className="text-sm text-[var(--color-muted-foreground)]">
                 Fluxo de pagamento integrado para testes e demonstrações.
@@ -93,18 +89,18 @@ const HomePage: React.FC = () => {
         <aside className="hidden lg:flex items-center justify-center">
           <div className="w-full max-w-md p-6 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] rounded-xl text-[var(--color-primary-foreground)] shadow-lg">
             <div className="text-sm uppercase font-medium opacity-90">
-              Demonstração
+              Plataforma Completa
             </div>
-            <h2 className="text-2xl font-bold mt-2">Agende em segundos</h2>
+            <h2 className="text-2xl font-bold mt-2">Gerencie seu negócio</h2>
             <p className="mt-3 text-[var(--color-primary-foreground)]/90">
-              Teste nosso fluxo público de agendamentos e simule pagamentos.
+              Sistema completo de agendamentos com gestão de profissionais, serviços e análises.
             </p>
             <div className="mt-6">
               <button
-                onClick={() => navigate("/public-booking")}
+                onClick={() => navigate("/login")}
                 className="px-4 py-2 rounded-md bg-[var(--color-primary-foreground)] text-[var(--color-primary)] font-semibold"
               >
-                {t("home.try_demo") || "Try demo"}
+                {t("home.login") || "Acessar Sistema"}
               </button>
             </div>
           </div>

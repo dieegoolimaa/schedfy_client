@@ -17,8 +17,6 @@ import professional from "@/mock-data/professional";
 import {
   Calendar,
   BarChart2,
-  Ticket,
-  Gift,
   Users,
   PlusCircle,
   LayoutDashboard,
@@ -69,8 +67,19 @@ export function Header({ user }: HeaderProps) {
 
   // Menu items baseado no role
   const getMenuItems = () => {
-    if (user.role === "admin") {
+    if (user.role === "admin" || user.role === "owner") {
+      // Admins and owners see full business management menus
       return [
+        {
+          label: "Gerenciar Negócio",
+          path: "/business-management",
+          icon: <LayoutDashboard className="mr-2 h-4 w-4" />,
+        },
+        {
+          label: "Horários",
+          path: "/admin/horarios",
+          icon: <Calendar className="mr-2 h-4 w-4" />,
+        },
         {
           label: "Agendamentos",
           path: "/admin/appointments",
@@ -80,16 +89,6 @@ export function Header({ user }: HeaderProps) {
           label: "Análises",
           path: "/admin/analytics",
           icon: <BarChart2 className="mr-2 h-4 w-4" />,
-        },
-        {
-          label: "Promoções",
-          path: "/admin/promotions",
-          icon: <Ticket className="mr-2 h-4 w-4" />,
-        },
-        {
-          label: "Vouchers",
-          path: "/admin/vouchers",
-          icon: <Gift className="mr-2 h-4 w-4" />,
         },
         {
           label: "Profissionais",
@@ -102,8 +101,9 @@ export function Header({ user }: HeaderProps) {
           icon: <PlusCircle className="mr-2 h-4 w-4" />,
         },
       ];
-    } else if (user.role === "professional") {
-      // Para profissionais, usar o ID do profissional, não do usuário
+    }
+
+    if (user.role === "professional") {
       const professionalId = currentProfessional?.id || user.id;
       return [
         {
@@ -122,8 +122,26 @@ export function Header({ user }: HeaderProps) {
           icon: <PlusCircle className="mr-2 h-4 w-4" />,
         },
       ];
-    } else {
+    }
+
+    if (user.role === "simple") {
+      // Simple admin - limited features
       return [
+        {
+          label: "Análises",
+          path: "/admin/analytics",
+          icon: <BarChart2 className="mr-2 h-4 w-4" />,
+        },
+        {
+          label: "Serviços",
+          path: "/admin/services",
+          icon: <PlusCircle className="mr-2 h-4 w-4" />,
+        },
+        {
+          label: "Agendamentos",
+          path: "/admin/appointments",
+          icon: <Calendar className="mr-2 h-4 w-4" />,
+        },
         {
           label: "Agendar",
           path: "/book-appointment",
@@ -131,8 +149,16 @@ export function Header({ user }: HeaderProps) {
         },
       ];
     }
-  };
 
+    // Default - public booking
+    return [
+      {
+        label: "Agendar",
+        path: "/book-appointment",
+        icon: <PlusCircle className="mr-2 h-4 w-4" />,
+      },
+    ];
+  };
   const menuItems = getMenuItems();
 
   return (

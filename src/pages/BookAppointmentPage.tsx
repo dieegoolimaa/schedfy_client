@@ -23,7 +23,6 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
-import PaymentDialog from "@/components/PaymentDialog";
 import professionals from "@/mock-data/professional";
 import { useLocation } from "react-router-dom";
 import { useI18n } from "@/contexts/I18nContext";
@@ -83,6 +82,7 @@ const BookAppointmentPage = () => {
   const [selectedService, setSelectedService] = useState<string>("");
   const [selectedProfessional, setSelectedProfessional] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [customerData, setCustomerData] = useState({
     name: "",
@@ -181,14 +181,12 @@ const BookAppointmentPage = () => {
       return;
     }
 
-    // Open payment dialog (mock) and on success save appointment
-    setShowPayment(true);
+    // Save appointment directly (no payment dialog)
+    handleSaveAppointment();
   };
 
-  const [showPayment, setShowPayment] = useState(false);
-
-  const handlePaymentSuccess = () => {
-    const appointment = {
+  const handleSaveAppointment = () => {
+    const makeAppointmentForDate = (date: Date | undefined) => ({
       id: `apt_${Date.now()}`,
       serviceId: selectedServiceData?.id,
       serviceName: selectedServiceData?.name,
@@ -197,10 +195,10 @@ const BookAppointmentPage = () => {
       customer: customerData.name,
       email: customerData.email,
       phone: customerData.phone,
-      date: selectedDate?.toISOString(),
+      date: date ? date.toISOString() : selectedDate?.toISOString(),
       time: selectedTime,
       duration: selectedServiceData?.duration,
-      status: "confirmed",
+      status: "pending",
       originalPrice: selectedServiceData?.price || 0,
       finalPrice: selectedServiceData?.price || 0,
       totalDiscountAmount: 0,
@@ -212,19 +210,24 @@ const BookAppointmentPage = () => {
         establishmentAmount: (selectedServiceData?.price || 0) * 0.3,
       },
       payment: {
-        method: "card",
-        status: "paid",
-        paidAmount: selectedServiceData?.price || 0,
+        method: "pending",
+        status: "pending",
+        paidAmount: 0,
       },
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    };
+    });
+
+    // build appointments array
+    const appointments = (isProfessional && selectedDates.length > 0)
+      ? selectedDates.map(d => makeAppointmentForDate(d))
+      : [makeAppointmentForDate(selectedDate)];
 
     try {
       const existing = JSON.parse(
         localStorage.getItem("mock_appointments") || "[]"
       );
-      existing.push(appointment);
+      appointments.forEach(a => existing.push(a));
       localStorage.setItem("mock_appointments", JSON.stringify(existing));
     } catch (e) {
       console.error("Failed to save appointment", e);
@@ -246,12 +249,13 @@ const BookAppointmentPage = () => {
       console.error("Failed to save customer", e);
     }
 
-    toast.success("Agendamento realizado com sucesso (mock)");
+    toast.success("Agendamento realizado com sucesso! Aguardando confirmação.");
 
     // Reset form
     setSelectedService("");
     setSelectedProfessional("");
     setSelectedDate(undefined);
+    setSelectedDates([]);
     setSelectedTime("");
     setCustomerData({ name: "", email: "", phone: "", notes: "" });
   };
@@ -403,17 +407,54 @@ const BookAppointmentPage = () => {
                 {/* Seleção de Data */}
                 <div className="space-y-3">
                   <Label className="text-base font-medium">Data</Label>
-                  <DatePicker
-                    date={selectedDate}
-                    onDateChange={setSelectedDate}
-                    placeholder="Selecione uma data"
-                    className="w-full mt-2"
-                  />
-                  {selectedDate && (
-                    <p className="text-sm text-muted-foreground">
-                      Data selecionada:{" "}
-                      {selectedDate.toLocaleDateString("pt-BR")}
-                    </p>
+                  {isProfessional ? (
+                    <div className="space-y-2">
+                      {selectedDates.map((d, idx) => (
+                        <div key={idx}>
+                          <DatePicker
+                            date={d}
+                            onDateChange={(date) => {
+                              const copy = [...selectedDates];
+                              copy[idx] = date as Date;
+                              setSelectedDates(copy);
+                            }}
+                            placeholder={`Data ${idx + 1}`}
+                            className="w-full mt-2"
+                          />
+                        </div>
+                      ))}
+
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setSelectedDates((s) => [...s, undefined as any])}
+                        >
+                          {t("booking.addAnotherDate")}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          onClick={() => setSelectedDates([])}
+                        >
+                          {t("booking.clearDates")}
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <DatePicker
+                        date={selectedDate}
+                        onDateChange={setSelectedDate}
+                        placeholder="Selecione uma data"
+                        className="w-full mt-2"
+                      />
+                      {selectedDate && (
+                        <p className="text-sm text-muted-foreground">
+                          Data selecionada: {selectedDate.toLocaleDateString("pt-BR")}
+                        </p>
+                      )}
+                    </>
                   )}
                 </div>
 
@@ -663,14 +704,6 @@ const BookAppointmentPage = () => {
           </Card>
         )}
       </form>
-
-      {/* Payment dialog (mock) */}
-      <PaymentDialog
-        open={showPayment}
-        onClose={() => setShowPayment(false)}
-        amount={selectedServiceData?.price || 0}
-        onSuccess={handlePaymentSuccess}
-      />
     </div>
   );
 };

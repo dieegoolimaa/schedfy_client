@@ -1,7 +1,6 @@
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
-import HomePage from "./pages/HomePage";
 import Appointments from "./pages/Appointments";
 import { Toaster } from "@/components/ui/sonner";
 import ProfessionalsPage from "./pages/ProfessionalPage";
@@ -20,6 +19,12 @@ import CreateUserPage from "./pages/CreateUserPage";
 import CreateProfessionalProfilePage from "./pages/CreateProfessionalProfilePage";
 import ProfessionalAnalyticsPage from "./pages/ProfessionalAnalyticsPage";
 import PublicBookingLanding from "./pages/PublicBookingLanding";
+import HomePage from "./pages/HomePage";
+import RequireRole from './components/RequireRole';
+import AdminServicesPage from './pages/admin/services';
+import AdminCommissionPage from './pages/admin/commission';
+import AdminHorariosPage from './pages/admin/horarios';
+import BusinessManagementPage from './pages/BusinessManagementPage';
 
 function App() {
   return (
@@ -39,6 +44,16 @@ function App() {
           element={<CreateProfessionalProfilePage />}
         />
         <Route path="/public-booking" element={<PublicBookingLanding />} />
+
+        {/* Business Management - Protected route */}
+        <Route
+          path="/business-management"
+          element={
+            <RequireRole roles={['admin', 'owner']}>
+              <BusinessManagementPage />
+            </RequireRole>
+          }
+        />
 
         {/* Páginas Públicas/Clientes */}
         <Route path="/book-appointment" element={<BookAppointmentPage />} />
@@ -103,17 +118,45 @@ function App() {
         <Route
           path="/admin/promotions"
           element={
-            <Layout>
-              <PromotionManagementPage />
-            </Layout>
+            <RequireRole roles={["admin","owner"]}>
+              <Layout>
+                <PromotionManagementPage />
+              </Layout>
+            </RequireRole>
           }
         />
         <Route
           path="/admin/vouchers"
           element={
-            <Layout>
-              <VoucherManagementPage />
-            </Layout>
+            <RequireRole roles={["admin","owner"]}>
+              <Layout>
+                <VoucherManagementPage />
+              </Layout>
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/admin/services"
+          element={
+            <RequireRole roles={["admin","owner"]}>
+              <AdminServicesPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/admin/commission"
+          element={
+            <RequireRole roles={["admin","owner"]}>
+              <AdminCommissionPage />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/admin/horarios"
+          element={
+            <RequireRole roles={["admin","owner"]}>
+              <AdminHorariosPage />
+            </RequireRole>
           }
         />
         <Route
