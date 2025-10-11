@@ -27,6 +27,7 @@ import { RequirePlan } from "./components/RequirePlan";
 import SimpleBookingAppointmentsPage from "./pages/simple/AppointmentsPage";
 import SimpleBookingServicesPage from "./pages/simple/ServicesPage";
 import FeedbackPage from "./pages/FeedbackPage";
+import BusinessDashboard from "./pages/BusinessDashboard";
 
 function App() {
   return (
@@ -48,6 +49,16 @@ function App() {
         <Route path="/public-booking" element={<PublicBookingLanding />} />
 
         {/* Business Management - Protected route for business/individual */}
+        <Route
+          path="/dashboard"
+          element={
+            <RequireRole roles={["admin", "owner"]}>
+              <Layout>
+                <BusinessDashboard />
+              </Layout>
+            </RequireRole>
+          }
+        />
         <Route
           path="/business-management"
           element={

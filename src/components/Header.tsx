@@ -72,7 +72,7 @@ export function Header({ user }: HeaderProps) {
       return [
         {
           label: "Dashboard",
-          path: "/business-management",
+          path: "/dashboard",
           icon: <LayoutDashboard className="mr-2 h-4 w-4" />,
         },
         {

@@ -3,54 +3,78 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { Appointment } from "@/interfaces/appointment.interface";
-import { ServiceCompletionDialog, type ServiceCompletionData } from "./ServiceCompletionDialog";
+import {
+  ServiceCompletionDialog,
+  type ServiceCompletionData,
+} from "./ServiceCompletionDialog";
 import { toast } from "sonner";
+import {
+  ConfirmCancelDialog,
+  ConfirmStartDialog,
+  ConfirmCompleteDialog,
+} from "@/components/dialogs/ConfirmDialogs";
 
 interface AppointmentCardProps {
   appointment: Appointment;
-  onStatusChange?: (appointmentId: string, newStatus: Appointment['status']) => void;
+  onStatusChange?: (
+    appointmentId: string,
+    newStatus: Appointment["status"]
+  ) => void;
 }
 
-export function AppointmentCard({ appointment, onStatusChange }: AppointmentCardProps) {
+export function AppointmentCard({
+  appointment,
+  onStatusChange,
+}: AppointmentCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [showCompletionDialog, setShowCompletionDialog] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState<
+    "cancel" | "start" | "complete" | null
+  >(null);
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(value);
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
+    return new Date(dateString).toLocaleDateString("pt-BR");
   };
 
-  const getStatusColor = (status: Appointment['status']) => {
+  const getStatusColor = (status: Appointment["status"]) => {
     const colors = {
-      scheduled: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-      confirmed: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-      in_progress: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-      completed: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200',
-      canceled: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-      no_show: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+      scheduled:
+        "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+      confirmed:
+        "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+      in_progress:
+        "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+      completed:
+        "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200",
+      canceled: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
+      no_show: "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200",
     };
-    return colors[status] || 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+    return (
+      colors[status] ||
+      "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+    );
   };
 
-  const getStatusText = (status: Appointment['status']) => {
+  const getStatusText = (status: Appointment["status"]) => {
     const texts = {
-      scheduled: 'Agendado',
-      confirmed: 'Confirmado',
-      in_progress: 'Em Andamento',
-      completed: 'Concluído',
-      canceled: 'Cancelado',
-      no_show: 'Não Compareceu'
+      scheduled: "Agendado",
+      confirmed: "Confirmado",
+      in_progress: "Em Andamento",
+      completed: "Concluído",
+      canceled: "Cancelado",
+      no_show: "Não Compareceu",
     };
     return texts[status] || status;
   };
 
-  const handleStatusChange = async (newStatus: Appointment['status']) => {
+  const handleStatusChange = async (newStatus: Appointment["status"]) => {
     setIsLoading(true);
     try {
       if (onStatusChange) {
@@ -66,18 +90,22 @@ export function AppointmentCard({ appointment, onStatusChange }: AppointmentCard
 
   const handleServiceCompletion = (completionData: ServiceCompletionData) => {
     // Aqui você pode salvar os dados de finalização do serviço
-    console.log('Dados de finalização:', completionData);
-    
+    console.log("Dados de finalização:", completionData);
+
     // Atualizar o status do agendamento para concluído
-    handleStatusChange('completed');
-    
+    handleStatusChange("completed");
+
     // Aqui seria integrado com o backend para:
     // 1. Criar perfil do cliente (se solicitado)
     // 2. Registrar informações de pagamento
     // 3. Salvar dados de comissão
     // 4. Enviar notificações
-    
-    toast.success(`Serviço finalizado! ${completionData.createCustomerProfile ? 'Perfil do cliente criado.' : ''}`);
+
+    toast.success(
+      `Serviço finalizado! ${
+        completionData.createCustomerProfile ? "Perfil do cliente criado." : ""
+      }`
+    );
   };
 
   const hasDiscounts = appointment.totalDiscountAmount > 0;
@@ -92,10 +120,15 @@ export function AppointmentCard({ appointment, onStatusChange }: AppointmentCard
               {appointment.serviceName}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
-              {appointment.customer} • {formatDate(appointment.date)} às {appointment.time}
+              {appointment.customer} • {formatDate(appointment.date)} às{" "}
+              {appointment.time}
             </p>
           </div>
-          <Badge className={`${getStatusColor(appointment.status)} text-xs ml-2 shrink-0`}>
+          <Badge
+            className={`${getStatusColor(
+              appointment.status
+            )} text-xs ml-2 shrink-0`}
+          >
             {getStatusText(appointment.status)}
           </Badge>
         </div>
@@ -140,7 +173,9 @@ export function AppointmentCard({ appointment, onStatusChange }: AppointmentCard
                   </div>
                   <div className="flex justify-between text-xs text-green-600">
                     <span>Desconto:</span>
-                    <span>-{formatCurrency(appointment.totalDiscountAmount)}</span>
+                    <span>
+                      -{formatCurrency(appointment.totalDiscountAmount)}
+                    </span>
                   </div>
                 </>
               )}
@@ -153,20 +188,25 @@ export function AppointmentCard({ appointment, onStatusChange }: AppointmentCard
         </div>
 
         {/* Vouchers aplicados */}
-        {appointment.appliedVouchers && appointment.appliedVouchers.length > 0 && (
-          <div className="mb-3">
-            <h4 className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Vouchers Aplicados
-            </h4>
-            <div className="flex flex-wrap gap-1">
-              {appointment.appliedVouchers.map((voucher) => (
-                <Badge key={voucher.id} variant="outline" className="text-xs px-2 py-0.5">
-                  {voucher.code} - {voucher.description}
-                </Badge>
-              ))}
+        {appointment.appliedVouchers &&
+          appointment.appliedVouchers.length > 0 && (
+            <div className="mb-3">
+              <h4 className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Vouchers Aplicados
+              </h4>
+              <div className="flex flex-wrap gap-1">
+                {appointment.appliedVouchers.map((voucher) => (
+                  <Badge
+                    key={voucher.id}
+                    variant="outline"
+                    className="text-xs px-2 py-0.5"
+                  >
+                    {voucher.code} - {voucher.description}
+                  </Badge>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Comissão e Pagamento */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
@@ -176,12 +216,22 @@ export function AppointmentCard({ appointment, onStatusChange }: AppointmentCard
             </h4>
             <div className="text-xs space-y-0.5">
               <div className="flex justify-between">
-                <span className="text-gray-500">Profissional ({appointment.commission.professionalPercentage}%):</span>
-                <span className="font-medium">{formatCurrency(appointment.commission.professionalAmount)}</span>
+                <span className="text-gray-500">
+                  Profissional ({appointment.commission.professionalPercentage}
+                  %):
+                </span>
+                <span className="font-medium">
+                  {formatCurrency(appointment.commission.professionalAmount)}
+                </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Estabelecimento ({appointment.commission.establishmentPercentage}%):</span>
-                <span className="font-medium">{formatCurrency(appointment.commission.establishmentAmount)}</span>
+                <span className="text-gray-500">
+                  Estabelecimento (
+                  {appointment.commission.establishmentPercentage}%):
+                </span>
+                <span className="font-medium">
+                  {formatCurrency(appointment.commission.establishmentAmount)}
+                </span>
               </div>
             </div>
           </div>
@@ -191,14 +241,20 @@ export function AppointmentCard({ appointment, onStatusChange }: AppointmentCard
               Pagamento
             </h4>
             <div className="flex items-center gap-2">
-              <Badge 
-                variant={appointment.payment.status === 'paid' ? 'default' : 'secondary'}
+              <Badge
+                variant={
+                  appointment.payment.status === "paid"
+                    ? "default"
+                    : "secondary"
+                }
                 className="text-xs"
               >
-                {appointment.payment.status === 'paid' ? 'Pago' : 'Pendente'}
+                {appointment.payment.status === "paid" ? "Pago" : "Pendente"}
               </Badge>
               <span className="text-xs text-gray-600">
-                {appointment.payment.method === 'pending' ? 'Método não definido' : appointment.payment.method.toUpperCase()}
+                {appointment.payment.method === "pending"
+                  ? "Método não definido"
+                  : appointment.payment.method.toUpperCase()}
               </span>
             </div>
           </div>
@@ -213,12 +269,14 @@ export function AppointmentCard({ appointment, onStatusChange }: AppointmentCard
             <div className="space-y-1">
               {appointment.customerNotes && (
                 <p className="text-xs text-gray-600 dark:text-gray-400">
-                  <span className="font-medium">Cliente:</span> {appointment.customerNotes}
+                  <span className="font-medium">Cliente:</span>{" "}
+                  {appointment.customerNotes}
                 </p>
               )}
               {appointment.professionalNotes && (
                 <p className="text-xs text-gray-600 dark:text-gray-400">
-                  <span className="font-medium">Profissional:</span> {appointment.professionalNotes}
+                  <span className="font-medium">Profissional:</span>{" "}
+                  {appointment.professionalNotes}
                 </p>
               )}
             </div>
@@ -238,8 +296,8 @@ export function AppointmentCard({ appointment, onStatusChange }: AppointmentCard
                     key={star}
                     className={`text-xs ${
                       star <= appointment.rating!.score
-                        ? 'text-yellow-400'
-                        : 'text-gray-300'
+                        ? "text-yellow-400"
+                        : "text-gray-300"
                     }`}
                   >
                     ★
@@ -260,12 +318,12 @@ export function AppointmentCard({ appointment, onStatusChange }: AppointmentCard
 
         {/* Ações */}
         <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-100 dark:border-gray-800">
-          {appointment.status === 'scheduled' && (
+          {appointment.status === "scheduled" && (
             <>
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => handleStatusChange('confirmed')}
+                onClick={() => handleStatusChange("confirmed")}
                 disabled={isLoading}
                 className="h-7 px-2 text-xs"
               >
@@ -274,7 +332,7 @@ export function AppointmentCard({ appointment, onStatusChange }: AppointmentCard
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => handleStatusChange('in_progress')}
+                onClick={() => setConfirmDialog("start")}
                 disabled={isLoading}
                 className="h-7 px-2 text-xs"
               >
@@ -283,7 +341,7 @@ export function AppointmentCard({ appointment, onStatusChange }: AppointmentCard
               <Button
                 size="sm"
                 variant="destructive"
-                onClick={() => handleStatusChange('canceled')}
+                onClick={() => setConfirmDialog("cancel")}
                 disabled={isLoading}
                 className="h-7 px-2 text-xs"
               >
@@ -292,12 +350,12 @@ export function AppointmentCard({ appointment, onStatusChange }: AppointmentCard
             </>
           )}
 
-          {appointment.status === 'confirmed' && (
+          {appointment.status === "confirmed" && (
             <>
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => handleStatusChange('in_progress')}
+                onClick={() => setConfirmDialog("start")}
                 disabled={isLoading}
                 className="h-7 px-2 text-xs"
               >
@@ -305,7 +363,7 @@ export function AppointmentCard({ appointment, onStatusChange }: AppointmentCard
               </Button>
               <Button
                 size="sm"
-                onClick={() => setShowCompletionDialog(true)}
+                onClick={() => setConfirmDialog("complete")}
                 disabled={isLoading}
                 className="h-7 px-2 text-xs"
               >
@@ -314,7 +372,7 @@ export function AppointmentCard({ appointment, onStatusChange }: AppointmentCard
               <Button
                 size="sm"
                 variant="destructive"
-                onClick={() => handleStatusChange('canceled')}
+                onClick={() => setConfirmDialog("cancel")}
                 disabled={isLoading}
                 className="h-7 px-2 text-xs"
               >
@@ -323,10 +381,10 @@ export function AppointmentCard({ appointment, onStatusChange }: AppointmentCard
             </>
           )}
 
-          {appointment.status === 'in_progress' && (
+          {appointment.status === "in_progress" && (
             <Button
               size="sm"
-              onClick={() => setShowCompletionDialog(true)}
+              onClick={() => setConfirmDialog("complete")}
               disabled={isLoading}
               className="h-7 px-2 text-xs"
             >
@@ -335,6 +393,36 @@ export function AppointmentCard({ appointment, onStatusChange }: AppointmentCard
           )}
         </div>
       </CardContent>
+
+      {/* Confirmation Dialogs */}
+      <ConfirmCancelDialog
+        open={confirmDialog === "cancel"}
+        onClose={() => setConfirmDialog(null)}
+        onConfirm={() => {
+          setConfirmDialog(null);
+          handleStatusChange("canceled");
+        }}
+        appointmentId={appointment.id}
+        customerName={appointment.customer}
+      />
+      <ConfirmStartDialog
+        open={confirmDialog === "start"}
+        onClose={() => setConfirmDialog(null)}
+        onConfirm={() => {
+          setConfirmDialog(null);
+          handleStatusChange("in_progress");
+        }}
+        customerName={appointment.customer}
+      />
+      <ConfirmCompleteDialog
+        open={confirmDialog === "complete"}
+        onClose={() => setConfirmDialog(null)}
+        onConfirm={() => {
+          setConfirmDialog(null);
+          setShowCompletionDialog(true);
+        }}
+        customerName={appointment.customer}
+      />
 
       {/* Diálogo de finalização do serviço */}
       <ServiceCompletionDialog
