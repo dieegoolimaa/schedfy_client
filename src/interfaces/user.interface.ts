@@ -4,6 +4,8 @@ export interface User {
   id?: number;
   username: string;
   password: string;
-  role: "admin" | "professional" | "owner" | "simple";
+  role: "admin" | "professional" | "owner" | "simple" | "platform_admin";
   planType?: PlanType;
+  name?: string;
+  email?: string;
 }

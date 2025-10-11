@@ -29,6 +29,10 @@ import SimpleBookingAppointmentsPage from "./pages/simple/AppointmentsPage";
 import SimpleBookingServicesPage from "./pages/simple/ServicesPage";
 import FeedbackPage from "./pages/FeedbackPage";
 import BusinessDashboard from "./pages/BusinessDashboard";
+import SchedfyAdminDashboard from "./pages/schedfy-admin/DashboardPage";
+import SchedfyCompaniesPage from "./pages/schedfy-admin/CompaniesPage";
+import SchedfyPlansPage from "./pages/schedfy-admin/PlansPage";
+import SchedfyLogsPage from "./pages/schedfy-admin/LogsPage";
 
 function App() {
   return (
@@ -48,6 +52,48 @@ function App() {
           element={<CreateProfessionalProfilePage />}
         />
         <Route path="/public-booking" element={<PublicBookingLanding />} />
+
+        {/* Schedfy Admin Routes - Protected for platform_admin */}
+        <Route
+          path="/schedfy/dashboard"
+          element={
+            <RequireRole roles={["platform_admin"]}>
+              <Layout>
+                <SchedfyAdminDashboard />
+              </Layout>
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/schedfy/companies"
+          element={
+            <RequireRole roles={["platform_admin"]}>
+              <Layout>
+                <SchedfyCompaniesPage />
+              </Layout>
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/schedfy/plans"
+          element={
+            <RequireRole roles={["platform_admin"]}>
+              <Layout>
+                <SchedfyPlansPage />
+              </Layout>
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/schedfy/logs"
+          element={
+            <RequireRole roles={["platform_admin"]}>
+              <Layout>
+                <SchedfyLogsPage />
+              </Layout>
+            </RequireRole>
+          }
+        />
 
         {/* Business Management - Protected route for business/individual */}
         <Route

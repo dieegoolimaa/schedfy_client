@@ -74,6 +74,32 @@ export function Header({ user }: HeaderProps) {
   const getMenuItems = () => {
     const userPlan = user.planType || "business";
 
+    // Platform Admin - Schedfy Administrator
+    if (user.role === "platform_admin") {
+      return [
+        {
+          label: "Dashboard Schedfy",
+          path: "/schedfy/dashboard",
+          icon: <LayoutDashboard className="mr-2 h-4 w-4" />,
+        },
+        {
+          label: "Empresas",
+          path: "/schedfy/companies",
+          icon: <Users className="mr-2 h-4 w-4" />,
+        },
+        {
+          label: "Planos",
+          path: "/schedfy/plans",
+          icon: <BarChart2 className="mr-2 h-4 w-4" />,
+        },
+        {
+          label: "Logs",
+          path: "/schedfy/logs",
+          icon: <Calendar className="mr-2 h-4 w-4" />,
+        },
+      ];
+    }
+
     if (user.role === "admin" || user.role === "owner") {
       const baseItems = [
         {

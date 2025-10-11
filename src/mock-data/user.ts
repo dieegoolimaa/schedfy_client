@@ -1,6 +1,16 @@
 import type { User } from "@/interfaces/user.interface";
 
 const users: User[] = [
+    // Platform Admin - Schedfy administrator
+    {
+        id: 999,
+        username: "admin@schedfy.io",
+        password: "Schedfy@2025",
+        role: "platform_admin",
+        name: "Schedfy Administrator",
+        email: "admin@schedfy.io",
+    },
+
     // Business Plan - Full access (owner/admin)
     {
         id: 1,

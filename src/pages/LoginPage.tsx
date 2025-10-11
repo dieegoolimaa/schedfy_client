@@ -20,8 +20,12 @@ const LoginPage = () => {
 
         toast.success("Login bem-sucedido!");
 
+        // Platform Admin - Schedfy administrator
+        if (currentUser.role === "platform_admin") {
+          navigate(`/schedfy/dashboard`);
+        }
         // Para profissionais, navegar para a página usando o ID do profissional, não do usuário
-        if (currentUser.role === "professional") {
+        else if (currentUser.role === "professional") {
           const professional = professionals.find(
             (p) => p.email === currentUser.username
           );
