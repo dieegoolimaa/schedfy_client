@@ -14,9 +14,18 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useState } from "react";
 
 const SchedfyAdminDashboard = () => {
   const navigate = useNavigate();
+  const [periodFilter, setPeriodFilter] = useState<string>("all");
 
   // Calculate statistics
   const totalCompanies = companies.length;
@@ -99,17 +108,31 @@ const SchedfyAdminDashboard = () => {
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto p-4 sm:p-6 space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold">Dashboard Schedfy</h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-1">
-          Visão geral da plataforma e métricas principais
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold">Dashboard Schedfy</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1 text-sm sm:text-base">
+            Visão geral da plataforma e métricas principais
+          </p>
+        </div>
+        <Select value={periodFilter} onValueChange={setPeriodFilter}>
+          <SelectTrigger className="w-full sm:w-[180px]">
+            <SelectValue placeholder="Período" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todo Período</SelectItem>
+            <SelectItem value="today">Hoje</SelectItem>
+            <SelectItem value="week">Últimos 7 dias</SelectItem>
+            <SelectItem value="month">Últimos 30 dias</SelectItem>
+            <SelectItem value="quarter">Últimos 90 dias</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Main Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card
           className="cursor-pointer hover:shadow-lg transition-shadow"
           onClick={() => navigate("/schedfy/companies")}

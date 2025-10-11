@@ -26,6 +26,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { companies, subscriptions } from "@/mock-data/companies";
 import type { Company } from "@/interfaces/company.interface";
 import {
@@ -47,8 +48,13 @@ const SchedfyCompaniesPage = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [planFilter, setPlanFilter] = useState<string>("all");
   const [countryFilter, setCountryFilter] = useState<string>("all");
+  const [dateFilter, setDateFilter] = useState<string>("all");
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
+  
+  // Confirmation dialogs
+  const [confirmSuspend, setConfirmSuspend] = useState<Company | null>(null);
+  const [confirmActivate, setConfirmActivate] = useState<Company | null>(null);
 
   const getStatusColor = (status: Company["status"]) => {
     const colors = {
@@ -93,7 +99,32 @@ const SchedfyCompaniesPage = () => {
     const matchesCountry =
       countryFilter === "all" || company.country === countryFilter;
 
-    return matchesSearch && matchesStatus && matchesPlan && matchesCountry;
+    // Date filter
+    let matchesDate = true;
+    if (dateFilter !== "all") {
+      const companyDate = new Date(company.createdAt);
+      const now = new Date();
+      const daysDiff = Math.floor(
+        (now.getTime() - companyDate.getTime()) / (1000 * 60 * 60 * 24)
+      );
+
+      switch (dateFilter) {
+        case "today":
+          matchesDate = daysDiff === 0;
+          break;
+        case "week":
+          matchesDate = daysDiff <= 7;
+          break;
+        case "month":
+          matchesDate = daysDiff <= 30;
+          break;
+        case "quarter":
+          matchesDate = daysDiff <= 90;
+          break;
+      }
+    }
+
+    return matchesSearch && matchesStatus && matchesPlan && matchesCountry && matchesDate;
   });
 
   const handleViewDetails = (company: Company) => {
@@ -102,11 +133,13 @@ const SchedfyCompaniesPage = () => {
   };
 
   const handleSuspendCompany = (company: Company) => {
+    setConfirmSuspend(null);
     toast.success(`Empresa ${company.name} suspensa com sucesso`);
     // Aqui você adicionaria a lógica real de suspensão
   };
 
   const handleActivateCompany = (company: Company) => {
+    setConfirmActivate(null);
     toast.success(`Empresa ${company.name} ativada com sucesso`);
     // Aqui você adicionaria a lógica real de ativação
   };
@@ -236,7 +269,7 @@ const SchedfyCompaniesPage = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
@@ -283,6 +316,19 @@ const SchedfyCompaniesPage = () => {
                 <SelectItem value="US">🇺🇸 EUA</SelectItem>
               </SelectContent>
             </Select>
+
+            <Select value={dateFilter} onValueChange={setDateFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="Período" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os Períodos</SelectItem>
+                <SelectItem value="today">Hoje</SelectItem>
+                <SelectItem value="week">Últimos 7 dias</SelectItem>
+                <SelectItem value="month">Últimos 30 dias</SelectItem>
+                <SelectItem value="quarter">Últimos 90 dias</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>
@@ -294,21 +340,22 @@ const SchedfyCompaniesPage = () => {
             Empresas Cadastradas ({filteredCompanies.length})
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Empresa</TableHead>
-                <TableHead>Proprietário</TableHead>
-                <TableHead>Plano</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>País</TableHead>
-                <TableHead>Agendamentos</TableHead>
-                <TableHead>Receita</TableHead>
-                <TableHead>Cadastro</TableHead>
-                <TableHead>Ações</TableHead>
-              </TableRow>
-            </TableHeader>
+        <CardContent className="overflow-x-auto">
+          <div className="min-w-full overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="whitespace-nowrap">Empresa</TableHead>
+                  <TableHead className="whitespace-nowrap">Proprietário</TableHead>
+                  <TableHead className="whitespace-nowrap">Plano</TableHead>
+                  <TableHead className="whitespace-nowrap">Status</TableHead>
+                  <TableHead className="whitespace-nowrap">País</TableHead>
+                  <TableHead className="whitespace-nowrap">Agendamentos</TableHead>
+                  <TableHead className="whitespace-nowrap">Receita</TableHead>
+                  <TableHead className="whitespace-nowrap">Cadastro</TableHead>
+                  <TableHead className="whitespace-nowrap">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
             <TableBody>
               {filteredCompanies.map((company) => {
                 const subscription = subscriptions.find(
@@ -367,7 +414,7 @@ const SchedfyCompaniesPage = () => {
                           <Button
                             size="sm"
                             variant="destructive"
-                            onClick={() => handleSuspendCompany(company)}
+                            onClick={() => setConfirmSuspend(company)}
                           >
                             <Ban className="h-4 w-4" />
                           </Button>
@@ -376,7 +423,7 @@ const SchedfyCompaniesPage = () => {
                           <Button
                             size="sm"
                             variant="default"
-                            onClick={() => handleActivateCompany(company)}
+                            onClick={() => setConfirmActivate(company)}
                           >
                             <CheckCircle className="h-4 w-4" />
                           </Button>
@@ -388,6 +435,7 @@ const SchedfyCompaniesPage = () => {
               })}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
 
@@ -551,6 +599,29 @@ const SchedfyCompaniesPage = () => {
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Confirmation Dialogs */}
+      <ConfirmationDialog
+        open={!!confirmSuspend}
+        onOpenChange={(open) => !open && setConfirmSuspend(null)}
+        title="Suspender Empresa"
+        description={`Tem certeza que deseja suspender a empresa "${confirmSuspend?.name}"? Esta ação bloqueará o acesso da empresa ao sistema.`}
+        confirmText="Sim, Suspender"
+        cancelText="Cancelar"
+        variant="destructive"
+        onConfirm={() => confirmSuspend && handleSuspendCompany(confirmSuspend)}
+      />
+
+      <ConfirmationDialog
+        open={!!confirmActivate}
+        onOpenChange={(open) => !open && setConfirmActivate(null)}
+        title="Ativar Empresa"
+        description={`Tem certeza que deseja ativar a empresa "${confirmActivate?.name}"? Isto restaurará o acesso completo ao sistema.`}
+        confirmText="Sim, Ativar"
+        cancelText="Cancelar"
+        variant="default"
+        onConfirm={() => confirmActivate && handleActivateCompany(confirmActivate)}
+      />
     </div>
   );
 };

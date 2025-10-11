@@ -34,6 +34,7 @@ const SchedfyLogsPage = () => {
   const [levelFilter, setLevelFilter] = useState<string>("all");
   const [actionFilter, setActionFilter] = useState<string>("all");
   const [dateFilter, setDateFilter] = useState<string>("all");
+  const [companyFilter, setCompanyFilter] = useState<string>("all");
 
   const getLevelColor = (level: LogLevel) => {
     const colors = {
@@ -100,6 +101,9 @@ const SchedfyLogsPage = () => {
 
     const matchesLevel = levelFilter === "all" || log.level === levelFilter;
     const matchesAction = actionFilter === "all" || log.action === actionFilter;
+    const matchesCompany = 
+      companyFilter === "all" || 
+      log.companyName?.toLowerCase().includes(companyFilter.toLowerCase());
 
     const matchesDate = () => {
       if (dateFilter === "all") return true;
@@ -124,7 +128,7 @@ const SchedfyLogsPage = () => {
       }
     };
 
-    return matchesSearch && matchesLevel && matchesAction && matchesDate();
+    return matchesSearch && matchesLevel && matchesAction && matchesCompany && matchesDate();
   });
 
   const formatDate = (dateString: string) => {
@@ -239,7 +243,7 @@ const SchedfyLogsPage = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
@@ -277,6 +281,18 @@ const SchedfyLogsPage = () => {
               </SelectContent>
             </Select>
 
+            <Select value={companyFilter} onValueChange={setCompanyFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="Empresa" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas as Empresas</SelectItem>
+                <SelectItem value="barbearia">Barbearia Moderna</SelectItem>
+                <SelectItem value="salao">Salão Elegante</SelectItem>
+                <SelectItem value="clinica">Clínica Bem-Estar</SelectItem>
+              </SelectContent>
+            </Select>
+
             <Select value={dateFilter} onValueChange={setDateFilter}>
               <SelectTrigger>
                 <SelectValue placeholder="Período" />
@@ -297,19 +313,20 @@ const SchedfyLogsPage = () => {
         <CardHeader>
           <CardTitle>Registros de Atividades ({filteredLogs.length})</CardTitle>
         </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Data/Hora</TableHead>
-                <TableHead>Nível</TableHead>
-                <TableHead>Ação</TableHead>
-                <TableHead>Descrição</TableHead>
-                <TableHead>Usuário</TableHead>
-                <TableHead>Empresa</TableHead>
-                <TableHead>IP</TableHead>
-              </TableRow>
-            </TableHeader>
+        <CardContent className="overflow-x-auto">
+          <div className="min-w-full overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="whitespace-nowrap">Data/Hora</TableHead>
+                  <TableHead className="whitespace-nowrap">Nível</TableHead>
+                  <TableHead className="whitespace-nowrap">Ação</TableHead>
+                  <TableHead className="min-w-[200px]">Descrição</TableHead>
+                  <TableHead className="whitespace-nowrap">Usuário</TableHead>
+                  <TableHead className="whitespace-nowrap">Empresa</TableHead>
+                  <TableHead className="whitespace-nowrap">IP</TableHead>
+                </TableRow>
+              </TableHeader>
             <TableBody>
               {filteredLogs.map((log) => (
                 <TableRow key={log.id}>
@@ -352,6 +369,7 @@ const SchedfyLogsPage = () => {
               ))}
             </TableBody>
           </Table>
+          </div>
         </CardContent>
       </Card>
     </div>
