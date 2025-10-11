@@ -1,41 +1,52 @@
 import { LoginForm } from "@/components/LoginForm";
 import { useNavigate } from "react-router-dom";
-import users from "@/mock-data/user";
 import professionals from "@/mock-data/professional";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const allUsers = users;
+  const { login } = useAuth();
 
-  const handleLogin = (username: string, password: string) => {
-    const user = allUsers.find(
-      (u) => u.username === username && u.password === password
-    );
+  const handleLogin = async (username: string, password: string) => {
+    try {
+      await login(username, password);
 
-    if (user) {
-      toast.success("Login bem-sucedido!");
-
-      // Para profissionais, navegar para a página usando o ID do profissional, não do usuário
-      if (user.role === "professional") {
-        const professional = professionals.find(
-          (p) => p.email === user.username
+      // Wait a bit for state to update
+      setTimeout(() => {
+        const currentUser = JSON.parse(
+          localStorage.getItem("currentUser") || "{}"
         );
-        if (professional) {
-          navigate(`/appointments/${professional.id}`);
-        } else {
-          toast.error("Profissional não encontrado!");
-          return;
-        }
-      } else {
-        // Para admin, pode usar qualquer rota administrativa
-        navigate(`/admin/appointments`);
-      }
 
-      localStorage.setItem("loggedInUser", JSON.stringify(user));
-    } else {
+        toast.success("Login bem-sucedido!");
+
+        // Para profissionais, navegar para a página usando o ID do profissional, não do usuário
+        if (currentUser.role === "professional") {
+          const professional = professionals.find(
+            (p) => p.email === currentUser.username
+          );
+          if (professional) {
+            navigate(`/appointments/${professional.id}`);
+          } else {
+            toast.error("Profissional não encontrado!");
+            return;
+          }
+        } else if (
+          currentUser.role === "owner" ||
+          currentUser.role === "admin"
+        ) {
+          // Para owner/admin, ir para o dashboard
+          navigate(`/dashboard`);
+        } else if (currentUser.role === "simple") {
+          // Para simple booking, ir para appointments
+          navigate(`/simple/appointments`);
+        } else {
+          // Fallback para admin appointments
+          navigate(`/admin/appointments`);
+        }
+      }, 100);
+    } catch (error) {
       toast.error("Credenciais inválidas. Tente novamente. 🚨");
-      localStorage.removeItem("loggedInUser");
     }
   };
 

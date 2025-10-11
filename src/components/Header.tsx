@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 import type { User } from "@/interfaces/user.interface";
 import professional from "@/mock-data/professional";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Calendar,
   BarChart2,
@@ -28,10 +29,11 @@ interface HeaderProps {
 
 export function Header({ user }: HeaderProps) {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem("loggedInUser");
+    logout();
     toast("Logout realizado com sucesso!");
     navigate("/");
   };
@@ -47,7 +49,7 @@ export function Header({ user }: HeaderProps) {
   );
 
   // Gerar iniciais do nome para fallback
-  const getInitials = (name: string) => {
+  const getInitials = (name?: string) => {
     if (currentProfessional) {
       return currentProfessional.name
         .split(" ")
@@ -55,6 +57,9 @@ export function Header({ user }: HeaderProps) {
         .join("")
         .toUpperCase()
         .slice(0, 2);
+    }
+    if (!name) {
+      return "U"; // Default fallback
     }
     return name
       .split("@")[0] // Para emails, usar parte antes do @
@@ -65,11 +70,12 @@ export function Header({ user }: HeaderProps) {
       .slice(0, 2);
   };
 
-  // Menu items baseado no role
+  // Menu items baseado no role e planType
   const getMenuItems = () => {
+    const userPlan = user.planType || "business";
+
     if (user.role === "admin" || user.role === "owner") {
-      // Admins and owners see full business management menus
-      return [
+      const baseItems = [
         {
           label: "Dashboard",
           path: "/dashboard",
@@ -80,22 +86,33 @@ export function Header({ user }: HeaderProps) {
           path: "/admin/appointments",
           icon: <Calendar className="mr-2 h-4 w-4" />,
         },
-        {
-          label: "Profissionais",
+      ];
+
+      // Only Business and Simple Booking have Professionals menu
+      if (userPlan === "business" || userPlan === "simple_booking") {
+        baseItems.push({
+          label: userPlan === "simple_booking" ? "Atendentes" : "Profissionais",
           path: "/professionals",
           icon: <Users className="mr-2 h-4 w-4" />,
-        },
-        {
+        });
+      }
+
+      // Only Business and Individual have Analytics
+      if (userPlan === "business" || userPlan === "individual") {
+        baseItems.push({
           label: "Análises",
           path: "/admin/analytics",
           icon: <BarChart2 className="mr-2 h-4 w-4" />,
-        },
-        {
-          label: "Agendar",
-          path: "/book-appointment",
-          icon: <PlusCircle className="mr-2 h-4 w-4" />,
-        },
-      ];
+        });
+      }
+
+      baseItems.push({
+        label: "Agendar",
+        path: "/book-appointment",
+        icon: <PlusCircle className="mr-2 h-4 w-4" />,
+      });
+
+      return baseItems;
     }
 
     if (user.role === "professional") {

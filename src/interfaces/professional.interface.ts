@@ -6,4 +6,5 @@ export interface Profissional {
     phone: string;
     email: string;
     photo?: string;
+    isActive?: boolean;
 }

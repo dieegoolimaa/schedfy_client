@@ -141,6 +141,37 @@ export function ConfirmStartDialog({
 }
 
 /**
+ * Confirm appointment confirmation
+ */
+interface ConfirmAppointmentDialogProps {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  customerName: string;
+}
+
+export function ConfirmAppointmentDialog({
+  open,
+  onClose,
+  onConfirm,
+  customerName,
+}: ConfirmAppointmentDialogProps) {
+  return (
+    <ConfirmDialog
+      open={open}
+      onClose={onClose}
+      onConfirm={onConfirm}
+      title="Confirmar Agendamento"
+      description={`Deseja confirmar o agendamento de ${customerName}?`}
+      confirmText="Sim, Confirmar"
+      cancelText="Cancelar"
+      variant="success"
+      icon={<CheckCircle className="h-6 w-6 text-green-500" />}
+    />
+  );
+}
+
+/**
  * Confirm complete appointment (simple_booking)
  */
 interface ConfirmCompleteDialogProps {

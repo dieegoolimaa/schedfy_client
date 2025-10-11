@@ -26,6 +26,7 @@ import { toast } from "sonner";
 import professionals from "@/mock-data/professional";
 import { useLocation } from "react-router-dom";
 import { useI18n } from "@/contexts/I18nContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { Calendar, User } from "lucide-react";
 
 // Mock data para serviços
@@ -98,24 +99,33 @@ const BookAppointmentPage = () => {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [isProfessional, setIsProfessional] = useState(false);
   const [isBusinessPlan, setIsBusinessPlan] = useState(false);
+  const [userPlanType, setUserPlanType] = useState<string>("business");
 
   const location = useLocation();
   const { t } = useI18n();
+  const { user } = useAuth();
+
+  // Determine if user can select professional
+  // Only Business plan can choose professionals
+  const canSelectProfessional = userPlanType === "business";
 
   // Pre-preencher dados se for profissional logado
   useEffect(() => {
     const loggedUser = localStorage.getItem("loggedInUser");
-    const user = loggedUser ? JSON.parse(loggedUser) : null;
-    const isProf = user?.role === "professional";
-    const isBusiness = user?.role === "owner" || user?.role === "admin";
+    const userFromStorage = loggedUser ? JSON.parse(loggedUser) : null;
+    const isProf = userFromStorage?.role === "professional";
+    const isBusiness =
+      userFromStorage?.role === "owner" || userFromStorage?.role === "admin";
+    const planType = user?.planType || userFromStorage?.planType || "business";
 
-    setCurrentUser(user);
+    setCurrentUser(userFromStorage);
     setIsProfessional(isProf);
     setIsBusinessPlan(isBusiness);
+    setUserPlanType(planType);
 
-    if (isProf && user) {
+    if (isProf && userFromStorage) {
       const professionalData = professionals.find(
-        (p) => p.email === user.username
+        (p) => p.email === userFromStorage.username
       );
       if (professionalData) {
         setCustomerData((prev) => ({
@@ -126,7 +136,7 @@ const BookAppointmentPage = () => {
         }));
       }
     }
-  }, []); // Executar apenas uma vez na montagem do componente
+  }, [user]); // Re-run when user changes
 
   // Prefill from query params (public booking landing)
   useEffect(() => {
@@ -174,13 +184,15 @@ const BookAppointmentPage = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (
-      !selectedService ||
-      !selectedProfessional ||
-      !selectedDate ||
-      !selectedTime
-    ) {
+    // Validations based on plan type
+    if (!selectedService || !selectedDate || !selectedTime) {
       toast.error("Por favor, preencha todos os campos obrigatórios");
+      return;
+    }
+
+    // Professional is required only for Business plan
+    if (canSelectProfessional && !selectedProfessional) {
+      toast.error("Por favor, selecione um profissional");
       return;
     }
 
@@ -194,12 +206,18 @@ const BookAppointmentPage = () => {
   };
 
   const handleSaveAppointment = () => {
+    // For Individual/Simple plans, auto-assign first available professional
+    let professionalToUse = selectedProfessionalData;
+    if (!canSelectProfessional && availableProfessionals.length > 0) {
+      professionalToUse = availableProfessionals[0];
+    }
+
     const makeAppointmentForDate = (date: Date | undefined) => ({
       id: `apt_${Date.now()}`,
       serviceId: selectedServiceData?.id,
       serviceName: selectedServiceData?.name,
-      professionalId: selectedProfessionalData?.id,
-      professionalName: selectedProfessionalData?.name,
+      professionalId: professionalToUse?.id,
+      professionalName: professionalToUse?.name,
       customer: customerData.name,
       email: customerData.email,
       phone: customerData.phone,
@@ -345,8 +363,8 @@ const BookAppointmentPage = () => {
           </CardContent>
         </Card>
 
-        {/* Booking Preference for Business Plan */}
-        {selectedService && isBusinessPlan && (
+        {/* Booking Preference - Only for Business Plan */}
+        {selectedService && canSelectProfessional && (
           <Card>
             <CardHeader>
               <CardTitle>2. Como deseja agendar?</CardTitle>
@@ -402,14 +420,13 @@ const BookAppointmentPage = () => {
           </Card>
         )}
 
-        {/* Seleção de Profissional - Shown when by-professional or simple/individual plan */}
+        {/* Seleção de Profissional - Only for Business when by-professional */}
         {selectedService &&
-          (bookingPreference === "by-professional" || !isBusinessPlan) && (
+          canSelectProfessional &&
+          bookingPreference === "by-professional" && (
             <Card>
               <CardHeader>
-                <CardTitle>
-                  {isBusinessPlan ? "3" : "2"}. Escolha o Profissional
-                </CardTitle>
+                <CardTitle>3. Escolha o Profissional</CardTitle>
                 <CardDescription>
                   Profissionais disponíveis para este serviço
                 </CardDescription>
@@ -570,13 +587,18 @@ const BookAppointmentPage = () => {
             </Card>
           )}
 
-        {/* Seleção de Data e Horário - for by-professional booking */}
-        {selectedProfessional &&
-          (bookingPreference === "by-professional" || !isBusinessPlan) && (
+        {/* Seleção de Data e Horário */}
+        {/* For Business: show after professional selected (by-professional mode) */}
+        {/* For Individual/Simple: show directly after service selected */}
+        {selectedService &&
+          ((canSelectProfessional &&
+            selectedProfessional &&
+            bookingPreference === "by-professional") ||
+            !canSelectProfessional) && (
             <Card>
               <CardHeader>
                 <CardTitle>
-                  {isBusinessPlan ? "4" : "3"}. Escolha Data e Horário
+                  {canSelectProfessional ? "4" : "2"}. Escolha Data e Horário
                 </CardTitle>
                 <CardDescription>
                   Selecione quando deseja ser atendido

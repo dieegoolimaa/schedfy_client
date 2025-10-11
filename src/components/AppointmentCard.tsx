@@ -12,6 +12,7 @@ import {
   ConfirmCancelDialog,
   ConfirmStartDialog,
   ConfirmCompleteDialog,
+  ConfirmAppointmentDialog,
 } from "@/components/dialogs/ConfirmDialogs";
 
 interface AppointmentCardProps {
@@ -29,7 +30,7 @@ export function AppointmentCard({
   const [isLoading, setIsLoading] = useState(false);
   const [showCompletionDialog, setShowCompletionDialog] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState<
-    "cancel" | "start" | "complete" | null
+    "cancel" | "start" | "complete" | "confirm" | null
   >(null);
 
   const formatCurrency = (value: number) => {
@@ -323,7 +324,7 @@ export function AppointmentCard({
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => handleStatusChange("confirmed")}
+                onClick={() => setConfirmDialog("confirm")}
                 disabled={isLoading}
                 className="h-7 px-2 text-xs"
               >
@@ -395,6 +396,15 @@ export function AppointmentCard({
       </CardContent>
 
       {/* Confirmation Dialogs */}
+      <ConfirmAppointmentDialog
+        open={confirmDialog === "confirm"}
+        onClose={() => setConfirmDialog(null)}
+        onConfirm={() => {
+          setConfirmDialog(null);
+          handleStatusChange("confirmed");
+        }}
+        customerName={appointment.customer}
+      />
       <ConfirmCancelDialog
         open={confirmDialog === "cancel"}
         onClose={() => setConfirmDialog(null)}

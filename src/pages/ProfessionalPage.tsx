@@ -2,7 +2,7 @@ import { ProfessionalCard } from "@/components/ProfessionalCard";
 import { toast } from "sonner";
 import professionals from "@/mock-data/professional";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,11 +15,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Upload, X } from "lucide-react";
+import type { Profissional } from "@/interfaces/professional.interface";
 
 const ProfessionalPage = () => {
   const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingProfessionalId, setEditingProfessionalId] = useState<
+    string | null
+  >(null);
+  const [localProfessionals, setLocalProfessionals] = useState<Profissional[]>(
+    []
+  );
   const [newProfessional, setNewProfessional] = useState({
     name: "",
     email: "",
@@ -28,6 +36,115 @@ const ProfessionalPage = () => {
     bio: "",
     photo: "",
   });
+  const [photoPreview, setPhotoPreview] = useState<string>("");
+  const [isDragging, setIsDragging] = useState(false);
+
+  useEffect(() => {
+    // Load professionals from localStorage or use default
+    const stored = localStorage.getItem("professionals");
+    if (stored) {
+      setLocalProfessionals(JSON.parse(stored));
+    } else {
+      setLocalProfessionals(professionals);
+    }
+  }, []);
+
+  const saveProfessionals = (profs: Profissional[]) => {
+    localStorage.setItem("professionals", JSON.stringify(profs));
+    setLocalProfessionals(profs);
+  };
+
+  const handleEdit = (professional: Profissional) => {
+    setIsEditMode(true);
+    setEditingProfessionalId(professional.id);
+    setNewProfessional({
+      name: professional.name,
+      email: professional.email,
+      phone: professional.phone,
+      specialty: professional.specialty,
+      bio: "",
+      photo: professional.photo || "",
+    });
+    setPhotoPreview(professional.photo || "");
+    setIsDialogOpen(true);
+  };
+
+  const handleToggleActive = (professionalId: string) => {
+    const updatedProfessionals = localProfessionals.map((prof) => {
+      if (prof.id === professionalId) {
+        const newStatus = !(prof.isActive !== false);
+        toast.success(
+          `Profissional ${newStatus ? "ativado" : "desativado"} com sucesso!`
+        );
+        return { ...prof, isActive: newStatus };
+      }
+      return prof;
+    });
+    saveProfessionals(updatedProfessionals);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        // 5MB limit
+        toast.error("Arquivo muito grande. Máximo 5MB.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        setPhotoPreview(result);
+        setNewProfessional({ ...newProfessional, photo: result });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith("image/")) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Arquivo muito grande. Máximo 5MB.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        setPhotoPreview(result);
+        setNewProfessional({ ...newProfessional, photo: result });
+      };
+      reader.readAsDataURL(file);
+    } else {
+      toast.error("Por favor, faça upload de uma imagem.");
+    }
+  };
+
+  const resetDialog = () => {
+    setIsDialogOpen(false);
+    setIsEditMode(false);
+    setEditingProfessionalId(null);
+    setNewProfessional({
+      name: "",
+      email: "",
+      phone: "",
+      specialty: "",
+      bio: "",
+      photo: "",
+    });
+    setPhotoPreview("");
+  };
 
   const handleViewSchedule = (
     professionalId: string,
@@ -62,17 +179,42 @@ const ProfessionalPage = () => {
       return;
     }
 
-    // TODO: Implementar lógica de criação no localStorage ou backend
-    toast.success(`Profissional ${newProfessional.name} criado com sucesso!`);
-    setIsDialogOpen(false);
-    setNewProfessional({
-      name: "",
-      email: "",
-      phone: "",
-      specialty: "",
-      bio: "",
-      photo: "",
-    });
+    if (isEditMode && editingProfessionalId) {
+      // Edit existing professional
+      const updatedProfessionals = localProfessionals.map((prof) => {
+        if (prof.id === editingProfessionalId) {
+          return {
+            ...prof,
+            name: newProfessional.name,
+            email: newProfessional.email,
+            phone: newProfessional.phone,
+            specialty: newProfessional.specialty,
+            photo: newProfessional.photo,
+          };
+        }
+        return prof;
+      });
+      saveProfessionals(updatedProfessionals);
+      toast.success(
+        `Profissional ${newProfessional.name} atualizado com sucesso!`
+      );
+    } else {
+      // Create new professional
+      const newProf: Profissional = {
+        id: `prof-${Date.now()}`,
+        name: newProfessional.name,
+        email: newProfessional.email,
+        phone: newProfessional.phone,
+        specialty: newProfessional.specialty,
+        commerce: 1, // Default commerce
+        photo: newProfessional.photo,
+        isActive: true,
+      };
+      saveProfessionals([...localProfessionals, newProf]);
+      toast.success(`Profissional ${newProfessional.name} criado com sucesso!`);
+    }
+
+    resetDialog();
   };
 
   return (
@@ -93,7 +235,7 @@ const ProfessionalPage = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {professionals.map((professional) => (
+        {localProfessionals.map((professional) => (
           <ProfessionalCard
             key={professional.id}
             professional={professional}
@@ -106,22 +248,88 @@ const ProfessionalPage = () => {
             onViewAnalytics={() =>
               handleViewAnalytics(professional.id, professional.name)
             }
+            onEdit={() => handleEdit(professional)}
+            onToggleActive={() => handleToggleActive(professional.id)}
           />
         ))}
       </div>
 
-      {/* Dialog para criar novo profissional */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-2xl">
+      {/* Dialog para criar/editar profissional */}
+      <Dialog open={isDialogOpen} onOpenChange={resetDialog}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Adicionar Novo Profissional</DialogTitle>
+            <DialogTitle>
+              {isEditMode
+                ? "Editar Profissional"
+                : "Adicionar Novo Profissional"}
+            </DialogTitle>
             <DialogDescription>
-              Preencha as informações do novo profissional que fará parte da
-              equipe.
+              {isEditMode
+                ? "Atualize as informações do profissional."
+                : "Preencha as informações do novo profissional que fará parte da equipe."}
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
+            {/* Photo Upload with Drag and Drop */}
+            <div className="space-y-2">
+              <Label>Foto do Profissional</Label>
+              <div
+                className={`border-2 border-dashed rounded-lg p-6 transition-colors ${
+                  isDragging
+                    ? "border-primary bg-primary/5"
+                    : "border-gray-300 dark:border-gray-700"
+                }`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
+                {photoPreview ? (
+                  <div className="relative">
+                    <img
+                      src={photoPreview}
+                      alt="Preview"
+                      className="w-32 h-32 rounded-full mx-auto object-cover"
+                    />
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      className="absolute top-0 right-1/2 translate-x-16"
+                      onClick={() => {
+                        setPhotoPreview("");
+                        setNewProfessional({ ...newProfessional, photo: "" });
+                      }}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="text-center">
+                    <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                      Arraste e solte uma imagem aqui ou
+                    </p>
+                    <label className="mt-2 inline-block">
+                      <Button type="button" variant="outline" size="sm" asChild>
+                        <span>
+                          Selecionar Arquivo
+                          <input
+                            type="file"
+                            className="hidden"
+                            accept="image/*"
+                            onChange={handleFileUpload}
+                          />
+                        </span>
+                      </Button>
+                    </label>
+                    <p className="mt-1 text-xs text-gray-500">
+                      PNG, JPG, GIF até 5MB
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="name">
@@ -192,22 +400,7 @@ const ProfessionalPage = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="photo">URL da Foto</Label>
-              <Input
-                id="photo"
-                placeholder="https://exemplo.com/foto.jpg"
-                value={newProfessional.photo}
-                onChange={(e) =>
-                  setNewProfessional({
-                    ...newProfessional,
-                    photo: e.target.value,
-                  })
-                }
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="bio">Biografia</Label>
+              <Label htmlFor="bio">Biografia (opcional)</Label>
               <Textarea
                 id="bio"
                 placeholder="Conte um pouco sobre a experiência e especialidades..."
@@ -224,11 +417,11 @@ const ProfessionalPage = () => {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+            <Button variant="outline" onClick={resetDialog}>
               Cancelar
             </Button>
             <Button onClick={handleCreateProfessional}>
-              Criar Profissional
+              {isEditMode ? "Atualizar Profissional" : "Criar Profissional"}
             </Button>
           </DialogFooter>
         </DialogContent>

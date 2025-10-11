@@ -1,27 +1,17 @@
 import { Header } from "@/components/Header";
-import { useEffect, useState } from "react";
-import type { User } from "@/interfaces/user.interface";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export function Layout({ children }: LayoutProps) {
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const loggedUser = localStorage.getItem("loggedInUser");
-    if (loggedUser) {
-      setUser(JSON.parse(loggedUser));
-    }
-  }, []);
+  const { user } = useAuth();
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
       {user && <Header user={user} />}
-      <main className={user ? "pt-20" : ""}>
-        {children}
-      </main>
+      <main className={user ? "pt-20" : ""}>{children}</main>
     </div>
   );
 }

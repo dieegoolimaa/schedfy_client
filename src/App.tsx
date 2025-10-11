@@ -19,11 +19,12 @@ import CreateUserPage from "./pages/CreateUserPage";
 import CreateProfessionalProfilePage from "./pages/CreateProfessionalProfilePage";
 import ProfessionalAnalyticsPage from "./pages/ProfessionalAnalyticsPage";
 import PublicBookingLanding from "./pages/PublicBookingLanding";
-import HomePage from "./pages/HomePage";
+import HomePage from "./pages/NewHomePage";
 import RequireRole from "./components/RequireRole";
 import BusinessManagementPage from "./pages/BusinessManagementPage";
 import { PlanProvider } from "./contexts/PlanContext";
 import { RequirePlan } from "./components/RequirePlan";
+import RequirePlanType from "./components/RequirePlanType";
 import SimpleBookingAppointmentsPage from "./pages/simple/AppointmentsPage";
 import SimpleBookingServicesPage from "./pages/simple/ServicesPage";
 import FeedbackPage from "./pages/FeedbackPage";
@@ -63,9 +64,12 @@ function App() {
           path="/business-management"
           element={
             <RequireRole roles={["admin", "owner"]}>
-              <RequirePlan plans={["business", "individual"]}>
+              <RequirePlanType
+                allowedPlans={["business"]}
+                deniedMessage="O gerenciamento de negócio avançado está disponível apenas no plano Business."
+              >
                 <BusinessManagementPage />
-              </RequirePlan>
+              </RequirePlanType>
             </RequireRole>
           }
         />
@@ -175,9 +179,16 @@ function App() {
         <Route
           path="/professionals"
           element={
-            <Layout>
-              <ProfessionalsPage />
-            </Layout>
+            <RequireRole roles={["admin", "owner", "simple"]}>
+              <RequirePlanType
+                allowedPlans={["business", "simple_booking"]}
+                deniedMessage="A gestão de profissionais/atendentes não está disponível no plano Individual. Você trabalha sozinho!"
+              >
+                <Layout>
+                  <ProfessionalsPage />
+                </Layout>
+              </RequirePlanType>
+            </RequireRole>
           }
         />
         <Route

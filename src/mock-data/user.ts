@@ -7,12 +7,14 @@ const users: User[] = [
         username: "business@schedfy.com",
         password: "P@ssw0rd",
         role: "owner",
+        planType: "business",
     },
     {
         id: 2,
         username: "admin@schedfy.com",
         password: "P@ssw0rd",
         role: "admin",
+        planType: "business",
     },
 
     // Individual Plan - Single professional with business features
@@ -21,6 +23,7 @@ const users: User[] = [
         username: "individual@schedfy.com",
         password: "P@ssw0rd",
         role: "owner", // Individual acts as owner of their own business
+        planType: "individual",
     },
 
     // Simple Booking Plan - Basic appointment system
@@ -29,6 +32,7 @@ const users: User[] = [
         username: "simple@schedfy.com",
         password: "P@ssw0rd",
         role: "simple",
+        planType: "simple_booking",
     },
 
     // Professional accounts (work for business/individual)

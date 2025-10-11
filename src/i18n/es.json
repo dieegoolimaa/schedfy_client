@@ -28,5 +28,20 @@
   "home.login": "Iniciar sesión",
   "home.cta_book": "Reservar ahora",
   "home.cta_business": "Crear mi negocio",
-  "home.try_demo": "Probar demo"
+  "home.cta_access": "Acceder al Sistema",
+  "home.try_demo": "Probar demo",
+  "home.tagline": "Programación simple para negocios",
+  "home.hero_title": "Schedfy — programación más fácil para su negocio",
+  "home.hero_description": "Gestione servicios, profesionales y reservas desde una interfaz simple e intuitiva. Acelere el servicio, reduzca ausencias y ofrezca pago integrado.",
+  "home.feature1_title": "Reserva Simple",
+  "home.feature1_description": "Sistema puro de citas - programación rápida y directa sin complejidad empresarial.",
+  "home.feature2_title": "Gestión de Profesionales",
+  "home.feature2_description": "Controle horarios, comisiones y disponibilidad de su equipo.",
+  "home.feature3_title": "Comentarios de Clientes",
+  "home.feature3_description": "Recopile encuestas de satisfacción y mejore la calidad de su servicio.",
+  "home.platform_badge": "Plataforma Completa",
+  "home.platform_title": "Gestione su negocio",
+  "home.platform_description": "Sistema completo de citas con gestión de profesionales, servicios y análisis.",
+  "home.rights": "Todos los derechos reservados",
+  "home.language": "Idioma"
 }
