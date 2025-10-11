@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useNavigate } from "react-router-dom";
 import { useI18n } from "@/contexts/I18nContext";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { useState } from "react";
 import {
   Calendar,
   Users,
@@ -17,11 +19,13 @@ import {
   Settings,
   ArrowRight,
   Sparkles,
+  Menu,
 } from "lucide-react";
 
 const HomePage = () => {
   const navigate = useNavigate();
   const { locale, setLocale } = useI18n();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const plans = [
     {
@@ -107,13 +111,15 @@ const HomePage = () => {
       <header className="fixed top-0 left-0 right-0 z-50 border-b bg-background/80 backdrop-blur-lg">
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
+            {/* Logo */}
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-2 font-bold text-2xl bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                <Calendar className="h-8 w-8 text-primary" />
+              <div className="flex items-center gap-2 font-bold text-xl sm:text-2xl bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
                 Schedfy
               </div>
             </div>
 
+            {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-6">
               <a
                 href="#features"
@@ -135,7 +141,8 @@ const HomePage = () => {
               </a>
             </nav>
 
-            <div className="flex items-center gap-3">
+            {/* Desktop Actions */}
+            <div className="hidden md:flex items-center gap-3">
               <select
                 value={locale}
                 onChange={(e) => setLocale(e.target.value as any)}
@@ -152,6 +159,78 @@ const HomePage = () => {
               <Button onClick={() => navigate("/create-business")}>
                 Get Started
               </Button>
+            </div>
+
+            {/* Mobile Menu */}
+            <div className="flex md:hidden items-center gap-2">
+              <ThemeToggle />
+              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Menu className="h-6 w-6" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                  <nav className="flex flex-col gap-6 mt-8">
+                    <a
+                      href="#features"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="text-lg font-medium hover:text-primary transition-colors"
+                    >
+                      Features
+                    </a>
+                    <a
+                      href="#pricing"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="text-lg font-medium hover:text-primary transition-colors"
+                    >
+                      Pricing
+                    </a>
+                    <a
+                      href="#about"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="text-lg font-medium hover:text-primary transition-colors"
+                    >
+                      About
+                    </a>
+                    
+                    <div className="pt-4 border-t">
+                      <label className="text-sm font-medium mb-2 block">Language</label>
+                      <select
+                        value={locale}
+                        onChange={(e) => setLocale(e.target.value as any)}
+                        className="w-full text-sm border rounded-md px-3 py-2 bg-background"
+                      >
+                        <option value="en">🇺🇸 English</option>
+                        <option value="pt-BR">🇧🇷 Português</option>
+                        <option value="es">🇵🇹 Português (PT)</option>
+                      </select>
+                    </div>
+
+                    <div className="flex flex-col gap-3 pt-4">
+                      <Button 
+                        variant="outline" 
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          navigate("/login");
+                        }}
+                        className="w-full"
+                      >
+                        Sign In
+                      </Button>
+                      <Button 
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          navigate("/create-business");
+                        }}
+                        className="w-full"
+                      >
+                        Get Started
+                      </Button>
+                    </div>
+                  </nav>
+                </SheetContent>
+              </Sheet>
             </div>
           </div>
         </div>

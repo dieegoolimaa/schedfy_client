@@ -60,6 +60,7 @@ export interface Appointment {
     // Valores e negócio
     originalPrice: number; // Preço original do serviço
     finalPrice: number; // Preço final após descontos/vouchers
+    price?: number; // Preço (alias para finalPrice, para compatibilidade)
     
     // Descontos e vouchers aplicados
     appliedVouchers?: Voucher[];
@@ -75,6 +76,7 @@ export interface Appointment {
     // Observações e controle
     professionalNotes?: string; // Observações do profissional
     adminNotes?: string; // Observações administrativas
+    notes?: string; // Observações gerais (alias para compatibilidade)
     rejectionReason?: string;
     cancellationReason?: string;
     cancellationFee?: number; // Taxa de cancelamento
