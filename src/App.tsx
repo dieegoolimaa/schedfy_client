@@ -20,6 +20,9 @@ import CreateProfessionalProfilePage from "./pages/CreateProfessionalProfilePage
 import ProfessionalAnalyticsPage from "./pages/ProfessionalAnalyticsPage";
 import PublicBookingLanding from "./pages/PublicBookingLanding";
 import HomePage from "./pages/NewHomePage";
+import SuspendedAccountPage from "./pages/SuspendedAccountPage";
+import BusinessProfilePage from "./pages/BusinessProfilePage";
+import BusinessManagementProfilePage from "./pages/BusinessManagementProfilePage";
 import RequireRole from "./components/RequireRole";
 import BusinessManagementPage from "./pages/BusinessManagementPage";
 import { PlanProvider } from "./contexts/PlanContext";
@@ -41,8 +44,14 @@ function App() {
         {/* Home page pública */}
         <Route path="/" element={<HomePage />} />
 
+        {/* Página de Perfil Público do Negócio */}
+        <Route path="/b/:slug" element={<BusinessProfilePage />} />
+
         {/* Página de Login - sem layout */}
         <Route path="/login" element={<LoginPage />} />
+
+        {/* Página de Conta Suspensa - sem layout */}
+        <Route path="/account-suspended" element={<SuspendedAccountPage />} />
 
         {/* Fluxo de Criação de Conta - sem layout */}
         <Route path="/create-business" element={<CreateBusinessPage />} />
@@ -116,6 +125,16 @@ function App() {
               >
                 <BusinessManagementPage />
               </RequirePlanType>
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/business-profile-management"
+          element={
+            <RequireRole roles={["admin", "owner"]}>
+              <Layout>
+                <BusinessManagementProfilePage />
+              </Layout>
             </RequireRole>
           }
         />

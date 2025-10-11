@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import professionals from "@/mock-data/professional";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
+import { isSuspendedAccount } from "@/mock-data/suspended-accounts";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -10,6 +11,13 @@ const LoginPage = () => {
 
   const handleLogin = async (username: string, password: string) => {
     try {
+      // Verificar se a conta está suspensa antes de fazer login
+      if (isSuspendedAccount(username)) {
+        toast.error("Sua conta está suspensa. Entre em contato com o suporte.");
+        navigate("/account-suspended");
+        return;
+      }
+
       await login(username, password);
 
       // Wait a bit for state to update

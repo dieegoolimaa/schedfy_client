@@ -27,6 +27,15 @@ const users: User[] = [
         planType: "business",
     },
 
+    // Suspended account for testing
+    {
+        id: 10,
+        username: "suspended@schedfy.com",
+        password: "P@ssw0rd",
+        role: "owner",
+        planType: "business",
+    },
+
     // Individual Plan - Single professional with business features
     {
         id: 3,

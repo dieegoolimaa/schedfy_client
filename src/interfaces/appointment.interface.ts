@@ -44,35 +44,35 @@ export interface Appointment {
     serviceName: string; // Nome do serviço para facilitar exibição
     professionalId: string;
     professionalName: string; // Nome do profissional para facilitar exibição
-    
+
     // Informações do cliente
     customer: string;
     email: string;
     phone: string;
     customerNotes?: string; // Observações do cliente
-    
+
     // Agendamento
     date: string; // ISO 8601 format
     time: string; // e.g., "14:00"
     duration: number; // Duração em minutos
     status: 'scheduled' | 'confirmed' | 'in_progress' | 'completed' | 'canceled' | 'no_show';
-    
+
     // Valores e negócio
     originalPrice: number; // Preço original do serviço
     finalPrice: number; // Preço final após descontos/vouchers
     price?: number; // Preço (alias para finalPrice, para compatibilidade)
-    
+
     // Descontos e vouchers aplicados
     appliedVouchers?: Voucher[];
     appliedDiscounts?: Discount[];
     totalDiscountAmount: number;
-    
+
     // Comissão
     commission: Commission;
-    
+
     // Pagamento
     payment: PaymentInfo;
-    
+
     // Observações e controle
     professionalNotes?: string; // Observações do profissional
     adminNotes?: string; // Observações administrativas
@@ -80,21 +80,21 @@ export interface Appointment {
     rejectionReason?: string;
     cancellationReason?: string;
     cancellationFee?: number; // Taxa de cancelamento
-    
+
     // Controle temporal
     createdAt: string;
     updatedAt: string;
     confirmedAt?: string;
     completedAt?: string;
     canceledAt?: string;
-    
+
     // Avaliação (opcional)
     rating?: {
         score: number; // 1-5
         comment?: string;
         ratedAt: string;
     };
-    
+
     // Recorrência (para agendamentos recorrentes)
     isRecurring?: boolean;
     recurringPattern?: {

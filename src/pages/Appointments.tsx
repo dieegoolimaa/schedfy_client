@@ -21,13 +21,9 @@ import {
   MessageSquare,
   ChevronDown,
   ChevronUp,
-  LayoutGrid,
-  Calendar as CalendarIcon,
 } from "lucide-react";
 import professionals from "@/mock-data/professional";
 import type { Appointment } from "@/interfaces/appointment.interface";
-import { AppointmentCalendar } from "@/components/calendar/AppointmentCalendar";
-import "react-big-calendar/lib/css/react-big-calendar.css";
 
 // Mock data de agendamentos
 const mockAppointments: Appointment[] = [
@@ -374,7 +370,6 @@ const Appointments = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [dateFilter, setDateFilter] = useState<string>("all");
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
-  const [viewMode, setViewMode] = useState<"cards" | "calendar">("cards");
 
   // Encontrar o profissional
   const professional = professionals.find((p) => p.id?.toString() === id);
@@ -515,71 +510,39 @@ const Appointments = () => {
                 </Select>
               </div>
             </div>
-
-            {/* View Mode Toggle */}
-            <div className="flex gap-1 p-1 bg-muted rounded-lg">
-              <Button
-                variant={viewMode === "cards" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("cards")}
-                className="gap-2"
-              >
-                <LayoutGrid className="h-4 w-4" />
-                Cards
-              </Button>
-              <Button
-                variant={viewMode === "calendar" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("calendar")}
-                className="gap-2"
-              >
-                <CalendarIcon className="h-4 w-4" />
-                Calendário
-              </Button>
-            </div>
           </div>
         </div>
       </div>
 
-      {/* Lista de Agendamentos ou Calendário */}
-      {viewMode === "calendar" ? (
-        <AppointmentCalendar 
-          appointments={filteredAppointments}
-          onSelectAppointment={(appointment) => {
-            console.log("Selected appointment:", appointment);
-            // Você pode adicionar lógica para abrir um modal ou navegar para detalhes
-          }}
-        />
-      ) : (
-        <div className="space-y-3">
-          {filteredAppointments.length === 0 ? (
-            <Card>
-              <CardContent className="flex items-center justify-center py-12">
-                <div className="text-center">
-                  <CalendarDays className="size-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-                    Nenhum agendamento encontrado
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400">
-                    {searchTerm || statusFilter !== "all" || dateFilter !== "all"
-                      ? "Tente ajustar os filtros para ver mais resultados."
-                      : "Este profissional ainda não possui agendamentos."}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            filteredAppointments.map((appointment) => (
-              <CompactAppointmentCard
-                key={appointment.id}
-                appointment={appointment}
-                isExpanded={expandedCards.has(appointment.id)}
-                onToggleExpand={() => toggleCardExpansion(appointment.id)}
-              />
-            ))
-          )}
-        </div>
-      )}
+      {/* Lista de Agendamentos */}
+      <div className="space-y-3">
+        {filteredAppointments.length === 0 ? (
+          <Card>
+            <CardContent className="flex items-center justify-center py-12">
+              <div className="text-center">
+                <CalendarDays className="size-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+                  Nenhum agendamento encontrado
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {searchTerm || statusFilter !== "all" || dateFilter !== "all"
+                    ? "Tente ajustar os filtros para ver mais resultados."
+                    : "Este profissional ainda não possui agendamentos."}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          filteredAppointments.map((appointment) => (
+            <CompactAppointmentCard
+              key={appointment.id}
+              appointment={appointment}
+              isExpanded={expandedCards.has(appointment.id)}
+              onToggleExpand={() => toggleCardExpansion(appointment.id)}
+            />
+          ))
+        )}
+      </div>
     </div>
   );
 };

@@ -21,6 +21,7 @@ import {
   Users,
   PlusCircle,
   LayoutDashboard,
+  Store,
 } from "lucide-react";
 
 interface HeaderProps {
@@ -113,6 +114,15 @@ export function Header({ user }: HeaderProps) {
           icon: <Calendar className="mr-2 h-4 w-4" />,
         },
       ];
+
+      // Only Business and Individual have Business Profile Management
+      if (userPlan === "business" || userPlan === "individual") {
+        baseItems.push({
+          label: "Perfil do Negócio",
+          path: "/business-profile-management",
+          icon: <Store className="mr-2 h-4 w-4" />,
+        });
+      }
 
       // Only Business and Simple Booking have Professionals menu
       if (userPlan === "business" || userPlan === "simple_booking") {

@@ -51,7 +51,7 @@ const SchedfyCompaniesPage = () => {
   const [dateFilter, setDateFilter] = useState<string>("all");
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
-  
+
   // Confirmation dialogs
   const [confirmSuspend, setConfirmSuspend] = useState<Company | null>(null);
   const [confirmActivate, setConfirmActivate] = useState<Company | null>(null);
@@ -124,7 +124,13 @@ const SchedfyCompaniesPage = () => {
       }
     }
 
-    return matchesSearch && matchesStatus && matchesPlan && matchesCountry && matchesDate;
+    return (
+      matchesSearch &&
+      matchesStatus &&
+      matchesPlan &&
+      matchesCountry &&
+      matchesDate
+    );
   });
 
   const handleViewDetails = (company: Company) => {
@@ -346,95 +352,99 @@ const SchedfyCompaniesPage = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead className="whitespace-nowrap">Empresa</TableHead>
-                  <TableHead className="whitespace-nowrap">Proprietário</TableHead>
+                  <TableHead className="whitespace-nowrap">
+                    Proprietário
+                  </TableHead>
                   <TableHead className="whitespace-nowrap">Plano</TableHead>
                   <TableHead className="whitespace-nowrap">Status</TableHead>
                   <TableHead className="whitespace-nowrap">País</TableHead>
-                  <TableHead className="whitespace-nowrap">Agendamentos</TableHead>
+                  <TableHead className="whitespace-nowrap">
+                    Agendamentos
+                  </TableHead>
                   <TableHead className="whitespace-nowrap">Receita</TableHead>
                   <TableHead className="whitespace-nowrap">Cadastro</TableHead>
                   <TableHead className="whitespace-nowrap">Ações</TableHead>
                 </TableRow>
               </TableHeader>
-            <TableBody>
-              {filteredCompanies.map((company) => {
-                const subscription = subscriptions.find(
-                  (s) => s.companyId === company.id
-                );
-                return (
-                  <TableRow key={company.id}>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{company.name}</div>
-                        <div className="text-sm text-gray-500">
-                          {company.email}
+              <TableBody>
+                {filteredCompanies.map((company) => {
+                  const subscription = subscriptions.find(
+                    (s) => s.companyId === company.id
+                  );
+                  return (
+                    <TableRow key={company.id}>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{company.name}</div>
+                          <div className="text-sm text-gray-500">
+                            {company.email}
+                          </div>
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{company.ownerName}</div>
-                        <div className="text-sm text-gray-500">
-                          {company.ownerEmail}
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{company.ownerName}</div>
+                          <div className="text-sm text-gray-500">
+                            {company.ownerEmail}
+                          </div>
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>{getPlanBadge(company.planType)}</TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(company.status)}>
-                        {getStatusText(company.status)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {company.country === "BR" && "🇧🇷"}
-                      {company.country === "PT" && "🇵🇹"}
-                      {company.country === "US" && "🇺🇸"}
-                    </TableCell>
-                    <TableCell>{company.stats.totalAppointments}</TableCell>
-                    <TableCell>
-                      {subscription &&
-                        formatCurrency(
-                          company.stats.totalRevenue,
-                          subscription.currency
-                        )}
-                    </TableCell>
-                    <TableCell className="text-sm text-gray-500">
-                      {formatDate(company.createdAt)}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleViewDetails(company)}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        {company.status === "active" && (
+                      </TableCell>
+                      <TableCell>{getPlanBadge(company.planType)}</TableCell>
+                      <TableCell>
+                        <Badge className={getStatusColor(company.status)}>
+                          {getStatusText(company.status)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {company.country === "BR" && "🇧🇷"}
+                        {company.country === "PT" && "🇵🇹"}
+                        {company.country === "US" && "🇺🇸"}
+                      </TableCell>
+                      <TableCell>{company.stats.totalAppointments}</TableCell>
+                      <TableCell>
+                        {subscription &&
+                          formatCurrency(
+                            company.stats.totalRevenue,
+                            subscription.currency
+                          )}
+                      </TableCell>
+                      <TableCell className="text-sm text-gray-500">
+                        {formatDate(company.createdAt)}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
                           <Button
                             size="sm"
-                            variant="destructive"
-                            onClick={() => setConfirmSuspend(company)}
+                            variant="outline"
+                            onClick={() => handleViewDetails(company)}
                           >
-                            <Ban className="h-4 w-4" />
+                            <Eye className="h-4 w-4" />
                           </Button>
-                        )}
-                        {company.status === "suspended" && (
-                          <Button
-                            size="sm"
-                            variant="default"
-                            onClick={() => setConfirmActivate(company)}
-                          >
-                            <CheckCircle className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+                          {company.status === "active" && (
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => setConfirmSuspend(company)}
+                            >
+                              <Ban className="h-4 w-4" />
+                            </Button>
+                          )}
+                          {company.status === "suspended" && (
+                            <Button
+                              size="sm"
+                              variant="default"
+                              onClick={() => setConfirmActivate(company)}
+                            >
+                              <CheckCircle className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>
@@ -620,7 +630,9 @@ const SchedfyCompaniesPage = () => {
         confirmText="Sim, Ativar"
         cancelText="Cancelar"
         variant="default"
-        onConfirm={() => confirmActivate && handleActivateCompany(confirmActivate)}
+        onConfirm={() =>
+          confirmActivate && handleActivateCompany(confirmActivate)
+        }
       />
     </div>
   );

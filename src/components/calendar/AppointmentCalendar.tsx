@@ -50,7 +50,9 @@ export function AppointmentCalendar({
 }: AppointmentCalendarProps) {
   const [view, setView] = useState<View>("month");
   const [date, setDate] = useState(new Date());
-  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
+    null
+  );
   const [showEventDialog, setShowEventDialog] = useState(false);
 
   // Convert appointments to calendar events
@@ -134,10 +136,14 @@ export function AppointmentCalendar({
 
   const getStatusColor = (status: Appointment["status"]) => {
     const colors = {
-      scheduled: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-      confirmed: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-      in_progress: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-      completed: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200",
+      scheduled:
+        "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+      confirmed:
+        "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+      in_progress:
+        "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+      completed:
+        "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200",
       canceled: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
       no_show: "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200",
     };
@@ -266,7 +272,7 @@ export function AppointmentCalendar({
                 time: "Hora",
                 event: "Evento",
                 noEventsInRange: "Não há agendamentos neste período.",
-                showMore: (total: number) => `+ ${total} mais`
+                showMore: (total: number) => `+ ${total} mais`,
               }}
               culture="pt-BR"
             />
@@ -297,7 +303,9 @@ export function AppointmentCalendar({
             <div className="space-y-4">
               {/* Status */}
               <div>
-                <Badge className={getStatusColor(selectedEvent.resource.status)}>
+                <Badge
+                  className={getStatusColor(selectedEvent.resource.status)}
+                >
                   {getStatusText(selectedEvent.resource.status)}
                 </Badge>
               </div>
@@ -305,15 +313,23 @@ export function AppointmentCalendar({
               {/* Customer Info */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Cliente</label>
-                  <p className="font-semibold">{selectedEvent.resource.customer}</p>
+                  <label className="text-sm font-medium text-gray-600">
+                    Cliente
+                  </label>
+                  <p className="font-semibold">
+                    {selectedEvent.resource.customer}
+                  </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Email</label>
+                  <label className="text-sm font-medium text-gray-600">
+                    Email
+                  </label>
                   <p>{selectedEvent.resource.email}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Telefone</label>
+                  <label className="text-sm font-medium text-gray-600">
+                    Telefone
+                  </label>
                   <p>{selectedEvent.resource.phone}</p>
                 </div>
               </div>
@@ -322,25 +338,39 @@ export function AppointmentCalendar({
               <div className="border-t pt-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-600">Serviço</label>
-                    <p className="font-semibold">{selectedEvent.resource.serviceName}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-600">Duração</label>
-                    <p>{selectedEvent.resource.duration} minutos</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-600">Valor</label>
-                    <p className="font-semibold text-green-600">
-                                      <p className="text-2xl font-bold text-primary">
-                  {formatCurrency(selectedEvent.resource.price || selectedEvent.resource.finalPrice)}
-                </p>
+                    <label className="text-sm font-medium text-gray-600">
+                      Serviço
+                    </label>
+                    <p className="font-semibold">
+                      {selectedEvent.resource.serviceName}
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-600">Horário</label>
+                    <label className="text-sm font-medium text-gray-600">
+                      Duração
+                    </label>
+                    <p>{selectedEvent.resource.duration} minutos</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-600">
+                      Valor
+                    </label>
+                    <p className="font-semibold text-green-600">
+                      <p className="text-2xl font-bold text-primary">
+                        {formatCurrency(
+                          selectedEvent.resource.price ||
+                            selectedEvent.resource.finalPrice
+                        )}
+                      </p>
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-600">
+                      Horário
+                    </label>
                     <p>
-                      {formatTime(selectedEvent.start)} - {formatTime(selectedEvent.end)}
+                      {formatTime(selectedEvent.start)} -{" "}
+                      {formatTime(selectedEvent.end)}
                     </p>
                   </div>
                 </div>
@@ -349,7 +379,9 @@ export function AppointmentCalendar({
               {/* Notes */}
               {selectedEvent.resource.notes && (
                 <div className="border-t pt-4">
-                  <label className="text-sm font-medium text-gray-600">Observações</label>
+                  <label className="text-sm font-medium text-gray-600">
+                    Observações
+                  </label>
                   <p className="text-sm mt-1">{selectedEvent.resource.notes}</p>
                 </div>
               )}

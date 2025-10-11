@@ -101,8 +101,8 @@ const SchedfyLogsPage = () => {
 
     const matchesLevel = levelFilter === "all" || log.level === levelFilter;
     const matchesAction = actionFilter === "all" || log.action === actionFilter;
-    const matchesCompany = 
-      companyFilter === "all" || 
+    const matchesCompany =
+      companyFilter === "all" ||
       log.companyName?.toLowerCase().includes(companyFilter.toLowerCase());
 
     const matchesDate = () => {
@@ -128,7 +128,13 @@ const SchedfyLogsPage = () => {
       }
     };
 
-    return matchesSearch && matchesLevel && matchesAction && matchesCompany && matchesDate();
+    return (
+      matchesSearch &&
+      matchesLevel &&
+      matchesAction &&
+      matchesCompany &&
+      matchesDate()
+    );
   });
 
   const formatDate = (dateString: string) => {
@@ -327,48 +333,48 @@ const SchedfyLogsPage = () => {
                   <TableHead className="whitespace-nowrap">IP</TableHead>
                 </TableRow>
               </TableHeader>
-            <TableBody>
-              {filteredLogs.map((log) => (
-                <TableRow key={log.id}>
-                  <TableCell className="text-sm font-mono">
-                    {formatDate(log.timestamp)}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      className={`${getLevelColor(
-                        log.level
-                      )} flex items-center gap-1 w-fit`}
-                    >
-                      {getLevelIcon(log.level)}
-                      {log.level.toUpperCase()}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-sm">
-                    {getActionText(log.action)}
-                  </TableCell>
-                  <TableCell className="max-w-md">
-                    <p className="text-sm truncate">{log.description}</p>
-                  </TableCell>
-                  <TableCell>
-                    {log.userName && (
-                      <div className="text-sm">
-                        <div className="font-medium">{log.userName}</div>
-                        <div className="text-gray-500 text-xs">
-                          {log.userEmail}
+              <TableBody>
+                {filteredLogs.map((log) => (
+                  <TableRow key={log.id}>
+                    <TableCell className="text-sm font-mono">
+                      {formatDate(log.timestamp)}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        className={`${getLevelColor(
+                          log.level
+                        )} flex items-center gap-1 w-fit`}
+                      >
+                        {getLevelIcon(log.level)}
+                        {log.level.toUpperCase()}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {getActionText(log.action)}
+                    </TableCell>
+                    <TableCell className="max-w-md">
+                      <p className="text-sm truncate">{log.description}</p>
+                    </TableCell>
+                    <TableCell>
+                      {log.userName && (
+                        <div className="text-sm">
+                          <div className="font-medium">{log.userName}</div>
+                          <div className="text-gray-500 text-xs">
+                            {log.userEmail}
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-sm">
-                    {log.companyName || "-"}
-                  </TableCell>
-                  <TableCell className="text-sm font-mono">
-                    {log.metadata?.ipAddress || "-"}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {log.companyName || "-"}
+                    </TableCell>
+                    <TableCell className="text-sm font-mono">
+                      {log.metadata?.ipAddress || "-"}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>

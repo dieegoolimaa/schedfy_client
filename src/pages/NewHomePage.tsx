@@ -170,60 +170,78 @@ const HomePage = () => {
                     <Menu className="h-6 w-6" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                  <nav className="flex flex-col gap-6 mt-8">
+                <SheetContent
+                  side="right"
+                  className="w-[85vw] max-w-[400px] overflow-y-auto p-6"
+                >
+                  {/* Logo no menu mobile */}
+                  <div className="flex items-center gap-2 mb-8 px-2">
+                    <Calendar className="h-6 w-6 text-primary" />
+                    <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                      Schedfy
+                    </span>
+                  </div>
+
+                  <nav className="flex flex-col gap-4 px-2">
+                    {/* Links de Navegação */}
                     <a
                       href="#features"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="text-lg font-medium hover:text-primary transition-colors"
+                      className="text-base font-medium hover:text-primary transition-colors py-3 border-b"
                     >
                       Features
                     </a>
                     <a
                       href="#pricing"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="text-lg font-medium hover:text-primary transition-colors"
+                      className="text-base font-medium hover:text-primary transition-colors py-3 border-b"
                     >
                       Pricing
                     </a>
                     <a
                       href="#about"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="text-lg font-medium hover:text-primary transition-colors"
+                      className="text-base font-medium hover:text-primary transition-colors py-3 border-b"
                     >
                       About
                     </a>
-                    
-                    <div className="pt-4 border-t">
-                      <label className="text-sm font-medium mb-2 block">Language</label>
+
+                    {/* Seletor de Idioma */}
+                    <div className="pt-6 pb-4 space-y-3">
+                      <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                        Idioma / Language
+                      </label>
                       <select
                         value={locale}
                         onChange={(e) => setLocale(e.target.value as any)}
-                        className="w-full text-sm border rounded-md px-3 py-2 bg-background"
+                        className="w-full text-base border rounded-lg px-4 py-3 bg-background"
                       >
                         <option value="en">🇺🇸 English</option>
-                        <option value="pt-BR">🇧🇷 Português</option>
+                        <option value="pt-BR">🇧🇷 Português (BR)</option>
                         <option value="es">🇵🇹 Português (PT)</option>
                       </select>
                     </div>
 
-                    <div className="flex flex-col gap-3 pt-4">
-                      <Button 
-                        variant="outline" 
+                    {/* Botões de Ação */}
+                    <div className="flex flex-col gap-3 pt-6">
+                      <Button
+                        variant="outline"
+                        size="lg"
                         onClick={() => {
                           setMobileMenuOpen(false);
                           navigate("/login");
                         }}
-                        className="w-full"
+                        className="w-full justify-center"
                       >
                         Sign In
                       </Button>
-                      <Button 
+                      <Button
+                        size="lg"
                         onClick={() => {
                           setMobileMenuOpen(false);
                           navigate("/create-business");
                         }}
-                        className="w-full"
+                        className="w-full justify-center bg-gradient-to-r from-primary to-primary/80"
                       >
                         Get Started
                       </Button>
