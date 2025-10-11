@@ -71,14 +71,9 @@ export function Header({ user }: HeaderProps) {
       // Admins and owners see full business management menus
       return [
         {
-          label: "Gerenciar Negócio",
+          label: "Dashboard",
           path: "/business-management",
           icon: <LayoutDashboard className="mr-2 h-4 w-4" />,
-        },
-        {
-          label: "Horários",
-          path: "/admin/horarios",
-          icon: <Calendar className="mr-2 h-4 w-4" />,
         },
         {
           label: "Agendamentos",
@@ -86,14 +81,14 @@ export function Header({ user }: HeaderProps) {
           icon: <Calendar className="mr-2 h-4 w-4" />,
         },
         {
-          label: "Análises",
-          path: "/admin/analytics",
-          icon: <BarChart2 className="mr-2 h-4 w-4" />,
-        },
-        {
           label: "Profissionais",
           path: "/professionals",
           icon: <Users className="mr-2 h-4 w-4" />,
+        },
+        {
+          label: "Análises",
+          path: "/admin/analytics",
+          icon: <BarChart2 className="mr-2 h-4 w-4" />,
         },
         {
           label: "Agendar",
@@ -125,22 +120,22 @@ export function Header({ user }: HeaderProps) {
     }
 
     if (user.role === "simple") {
-      // Simple admin - limited features
+      // Simple booking - limited features, NO business management
       return [
         {
-          label: "Análises",
-          path: "/admin/analytics",
-          icon: <BarChart2 className="mr-2 h-4 w-4" />,
+          label: "Agendamentos",
+          path: "/simple/appointments",
+          icon: <Calendar className="mr-2 h-4 w-4" />,
         },
         {
           label: "Serviços",
-          path: "/admin/services",
+          path: "/simple/services",
           icon: <PlusCircle className="mr-2 h-4 w-4" />,
         },
         {
-          label: "Agendamentos",
-          path: "/admin/appointments",
-          icon: <Calendar className="mr-2 h-4 w-4" />,
+          label: "Feedback",
+          path: "/feedback",
+          icon: <BarChart2 className="mr-2 h-4 w-4" />,
         },
         {
           label: "Agendar",

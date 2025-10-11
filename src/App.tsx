@@ -26,6 +26,7 @@ import { PlanProvider } from "./contexts/PlanContext";
 import { RequirePlan } from "./components/RequirePlan";
 import SimpleBookingAppointmentsPage from "./pages/simple/AppointmentsPage";
 import SimpleBookingServicesPage from "./pages/simple/ServicesPage";
+import FeedbackPage from "./pages/FeedbackPage";
 
 function App() {
   return (
@@ -136,6 +137,10 @@ function App() {
             </Layout>
           }
         />
+
+        {/* Feedback Page - Available for all plans */}
+        <Route path="/feedback" element={<FeedbackPage />} />
+
         <Route
           path="/admin/promotions"
           element={

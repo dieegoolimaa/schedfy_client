@@ -27,6 +27,21 @@
   "home.create_business": "Create business",
   "home.login": "Login",
   "home.cta_book": "Book now",
-  "home.cta_business": "Create business",
-  "home.try_demo": "Try demo"
+  "home.cta_business": "Create my business",
+  "home.cta_access": "Access System",
+  "home.try_demo": "Try demo",
+  "home.tagline": "Simple scheduling for businesses",
+  "home.hero_title": "Schedfy — easier scheduling for your business",
+  "home.hero_description": "Manage services, professionals and bookings from a simple and intuitive interface. Speed up service, reduce no-shows and offer integrated payment.",
+  "home.feature1_title": "Simple Booking",
+  "home.feature1_description": "Pure appointment system - quick and direct scheduling without business complexity.",
+  "home.feature2_title": "Professional Management",
+  "home.feature2_description": "Control schedules, commissions and availability of your team.",
+  "home.feature3_title": "Customer Feedback",
+  "home.feature3_description": "Collect satisfaction surveys and improve your service quality.",
+  "home.platform_badge": "Complete Platform",
+  "home.platform_title": "Manage your business",
+  "home.platform_description": "Complete appointment system with professional management, services and analytics.",
+  "home.rights": "All rights reserved",
+  "home.language": "Language"
 }

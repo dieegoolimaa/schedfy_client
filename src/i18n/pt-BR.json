@@ -28,5 +28,20 @@
   "home.login": "Entrar",
   "home.cta_book": "Agende agora",
   "home.cta_business": "Criar meu negócio",
-  "home.try_demo": "Experimentar"
+  "home.cta_access": "Acessar Sistema",
+  "home.try_demo": "Experimentar",
+  "home.tagline": "Agendamentos simples para negócios",
+  "home.hero_title": "Schedfy — agendamentos mais fáceis para seu negócio",
+  "home.hero_description": "Gerencie serviços, profissionais e reservas a partir de uma interface simples e intuitiva. Acelere o atendimento, reduza faltas e ofereça pagamento integrado.",
+  "home.feature1_title": "Agendamento Simples",
+  "home.feature1_description": "Sistema puro de agendamento - rápido e direto sem complexidade de negócio.",
+  "home.feature2_title": "Gestão de Profissionais",
+  "home.feature2_description": "Controle agendas, comissões e disponibilidade da sua equipe.",
+  "home.feature3_title": "Feedback de Clientes",
+  "home.feature3_description": "Colete pesquisas de satisfação e melhore a qualidade do seu serviço.",
+  "home.platform_badge": "Plataforma Completa",
+  "home.platform_title": "Gerencie seu negócio",
+  "home.platform_description": "Sistema completo de agendamentos com gestão de profissionais, serviços e análises.",
+  "home.rights": "Todos os direitos reservados",
+  "home.language": "Idioma"
 }

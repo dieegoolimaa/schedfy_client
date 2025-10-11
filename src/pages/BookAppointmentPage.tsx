@@ -26,6 +26,7 @@ import { toast } from "sonner";
 import professionals from "@/mock-data/professional";
 import { useLocation } from "react-router-dom";
 import { useI18n } from "@/contexts/I18nContext";
+import { Calendar, User } from "lucide-react";
 
 // Mock data para serviços
 const services = [
@@ -78,7 +79,11 @@ const timeSlots = [
   "17:30",
 ];
 
+type BookingPreference = "by-date" | "by-professional";
+
 const BookAppointmentPage = () => {
+  const [bookingPreference, setBookingPreference] =
+    useState<BookingPreference>("by-professional");
   const [selectedService, setSelectedService] = useState<string>("");
   const [selectedProfessional, setSelectedProfessional] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -92,6 +97,7 @@ const BookAppointmentPage = () => {
   });
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [isProfessional, setIsProfessional] = useState(false);
+  const [isBusinessPlan, setIsBusinessPlan] = useState(false);
 
   const location = useLocation();
   const { t } = useI18n();
@@ -101,9 +107,11 @@ const BookAppointmentPage = () => {
     const loggedUser = localStorage.getItem("loggedInUser");
     const user = loggedUser ? JSON.parse(loggedUser) : null;
     const isProf = user?.role === "professional";
+    const isBusiness = user?.role === "owner" || user?.role === "admin";
 
     setCurrentUser(user);
     setIsProfessional(isProf);
+    setIsBusinessPlan(isBusiness);
 
     if (isProf && user) {
       const professionalData = professionals.find(
@@ -337,159 +345,330 @@ const BookAppointmentPage = () => {
           </CardContent>
         </Card>
 
-        {/* Seleção de Profissional */}
-        {selectedService && (
+        {/* Booking Preference for Business Plan */}
+        {selectedService && isBusinessPlan && (
           <Card>
             <CardHeader>
-              <CardTitle>2. Escolha o Profissional</CardTitle>
+              <CardTitle>2. Como deseja agendar?</CardTitle>
               <CardDescription>
-                Profissionais disponíveis para este serviço
+                Escolha sua preferência de agendamento
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div>
-                <Label htmlFor="professional-select">Profissional</Label>
-                <Select
-                  value={selectedProfessional}
-                  onValueChange={setSelectedProfessional}
+              <div className="grid grid-cols-2 gap-4">
+                <Button
+                  type="button"
+                  variant={
+                    bookingPreference === "by-professional"
+                      ? "default"
+                      : "outline"
+                  }
+                  className="h-auto py-6 flex flex-col items-center gap-2"
+                  onClick={() => {
+                    setBookingPreference("by-professional");
+                    setSelectedDate(undefined);
+                    setSelectedTime("");
+                  }}
                 >
-                  <SelectTrigger className="mt-2">
-                    <SelectValue placeholder="Selecione um profissional" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availableProfessionals.map((professional) => (
-                      <SelectItem
-                        key={professional.id}
-                        value={professional.id?.toString() || ""}
-                      >
-                        <div className="flex items-center gap-2 w-full">
-                          <Avatar className="w-7 h-7 flex-shrink-0">
-                            <AvatarImage
-                              src={professional.photo}
-                              alt={professional.name}
-                            />
-                            <AvatarFallback className="text-xs bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-medium">
-                              {professional.name
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")
-                                .toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex flex-col min-w-0 flex-1">
-                            <span className="font-medium text-sm truncate">
-                              {professional.name}
-                            </span>
-                            <span className="text-xs text-gray-500 truncate">
-                              {professional.specialty}
-                            </span>
-                          </div>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Seleção de Data e Horário */}
-        {selectedProfessional && (
-          <Card>
-            <CardHeader>
-              <CardTitle>3. Escolha Data e Horário</CardTitle>
-              <CardDescription>
-                Selecione quando deseja ser atendido
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Seleção de Data */}
-                <div className="space-y-3">
-                  <Label className="text-base font-medium">Data</Label>
-                  {isProfessional ? (
-                    <div className="space-y-2">
-                      {selectedDates.map((d, idx) => (
-                        <div key={idx}>
-                          <DatePicker
-                            date={d}
-                            onDateChange={(date) => {
-                              const copy = [...selectedDates];
-                              copy[idx] = date as Date;
-                              setSelectedDates(copy);
-                            }}
-                            placeholder={`Data ${idx + 1}`}
-                            className="w-full mt-2"
-                          />
-                        </div>
-                      ))}
-
-                      <div className="flex gap-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() =>
-                            setSelectedDates((s) => [...s, undefined as any])
-                          }
-                        >
-                          {t("booking.addAnotherDate")}
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          onClick={() => setSelectedDates([])}
-                        >
-                          {t("booking.clearDates")}
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      <DatePicker
-                        date={selectedDate}
-                        onDateChange={setSelectedDate}
-                        placeholder="Selecione uma data"
-                        className="w-full mt-2"
-                      />
-                      {selectedDate && (
-                        <p className="text-sm text-muted-foreground">
-                          Data selecionada:{" "}
-                          {selectedDate.toLocaleDateString("pt-BR")}
-                        </p>
-                      )}
-                    </>
-                  )}
-                </div>
-
-                {/* Horários */}
-                {selectedDate && (
-                  <div className="space-y-3">
-                    <Label className="text-base font-medium">
-                      Horário Disponível
-                    </Label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                      {timeSlots.map((time) => (
-                        <Button
-                          key={time}
-                          type="button"
-                          variant={
-                            selectedTime === time ? "default" : "outline"
-                          }
-                          size="sm"
-                          onClick={() => setSelectedTime(time)}
-                          className="text-xs h-9"
-                        >
-                          {time}
-                        </Button>
-                      ))}
+                  <User className="h-8 w-8" />
+                  <div className="text-center">
+                    <div className="font-semibold">Por Profissional</div>
+                    <div className="text-xs font-normal opacity-80 mt-1">
+                      Escolha o profissional e veja os horários disponíveis
                     </div>
                   </div>
-                )}
+                </Button>
+                <Button
+                  type="button"
+                  variant={
+                    bookingPreference === "by-date" ? "default" : "outline"
+                  }
+                  className="h-auto py-6 flex flex-col items-center gap-2"
+                  onClick={() => {
+                    setBookingPreference("by-date");
+                    setSelectedProfessional("");
+                  }}
+                >
+                  <Calendar className="h-8 w-8" />
+                  <div className="text-center">
+                    <div className="font-semibold">Por Data e Hora</div>
+                    <div className="text-xs font-normal opacity-80 mt-1">
+                      Escolha data/hora e veja os profissionais disponíveis
+                    </div>
+                  </div>
+                </Button>
               </div>
             </CardContent>
           </Card>
         )}
+
+        {/* Seleção de Profissional - Shown when by-professional or simple/individual plan */}
+        {selectedService &&
+          (bookingPreference === "by-professional" || !isBusinessPlan) && (
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  {isBusinessPlan ? "3" : "2"}. Escolha o Profissional
+                </CardTitle>
+                <CardDescription>
+                  Profissionais disponíveis para este serviço
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div>
+                  <Label htmlFor="professional-select">Profissional</Label>
+                  <Select
+                    value={selectedProfessional}
+                    onValueChange={setSelectedProfessional}
+                  >
+                    <SelectTrigger className="mt-2">
+                      <SelectValue placeholder="Selecione um profissional" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableProfessionals.map((professional) => (
+                        <SelectItem
+                          key={professional.id}
+                          value={professional.id?.toString() || ""}
+                        >
+                          <div className="flex items-center gap-2 w-full">
+                            <Avatar className="w-7 h-7 flex-shrink-0">
+                              <AvatarImage
+                                src={professional.photo}
+                                alt={professional.name}
+                              />
+                              <AvatarFallback className="text-xs bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-medium">
+                                {professional.name
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .join("")
+                                  .toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex flex-col min-w-0 flex-1">
+                              <span className="font-medium text-sm truncate">
+                                {professional.name}
+                              </span>
+                              <span className="text-xs text-gray-500 truncate">
+                                {professional.specialty}
+                              </span>
+                            </div>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+        {/* Date and Time Selection - for by-date booking preference */}
+        {selectedService &&
+          isBusinessPlan &&
+          bookingPreference === "by-date" && (
+            <Card>
+              <CardHeader>
+                <CardTitle>3. Escolha Data e Horário</CardTitle>
+                <CardDescription>
+                  Selecione quando deseja ser atendido
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="space-y-3">
+                    <Label className="text-base font-medium">Data</Label>
+                    <DatePicker
+                      date={selectedDate}
+                      onDateChange={setSelectedDate}
+                      placeholder="Selecione uma data"
+                      className="w-full"
+                    />
+                  </div>
+                  {selectedDate && (
+                    <div className="space-y-3">
+                      <Label className="text-base font-medium">Horário</Label>
+                      <div className="grid grid-cols-3 gap-2 max-h-64 overflow-y-auto p-2 border rounded-md">
+                        {timeSlots.map((time) => (
+                          <Button
+                            key={time}
+                            type="button"
+                            variant={
+                              selectedTime === time ? "default" : "outline"
+                            }
+                            size="sm"
+                            onClick={() => setSelectedTime(time)}
+                            className="text-xs"
+                          >
+                            {time}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+        {/* Show available professionals after date/time selection */}
+        {isBusinessPlan &&
+          bookingPreference === "by-date" &&
+          selectedDate &&
+          selectedTime && (
+            <Card>
+              <CardHeader>
+                <CardTitle>4. Profissionais Disponíveis</CardTitle>
+                <CardDescription>
+                  Profissionais que podem atender na data e horário selecionados
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div>
+                  <Label htmlFor="professional-select">Profissional</Label>
+                  <Select
+                    value={selectedProfessional}
+                    onValueChange={setSelectedProfessional}
+                  >
+                    <SelectTrigger className="mt-2">
+                      <SelectValue placeholder="Selecione um profissional disponível" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableProfessionals.map((professional) => (
+                        <SelectItem
+                          key={professional.id}
+                          value={professional.id?.toString() || ""}
+                        >
+                          <div className="flex items-center gap-2 w-full">
+                            <Avatar className="w-7 h-7 flex-shrink-0">
+                              <AvatarImage
+                                src={professional.photo}
+                                alt={professional.name}
+                              />
+                              <AvatarFallback className="text-xs bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-medium">
+                                {professional.name
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .join("")
+                                  .toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex flex-col min-w-0 flex-1">
+                              <span className="font-medium text-sm truncate">
+                                {professional.name}
+                              </span>
+                              <span className="text-xs text-gray-500 truncate">
+                                {professional.specialty}
+                              </span>
+                            </div>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+        {/* Seleção de Data e Horário - for by-professional booking */}
+        {selectedProfessional &&
+          (bookingPreference === "by-professional" || !isBusinessPlan) && (
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  {isBusinessPlan ? "4" : "3"}. Escolha Data e Horário
+                </CardTitle>
+                <CardDescription>
+                  Selecione quando deseja ser atendido
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Seleção de Data */}
+                  <div className="space-y-3">
+                    <Label className="text-base font-medium">Data</Label>
+                    {isProfessional ? (
+                      <div className="space-y-2">
+                        {selectedDates.map((d, idx) => (
+                          <div key={idx}>
+                            <DatePicker
+                              date={d}
+                              onDateChange={(date) => {
+                                const copy = [...selectedDates];
+                                copy[idx] = date as Date;
+                                setSelectedDates(copy);
+                              }}
+                              placeholder={`Data ${idx + 1}`}
+                              className="w-full mt-2"
+                            />
+                          </div>
+                        ))}
+
+                        <div className="flex gap-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() =>
+                              setSelectedDates((s) => [...s, undefined as any])
+                            }
+                          >
+                            {t("booking.addAnotherDate")}
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={() => setSelectedDates([])}
+                          >
+                            {t("booking.clearDates")}
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <DatePicker
+                          date={selectedDate}
+                          onDateChange={setSelectedDate}
+                          placeholder="Selecione uma data"
+                          className="w-full mt-2"
+                        />
+                        {selectedDate && (
+                          <p className="text-sm text-muted-foreground">
+                            Data selecionada:{" "}
+                            {selectedDate.toLocaleDateString("pt-BR")}
+                          </p>
+                        )}
+                      </>
+                    )}
+                  </div>
+
+                  {/* Horários */}
+                  {selectedDate && (
+                    <div className="space-y-3">
+                      <Label className="text-base font-medium">
+                        Horário Disponível
+                      </Label>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        {timeSlots.map((time) => (
+                          <Button
+                            key={time}
+                            type="button"
+                            variant={
+                              selectedTime === time ? "default" : "outline"
+                            }
+                            size="sm"
+                            onClick={() => setSelectedTime(time)}
+                            className="text-xs h-9"
+                          >
+                            {time}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
         {/* Informações do Cliente */}
         {selectedTime && (
@@ -497,7 +676,11 @@ const BookAppointmentPage = () => {
             <CardHeader>
               <CardTitle>
                 {isProfessional
-                  ? "4. Informações do Cliente"
+                  ? isBusinessPlan
+                    ? "5. Informações do Cliente"
+                    : "4. Informações do Cliente"
+                  : isBusinessPlan
+                  ? "5. Suas Informações"
                   : "4. Suas Informações"}
               </CardTitle>
               <CardDescription>
@@ -663,7 +846,9 @@ const BookAppointmentPage = () => {
           customerData.phone && (
             <Card>
               <CardHeader>
-                <CardTitle>5. Resumo do Agendamento</CardTitle>
+                <CardTitle>
+                  {isBusinessPlan ? "6" : "5"}. Resumo do Agendamento
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">

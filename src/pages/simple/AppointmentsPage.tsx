@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import { Layout } from "@/components/Layout";
-import { Calendar, Clock, User, CheckCircle, XCircle } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  User,
+  CheckCircle,
+  XCircle,
+  Play,
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -11,6 +18,12 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Appointment } from "@/interfaces/appointment.interface";
+import {
+  ConfirmCancelDialog,
+  ConfirmStartDialog,
+  ConfirmCompleteDialog,
+} from "@/components/dialogs/ConfirmDialogs";
+import { toast } from "sonner";
 
 /**
  * Simple Booking Appointments Page
@@ -22,6 +35,12 @@ const SimpleBookingAppointmentsPage = () => {
   const [filter, setFilter] = useState<
     "all" | "scheduled" | "confirmed" | "completed" | "canceled"
   >("all");
+
+  // Confirmation dialogs state
+  const [confirmDialog, setConfirmDialog] = useState<{
+    type: "cancel" | "start" | "complete" | null;
+    appointment: Appointment | null;
+  }>({ type: null, appointment: null });
 
   useEffect(() => {
     loadAppointments();
@@ -43,6 +62,28 @@ const SimpleBookingAppointmentsPage = () => {
     );
     setAppointments(updated);
     localStorage.setItem("mock_appointments", JSON.stringify(updated));
+
+    // Close dialog and show success message
+    setConfirmDialog({ type: null, appointment: null });
+
+    const statusMessages = {
+      confirmed: "Agendamento confirmado com sucesso!",
+      in_progress: "Atendimento iniciado!",
+      completed: "Atendimento concluído com sucesso!",
+      canceled: "Agendamento cancelado.",
+    };
+
+    toast.success(
+      statusMessages[newStatus as keyof typeof statusMessages] ||
+        "Status atualizado!"
+    );
+  };
+
+  const openConfirmDialog = (
+    type: "cancel" | "start" | "complete",
+    appointment: Appointment
+  ) => {
+    setConfirmDialog({ type, appointment });
   };
 
   const filteredAppointments =
@@ -234,7 +275,7 @@ const SimpleBookingAppointmentsPage = () => {
                             size="sm"
                             variant="outline"
                             onClick={() =>
-                              handleStatusChange(appointment.id!, "canceled")
+                              openConfirmDialog("cancel", appointment)
                             }
                           >
                             <XCircle className="h-4 w-4 mr-2" />
@@ -243,14 +284,37 @@ const SimpleBookingAppointmentsPage = () => {
                         </>
                       )}
                       {appointment.status === "confirmed" && (
+                        <>
+                          <Button
+                            size="sm"
+                            onClick={() =>
+                              openConfirmDialog("start", appointment)
+                            }
+                          >
+                            <Play className="h-4 w-4 mr-2" />
+                            Iniciar Atendimento
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() =>
+                              openConfirmDialog("cancel", appointment)
+                            }
+                          >
+                            <XCircle className="h-4 w-4 mr-2" />
+                            Cancelar
+                          </Button>
+                        </>
+                      )}
+                      {appointment.status === "in_progress" && (
                         <Button
                           size="sm"
                           onClick={() =>
-                            handleStatusChange(appointment.id!, "completed")
+                            openConfirmDialog("complete", appointment)
                           }
                         >
                           <CheckCircle className="h-4 w-4 mr-2" />
-                          Marcar como Concluído
+                          Concluir Atendimento
                         </Button>
                       )}
                     </div>
@@ -259,6 +323,48 @@ const SimpleBookingAppointmentsPage = () => {
               </Card>
             ))}
           </div>
+        )}
+
+        {/* Confirmation Dialogs */}
+        {confirmDialog.appointment && (
+          <>
+            <ConfirmCancelDialog
+              open={confirmDialog.type === "cancel"}
+              onClose={() =>
+                setConfirmDialog({ type: null, appointment: null })
+              }
+              onConfirm={() =>
+                handleStatusChange(confirmDialog.appointment!.id!, "canceled")
+              }
+              appointmentId={confirmDialog.appointment.id!}
+              customerName={confirmDialog.appointment.customer}
+            />
+
+            <ConfirmStartDialog
+              open={confirmDialog.type === "start"}
+              onClose={() =>
+                setConfirmDialog({ type: null, appointment: null })
+              }
+              onConfirm={() =>
+                handleStatusChange(
+                  confirmDialog.appointment!.id!,
+                  "in_progress"
+                )
+              }
+              customerName={confirmDialog.appointment.customer}
+            />
+
+            <ConfirmCompleteDialog
+              open={confirmDialog.type === "complete"}
+              onClose={() =>
+                setConfirmDialog({ type: null, appointment: null })
+              }
+              onConfirm={() =>
+                handleStatusChange(confirmDialog.appointment!.id!, "completed")
+              }
+              customerName={confirmDialog.appointment.customer}
+            />
+          </>
         )}
       </div>
     </Layout>
