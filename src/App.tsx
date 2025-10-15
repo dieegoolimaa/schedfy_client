@@ -36,6 +36,8 @@ import SchedfyAdminDashboard from "./pages/schedfy-admin/DashboardPage";
 import SchedfyCompaniesPage from "./pages/schedfy-admin/CompaniesPage";
 import SchedfyPlansPage from "./pages/schedfy-admin/PlansPage";
 import SchedfyLogsPage from "./pages/schedfy-admin/LogsPage";
+import UploadDemoPage from "./pages/UploadDemoPage";
+import NotificationDemoPage from "./pages/NotificationDemoPage";
 
 function App() {
   return (
@@ -261,6 +263,25 @@ function App() {
           element={
             <Layout>
               <OnGoingServicesPage />
+            </Layout>
+          }
+        />
+
+        {/* Páginas de Demonstração - Integração Backend */}
+        <Route
+          path="/demo/upload"
+          element={
+            <Layout>
+              <UploadDemoPage />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/demo/notifications"
+          element={
+            <Layout>
+              <NotificationDemoPage />
             </Layout>
           }
         />
