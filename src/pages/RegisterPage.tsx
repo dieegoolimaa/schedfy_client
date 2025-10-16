@@ -14,6 +14,8 @@ import { Button } from "../components/ui/button";
 import { Label } from "../components/ui/label";
 import { Loader2, Eye, EyeOff, User, Mail, Phone } from "lucide-react";
 import { toast } from "sonner";
+import { useCountryLocalization } from "../hooks/useCountryLocalization";
+import { PhoneInput } from "../components/ui/phone-input";
 
 interface RegisterFormData {
   firstName: string;
@@ -27,6 +29,12 @@ interface RegisterFormData {
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const { register, loading, error } = useAuth();
+  const { 
+    formatPhoneNumber, 
+    validatePhoneNumber, 
+    localization,
+    getCountryFlag 
+  } = useCountryLocalization();
 
   const [formData, setFormData] = useState<RegisterFormData>({
     firstName: "",
@@ -40,35 +48,67 @@ const RegisterPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof RegisterFormData, string>>>({});
 
   const handleInputChange = (field: keyof RegisterFormData, value: string) => {
+    // Apply mask for phone field
+    const processedValue = field === "phone" ? formatPhoneNumber(value) : value;
+    
     setFormData((prev) => ({
       ...prev,
-      [field]: value,
+      [field]: processedValue,
     }));
     setLocalError(null);
+    
+    // Clear field-specific error
+    setFieldErrors(prev => ({ ...prev, [field]: undefined }));
   };
 
   const validateForm = (): string | null => {
     const { firstName, lastName, email, phone, password, confirmPassword } =
       formData;
 
-    if (!firstName.trim()) return "Nome é obrigatório";
-    if (!lastName.trim()) return "Sobrenome é obrigatório";
-    if (!email.trim()) return "Email é obrigatório";
-    if (!email.includes("@")) return "Por favor, insira um email válido";
-    if (!phone.trim()) return "Telefone é obrigatório";
-    if (password.length < 8) return "Senha deve ter pelo menos 8 caracteres";
-    if (
+    const errors: Partial<Record<keyof RegisterFormData, string>> = {};
+
+    if (!firstName.trim()) {
+      errors.firstName = "Nome é obrigatório";
+    }
+    
+    if (!lastName.trim()) {
+      errors.lastName = "Sobrenome é obrigatório";
+    }
+    
+    if (!email.trim()) {
+      errors.email = "Email é obrigatório";
+    } else if (!email.includes("@")) {
+      errors.email = "Por favor, insira um email válido";
+    }
+    
+    if (!phone.trim()) {
+      errors.phone = "Telefone é obrigatório";
+    } else if (!validatePhoneNumber(phone)) {
+      errors.phone = `Telefone inválido. Use o formato: ${localization.phoneFormat}`;
+    }
+    
+    if (password.length < 8) {
+      errors.password = "Senha deve ter pelo menos 8 caracteres";
+    } else if (
       !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/.test(
         password
       )
     ) {
-      return "Senha deve conter ao menos: 1 letra minúscula, 1 maiúscula, 1 número e 1 caractere especial";
+      errors.password = "Senha deve conter ao menos: 1 letra minúscula, 1 maiúscula, 1 número e 1 caractere especial";
     }
-    if (password !== confirmPassword) return "Senhas não coincidem";
+    
+    if (password !== confirmPassword) {
+      errors.confirmPassword = "Senhas não coincidem";
+    }
 
-    return null;
+    setFieldErrors(errors);
+
+    // Return first error message
+    const errorMessages = Object.values(errors);
+    return errorMessages.length > 0 ? errorMessages[0] : null;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -82,10 +122,15 @@ const RegisterPage: React.FC = () => {
     }
 
     try {
+      // Get country code based on localization
+      const countryCode = localization.country === "BR" ? "+55" : 
+                         localization.country === "PT" ? "+351" : 
+                         "+1";
+      
       const userData = {
         name: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
         email: formData.email.trim().toLowerCase(),
-        phone: `+55${formData.phone.replace(/[^\d]/g, "")}`, // Formato internacional brasileiro
+        phone: `${countryCode}${formData.phone.replace(/[^\d]/g, "")}`, // Formato internacional dinâmico
         password: formData.password,
         role: "customer" as const,
       };
@@ -102,17 +147,17 @@ const RegisterPage: React.FC = () => {
   const displayError = localError || error;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">
             Crie sua conta
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="mt-2 text-center text-sm text-muted-foreground">
             Já tem uma conta?{" "}
             <Link
               to="/login"
-              className="font-medium text-indigo-600 hover:text-indigo-500"
+              className="font-medium text-primary hover:text-primary/80"
             >
               Faça login
             </Link>
@@ -138,6 +183,20 @@ const RegisterPage: React.FC = () => {
                 </div>
               )}
 
+              {/* Country Selector */}
+              <div className="bg-muted/50 rounded-lg p-3 mb-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">País selecionado:</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl">{getCountryFlag()}</span>
+                    <span className="text-sm font-medium">{localization.country === "BR" ? "Brasil" : localization.country === "PT" ? "Portugal" : "Internacional"}</span>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Para alterar o país, volte à seleção inicial ou acesse as configurações.
+                </p>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="firstName">Nome</Label>
@@ -151,7 +210,11 @@ const RegisterPage: React.FC = () => {
                     }
                     disabled={loading}
                     required
+                    className={fieldErrors.firstName ? "border-destructive" : ""}
                   />
+                  {fieldErrors.firstName && (
+                    <p className="text-xs text-destructive">{fieldErrors.firstName}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="lastName">Sobrenome</Label>
@@ -165,7 +228,11 @@ const RegisterPage: React.FC = () => {
                     }
                     disabled={loading}
                     required
+                    className={fieldErrors.lastName ? "border-destructive" : ""}
                   />
+                  {fieldErrors.lastName && (
+                    <p className="text-xs text-destructive">{fieldErrors.lastName}</p>
+                  )}
                 </div>
               </div>
 
@@ -179,28 +246,35 @@ const RegisterPage: React.FC = () => {
                     placeholder="seu@email.com"
                     value={formData.email}
                     onChange={(e) => handleInputChange("email", e.target.value)}
-                    className="pl-10"
+                    className={`pl-10 ${fieldErrors.email ? "border-destructive" : ""}`}
                     disabled={loading}
                     required
                   />
                 </div>
+                {fieldErrors.email && (
+                  <p className="text-xs text-destructive">{fieldErrors.email}</p>
+                )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Telefone</Label>
+                <Label htmlFor="phone">
+                  Telefone {getCountryFlag()}
+                </Label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
+                  <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground z-10" />
+                  <PhoneInput
                     id="phone"
-                    type="tel"
-                    placeholder="(11) 99999-9999"
                     value={formData.phone}
-                    onChange={(e) => handleInputChange("phone", e.target.value)}
+                    onChange={(value) => handleInputChange("phone", value)}
                     className="pl-10"
                     disabled={loading}
                     required
+                    error={fieldErrors.phone}
                   />
                 </div>
+                {fieldErrors.phone && (
+                  <p className="text-xs text-destructive mt-1">{fieldErrors.phone}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -217,6 +291,7 @@ const RegisterPage: React.FC = () => {
                     disabled={loading}
                     required
                     minLength={8}
+                    className={fieldErrors.password ? "border-destructive" : ""}
                   />
                   <button
                     type="button"
@@ -230,6 +305,9 @@ const RegisterPage: React.FC = () => {
                     )}
                   </button>
                 </div>
+                {fieldErrors.password && (
+                  <p className="text-xs text-destructive">{fieldErrors.password}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -245,6 +323,7 @@ const RegisterPage: React.FC = () => {
                     }
                     disabled={loading}
                     required
+                    className={fieldErrors.confirmPassword ? "border-destructive" : ""}
                   />
                   <button
                     type="button"
@@ -258,6 +337,9 @@ const RegisterPage: React.FC = () => {
                     )}
                   </button>
                 </div>
+                {fieldErrors.confirmPassword && (
+                  <p className="text-xs text-destructive">{fieldErrors.confirmPassword}</p>
+                )}
               </div>
             </CardContent>
 
