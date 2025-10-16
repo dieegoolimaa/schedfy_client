@@ -2,24 +2,24 @@ import React from "react";
 import { Input } from "./input";
 import { useCountryLocalization } from "@/hooks/useCountryLocalization";
 
-interface PhoneInputProps
+interface PostalCodeInputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange"> {
   value: string;
   onChange: (value: string) => void;
   error?: string;
 }
 
-export const PhoneInput: React.FC<PhoneInputProps> = ({
+export const PostalCodeInput: React.FC<PostalCodeInputProps> = ({
   value,
   onChange,
   error,
   ...props
 }) => {
-  const { formatPhoneNumber, localization } = useCountryLocalization();
+  const { formatPostalCode, getPostalCodePlaceholder } = useCountryLocalization();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
-    const formattedValue = formatPhoneNumber(rawValue);
+    const formattedValue = formatPostalCode(rawValue);
     onChange(formattedValue);
   };
 
@@ -27,10 +27,10 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
     <div className="relative">
       <Input
         {...props}
-        type="tel"
+        type="text"
         value={value}
         onChange={handleChange}
-        placeholder={localization.phonePlaceholder}
+        placeholder={getPostalCodePlaceholder()}
         className={error ? "border-destructive" : ""}
       />
       {error && <p className="text-xs text-destructive mt-1">{error}</p>}
