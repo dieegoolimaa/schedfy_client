@@ -8,12 +8,12 @@ export interface LoginDto {
 }
 
 export interface RegisterDto {
+    name: string;
     email: string;
     password: string;
-    firstName: string;
-    lastName: string;
-    phone?: string;
+    phone: string;
     role?: 'customer' | 'professional' | 'business_owner' | 'admin';
+    planType?: string;
 }
 
 export interface User {
@@ -26,6 +26,7 @@ export interface User {
     isActive: boolean;
     isEmailVerified: boolean;
     avatar?: string;
+    planType?: 'business' | 'individual' | 'simple_booking';
 
     // Profile específico por role
     professionalProfile?: {
@@ -236,6 +237,11 @@ class AuthService {
 
         // Dispara evento de logout
         window.dispatchEvent(new CustomEvent('userLoggedOut'));
+    }
+
+    // Alias público para clearAuthData
+    clearTokens(): void {
+        this.clearAuthData();
     }
 
     // Utilities

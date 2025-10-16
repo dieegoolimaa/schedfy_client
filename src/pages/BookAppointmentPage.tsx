@@ -26,6 +26,10 @@ import { toast } from "sonner";
 import professionals from "@/mock-data/professional";
 import { useLocation } from "react-router-dom";
 import { useI18n } from "@/contexts/I18nContext";
+import {
+  useDynamicI18n,
+  useAppointmentTranslations,
+} from "@/hooks/useDynamicI18n";
 import { useAuth } from "@/contexts/AuthContext";
 import { Calendar, User, Share2 } from "lucide-react";
 import {
@@ -111,6 +115,10 @@ const BookAppointmentPage = () => {
   const { t } = useI18n();
   const { user } = useAuth();
 
+  // Sistema de localização dinâmica
+  const { formatCurrency } = useDynamicI18n();
+  const appointmentTranslations = useAppointmentTranslations();
+
   // Determine if user can select professional
   // Only Business plan can choose professionals
   const canSelectProfessional = userPlanType === "business";
@@ -180,12 +188,7 @@ const BookAppointmentPage = () => {
     (p) => p.id?.toString() === selectedProfessional
   );
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(value);
-  };
+  // formatCurrency removido - usando o do sistema de localização
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -198,12 +201,12 @@ const BookAppointmentPage = () => {
 
     // Professional is required only for Business plan
     if (canSelectProfessional && !selectedProfessional) {
-      toast.error("Por favor, selecione um profissional");
+      toast.error(appointmentTranslations.selectProfessional);
       return;
     }
 
     if (!customerData.name || !customerData.email || !customerData.phone) {
-      toast.error("Por favor, preencha suas informações de contato");
+      toast.error("Por favor, preencha suas informações de contato"); // TODO: adicionar ao sistema de tradução
       return;
     }
 

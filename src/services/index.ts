@@ -13,6 +13,7 @@ export { feedbackService } from './feedbackService';
 export { uploadService } from './uploadService';
 export { notificationService } from './notificationService';
 export { analyticsService } from './analyticsService';
+export { localizationService } from './localizationService';
 
 // Type exports (with explicit naming to avoid conflicts)
 export type { User as AuthUser } from './authService';

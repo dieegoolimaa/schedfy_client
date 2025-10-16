@@ -11,7 +11,6 @@ import {
   Users,
   TrendingUp,
   Check,
-  Globe,
   Smartphone,
   CreditCard,
   Clock,
@@ -156,7 +155,7 @@ const HomePage = () => {
               <Button variant="ghost" onClick={() => navigate("/login")}>
                 Sign In
               </Button>
-              <Button onClick={() => navigate("/create-business")}>
+              <Button onClick={() => navigate("/onboarding/country-selection")}>
                 Get Started
               </Button>
             </div>
@@ -239,7 +238,7 @@ const HomePage = () => {
                         size="lg"
                         onClick={() => {
                           setMobileMenuOpen(false);
-                          navigate("/create-business");
+                          navigate("/onboarding/country-selection");
                         }}
                         className="w-full justify-center bg-gradient-to-r from-primary to-primary/80"
                       >
@@ -280,27 +279,15 @@ const HomePage = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button
                 size="lg"
-                onClick={() => navigate("/create-business")}
+                onClick={() => navigate("/onboarding/country-selection")}
                 className="text-lg px-8 py-6 bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all"
               >
-                Start Free Trial
+                Get Started
                 <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => navigate("/book-appointment")}
-                className="text-lg px-8 py-6"
-              >
-                Book a Demo
               </Button>
             </div>
 
             <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground pt-4">
-              <div className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-primary" />
-                No credit card required
-              </div>
               <div className="flex items-center gap-2">
                 <Check className="h-4 w-4 text-primary" />
                 14-day free trial
@@ -318,10 +305,6 @@ const HomePage = () => {
       <section id="features" className="py-20 px-4 bg-muted/30">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16 space-y-4">
-            <Badge variant="secondary" className="mx-auto">
-              <Globe className="w-3 h-3 mr-1" />
-              Available Worldwide
-            </Badge>
             <h2 className="text-4xl md:text-5xl font-bold">
               Everything you need to{" "}
               <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
@@ -470,7 +453,7 @@ const HomePage = () => {
                       }`}
                       variant={plan.recommended ? "default" : "outline"}
                       size="lg"
-                      onClick={() => navigate("/create-business")}
+                      onClick={() => navigate("/onboarding/country-selection")}
                     >
                       Get Started
                       <ArrowRight className="ml-2 h-4 w-4" />
@@ -503,12 +486,73 @@ const HomePage = () => {
           </p>
           <Button
             size="lg"
-            onClick={() => navigate("/create-business")}
+            onClick={() => navigate("/onboarding/country-selection")}
             className="text-lg px-12 py-6 bg-gradient-to-r from-primary to-primary/80 hover:shadow-xl hover:shadow-primary/30 transition-all"
           >
             Start Your Free Trial
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section id="about" className="py-20 px-4 bg-muted/30">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-12 space-y-4">
+            <h2 className="text-4xl md:text-5xl font-bold">
+              About{" "}
+              <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                Schedfy
+              </span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+              Schedfy foi criado com um objetivo simples: tornar o agendamento
+              de compromissos algo fácil e eficiente. Nossa plataforma oferece
+              simplicidade na criação de agendamentos e facilidade no
+              gerenciamento dos seus compromissos de negócio.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 mt-12">
+            <Card className="text-center p-6">
+              <CardContent className="space-y-4 pt-4">
+                <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+                  <Calendar className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold">Agendamento Simplificado</h3>
+                <p className="text-muted-foreground">
+                  Crie e gerencie agendamentos em poucos cliques, sem
+                  complicação
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center p-6">
+              <CardContent className="space-y-4 pt-4">
+                <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+                  <Settings className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold">Gestão Facilitada</h3>
+                <p className="text-muted-foreground">
+                  Ferramentas intuitivas para gerenciar todos os aspectos do seu
+                  negócio
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center p-6">
+              <CardContent className="space-y-4 pt-4">
+                <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+                  <TrendingUp className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold">Crescimento do Negócio</h3>
+                <p className="text-muted-foreground">
+                  Recursos poderosos que ajudam seu negócio a crescer e
+                  prosperar
+                </p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </section>
 

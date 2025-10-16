@@ -1,5 +1,6 @@
 import { apiUtils } from './api';
 import type { ApiResponse, PaginatedResponse } from './api';
+import { localizationService } from './localizationService';
 
 // Interfaces para Payments
 export interface CreatePaymentDto {
@@ -506,6 +507,221 @@ class PaymentService {
             if (maxAmount !== undefined && payment.amount > maxAmount) return false;
             return true;
         });
+    }
+
+    // === MÉTODOS DE LOCALIZAÇÃO PARA PAGAMENTOS ===
+
+    async getLocalizedPaymentMethods(): Promise<any[]> {
+        try {
+            const methods = await localizationService.getAvailablePaymentMethods();
+            return methods.map(method => ({
+                ...method,
+                icon: localizationService.getPaymentMethodIcon(method.id),
+                color: localizationService.getPaymentMethodColor(method.id)
+            }));
+        } catch (error) {
+            console.error('Erro ao obter métodos de pagamento localizados:', error);
+            return [];
+        }
+    }
+
+    async calculateLocalizedFees(amount: number, paymentMethodId: string): Promise<any> {
+        try {
+            return await localizationService.calculatePaymentFee(amount, paymentMethodId);
+        } catch (error) {
+            console.error('Erro ao calcular taxas:', error);
+            return { feeAmount: 0, totalAmount: amount };
+        }
+    }
+
+    async formatLocalizedAmount(amount: number): Promise<string> {
+        try {
+            return await localizationService.formatCurrency(amount);
+        } catch (error) {
+            console.error('Erro ao formatar valor:', error);
+            return `${amount}`;
+        }
+    }
+
+    async createLocalizedPaymentSummary(amount: number, paymentMethodId: string): Promise<any> {
+        try {
+            return await localizationService.formatPaymentSummary(amount, paymentMethodId);
+        } catch (error) {
+            console.error('Erro ao criar resumo de pagamento:', error);
+            return null;
+        }
+    }
+
+    // Método específico para PIX (Brasil)
+    async createPixPayment(data: CreatePaymentDto & { pixKey?: string }): Promise<Payment> {
+        if (localizationService.getCurrentLocale() !== 'pt-BR') {
+            throw new Error('PIX só está disponível no Brasil');
+        }
+
+        const pixPaymentData = {
+            ...data,
+            method: 'pix' as const,
+            pixExpirationTime: data.pixExpirationTime || 30, // 30 minutos padrão
+            metadata: {
+                pixKey: data.pixKey,
+                qrCodeGenerated: false,
+                locale: 'pt-BR'
+            }
+        };
+
+        return this.createPayment(pixPaymentData);
+    }
+
+    // Método específico para MB WAY (Portugal)
+    async createMBWayPayment(data: CreatePaymentDto & { phoneNumber?: string }): Promise<Payment> {
+        if (localizationService.getCurrentLocale() !== 'pt-PT') {
+            throw new Error('MB WAY só está disponível em Portugal');
+        }
+
+        const mbwayPaymentData = {
+            ...data,
+            method: 'mb_way' as any,
+            metadata: {
+                phoneNumber: data.phoneNumber,
+                locale: 'pt-PT'
+            }
+        };
+
+        return this.createPayment(mbwayPaymentData);
+    }
+
+    // Método específico para Multibanco (Portugal)
+    async createMultibancoPayment(data: CreatePaymentDto): Promise<Payment & { reference?: string }> {
+        if (localizationService.getCurrentLocale() !== 'pt-PT') {
+            throw new Error('Multibanco só está disponível em Portugal');
+        }
+
+        const multibancoPaymentData = {
+            ...data,
+            method: 'multibanco' as any,
+            metadata: {
+                locale: 'pt-PT'
+            }
+        };
+
+        const payment = await this.createPayment(multibancoPaymentData);
+
+        // TODO: Gerar referência Multibanco
+        const reference = this.generateMultibancoReference(payment.amount);
+
+        return {
+            ...payment,
+            reference
+        };
+    }
+
+    private generateMultibancoReference(amount: number): string {
+        // TODO: Implementar geração real de referência Multibanco
+        // Por enquanto, gerar uma referência fictícia
+        const entity = '12345'; // Entidade fictícia
+        const reference = Math.floor(Math.random() * 999999999).toString().padStart(9, '0');
+
+        return `${entity} ${reference} ${amount.toFixed(2).replace('.', '')}`;
+    }
+
+    // Método para validar métodos de pagamento por localização
+    validatePaymentMethodForLocale(methodId: string): boolean {
+        const locale = localizationService.getCurrentLocale();
+
+        const localeSpecificMethods = {
+            'pt-PT': ['mb_way', 'multibanco', 'credit_card', 'debit_card', 'bank_transfer', 'cash'],
+            'pt-BR': ['pix', 'credit_card', 'debit_card', 'boleto', 'bank_transfer', 'cash']
+        };
+
+        const allowedMethods = localeSpecificMethods[locale as keyof typeof localeSpecificMethods] || [];
+        return allowedMethods.includes(methodId);
+    }
+
+    // Obter métodos preferidos por país
+    getPreferredPaymentMethods(): string[] {
+        const locale = localizationService.getCurrentLocale();
+
+        if (locale === 'pt-PT') {
+            return ['mb_way', 'multibanco', 'credit_card'];
+        }
+
+        return ['pix', 'credit_card', 'boleto'];
+    }
+
+    // Obter métodos instantâneos
+    getInstantPaymentMethods(): string[] {
+        const locale = localizationService.getCurrentLocale();
+
+        if (locale === 'pt-PT') {
+            return ['mb_way', 'multibanco', 'credit_card', 'debit_card'];
+        }
+
+        return ['pix', 'credit_card', 'debit_card'];
+    }
+
+    // Obter métodos sem taxa
+    getFreePaymentMethods(): string[] {
+        const locale = localizationService.getCurrentLocale();
+
+        if (locale === 'pt-PT') {
+            return ['cash', 'bank_transfer'];
+        }
+
+        return ['pix', 'cash', 'bank_transfer'];
+    }
+
+    // Formatadores localizados para status
+    getLocalizedPaymentStatus(status: string): string {
+        const locale = localizationService.getCurrentLocale();
+
+        const statusLabels = {
+            'pt-PT': {
+                pending: 'Pendente',
+                processing: 'A processar',
+                completed: 'Completo',
+                failed: 'Falhado',
+                canceled: 'Cancelado',
+                refunded: 'Reembolsado'
+            },
+            'pt-BR': {
+                pending: 'Pendente',
+                processing: 'Processando',
+                completed: 'Concluído',
+                failed: 'Falhou',
+                canceled: 'Cancelado',
+                refunded: 'Estornado'
+            }
+        };
+
+        const labels = statusLabels[locale as keyof typeof statusLabels] || statusLabels['pt-BR'];
+        return labels[status as keyof typeof labels] || status;
+    }
+
+    // Formatadores localizados para métodos
+    getLocalizedPaymentMethodName(methodId: string): string {
+        const locale = localizationService.getCurrentLocale();
+
+        const methodNames = {
+            'pt-PT': {
+                mb_way: 'MB WAY',
+                multibanco: 'Multibanco',
+                credit_card: 'Cartão de Crédito',
+                debit_card: 'Cartão de Débito',
+                bank_transfer: 'Transferência Bancária',
+                cash: 'Numerário'
+            },
+            'pt-BR': {
+                pix: 'PIX',
+                boleto: 'Boleto Bancário',
+                credit_card: 'Cartão de Crédito',
+                debit_card: 'Cartão de Débito',
+                bank_transfer: 'Transferência Bancária',
+                cash: 'Dinheiro'
+            }
+        };
+
+        const names = methodNames[locale as keyof typeof methodNames] || methodNames['pt-BR'];
+        return names[methodId as keyof typeof names] || methodId;
     }
 }
 

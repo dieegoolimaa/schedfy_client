@@ -1,6 +1,8 @@
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import RegisterBusinessPage from "./pages/RegisterBusinessPage";
 import Appointments from "./pages/Appointments";
 import { Toaster } from "@/components/ui/sonner";
 import ProfessionalsPage from "./pages/ProfessionalPage";
@@ -38,6 +40,9 @@ import SchedfyPlansPage from "./pages/schedfy-admin/PlansPage";
 import SchedfyLogsPage from "./pages/schedfy-admin/LogsPage";
 import UploadDemoPage from "./pages/UploadDemoPage";
 import NotificationDemoPage from "./pages/NotificationDemoPage";
+import PlanSelectionPage from "./pages/PlanSelectionPage";
+import CountrySelectionPage from "./pages/CountrySelectionPage";
+import OnboardingRegisterUserPage from "./pages/OnboardingRegisterUserPage";
 
 function App() {
   return (
@@ -49,8 +54,28 @@ function App() {
         {/* Página de Perfil Público do Negócio */}
         <Route path="/b/:slug" element={<BusinessProfilePage />} />
 
-        {/* Página de Login - sem layout */}
+        {/* Páginas de Autenticação - sem layout */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/register/business" element={<RegisterBusinessPage />} />
+
+        {/* Fluxo de Onboarding - sem layout */}
+        <Route
+          path="/onboarding/plan-selection"
+          element={<PlanSelectionPage />}
+        />
+        <Route
+          path="/onboarding/country-selection"
+          element={<CountrySelectionPage />}
+        />
+        <Route
+          path="/onboarding/register-user"
+          element={<OnboardingRegisterUserPage />}
+        />
+        <Route
+          path="/onboarding/register-business"
+          element={<RegisterBusinessPage />}
+        />
 
         {/* Página de Conta Suspensa - sem layout */}
         <Route path="/account-suspended" element={<SuspendedAccountPage />} />
