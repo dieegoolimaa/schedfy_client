@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
 import {
   Card,
   CardContent,
@@ -16,6 +15,8 @@ import { Loader2, Eye, EyeOff, User, Mail, Phone } from "lucide-react";
 import { toast } from "sonner";
 import { useCountryLocalization } from "../hooks/useCountryLocalization";
 import { PhoneInput } from "../components/ui/phone-input";
+import { EmailVerificationDialog } from "../components/EmailVerificationDialog";
+import { authService } from "../services/authService";
 
 interface RegisterFormData {
   firstName: string;
@@ -28,7 +29,6 @@ interface RegisterFormData {
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
-  const { register, loading, error } = useAuth();
   const {
     formatPhoneNumber,
     validatePhoneNumber,
@@ -45,12 +45,20 @@ const RegisterPage: React.FC = () => {
     confirmPassword: "",
   });
 
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<keyof RegisterFormData, string>>
   >({});
+
+  // Email verification state
+  const [showVerificationDialog, setShowVerificationDialog] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState("");
+  const [verificationExpiresAt, setVerificationExpiresAt] = useState<
+    Date | undefined
+  >();
 
   const handleInputChange = (field: keyof RegisterFormData, value: string) => {
     // Apply mask for phone field
@@ -73,38 +81,38 @@ const RegisterPage: React.FC = () => {
     const errors: Partial<Record<keyof RegisterFormData, string>> = {};
 
     if (!firstName.trim()) {
-      errors.firstName = "Nome é obrigatório";
+      errors.firstName = "First name is required";
     }
 
     if (!lastName.trim()) {
-      errors.lastName = "Sobrenome é obrigatório";
+      errors.lastName = "Last name is required";
     }
 
     if (!email.trim()) {
-      errors.email = "Email é obrigatório";
+      errors.email = "Email is required";
     } else if (!email.includes("@")) {
-      errors.email = "Por favor, insira um email válido";
+      errors.email = "Please enter a valid email";
     }
 
     if (!phone.trim()) {
-      errors.phone = "Telefone é obrigatório";
+      errors.phone = "Phone is required";
     } else if (!validatePhoneNumber(phone)) {
-      errors.phone = `Telefone inválido. Use o formato: ${localization.phoneFormat}`;
+      errors.phone = `Invalid phone number. Use format: ${localization.phoneFormat}`;
     }
 
     if (password.length < 8) {
-      errors.password = "Senha deve ter pelo menos 8 caracteres";
+      errors.password = "Password must be at least 8 characters";
     } else if (
       !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/.test(
         password
       )
     ) {
       errors.password =
-        "Senha deve conter ao menos: 1 letra minúscula, 1 maiúscula, 1 número e 1 caractere especial";
+        "Password must contain at least: 1 lowercase, 1 uppercase, 1 number and 1 special character";
     }
 
     if (password !== confirmPassword) {
-      errors.confirmPassword = "Senhas não coincidem";
+      errors.confirmPassword = "Passwords do not match";
     }
 
     setFieldErrors(errors);
@@ -124,6 +132,8 @@ const RegisterPage: React.FC = () => {
       return;
     }
 
+    setLoading(true);
+
     try {
       // Get country code based on localization
       const countryCode =
@@ -141,31 +151,43 @@ const RegisterPage: React.FC = () => {
         role: "customer" as const,
       };
 
-      await register(userData);
-      toast.success("Conta criada com sucesso! Bem-vindo ao Schedfy!");
-      navigate("/dashboard");
-    } catch (error) {
+      // Register returns email verification response
+      const response = await authService.register(userData);
+
+      // Show verification dialog
+      setVerificationEmail(userData.email);
+      setVerificationExpiresAt(response.expiresAt);
+      setShowVerificationDialog(true);
+
+      toast.success("Conta criada! Verifique seu email para continuar.");
+    } catch (error: any) {
       console.error("Erro no registro:", error);
-      toast.error("Erro ao criar conta. Tente novamente.");
+      const errorMessage =
+        error.response?.data?.message ||
+        "Erro ao criar conta. Tente novamente.";
+      setLocalError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const displayError = localError || error;
+  const displayError = localError;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">
-            Crie sua conta
+            Create Your Account
           </h2>
           <p className="mt-2 text-center text-sm text-muted-foreground">
-            Já tem uma conta?{" "}
+            Already have an account?{" "}
             <Link
               to="/login"
               className="font-medium text-primary hover:text-primary/80"
             >
-              Faça login
+              Sign in
             </Link>
           </p>
         </div>
@@ -174,10 +196,10 @@ const RegisterPage: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center">
               <User className="mr-2 h-5 w-5" />
-              Registro de Usuário
+              User Registration
             </CardTitle>
             <CardDescription>
-              Preencha os dados para criar sua conta no Schedfy
+              Fill in the details to create your Schedfy account
             </CardDescription>
           </CardHeader>
 
@@ -193,32 +215,32 @@ const RegisterPage: React.FC = () => {
               <div className="bg-muted/50 rounded-lg p-3 mb-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">
-                    País selecionado:
+                    Selected country:
                   </span>
                   <div className="flex items-center gap-2">
                     <span className="text-2xl">{getCountryFlag()}</span>
                     <span className="text-sm font-medium">
                       {localization.country === "BR"
-                        ? "Brasil"
+                        ? "Brazil"
                         : localization.country === "PT"
                         ? "Portugal"
-                        : "Internacional"}
+                        : "International"}
                     </span>
                   </div>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Para alterar o país, volte à seleção inicial ou acesse as
-                  configurações.
+                  To change the country, go back to initial selection or access
+                  settings.
                 </p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">Nome</Label>
+                  <Label htmlFor="firstName">First Name</Label>
                   <Input
                     id="firstName"
                     type="text"
-                    placeholder="Seu nome"
+                    placeholder="Your first name"
                     value={formData.firstName}
                     onChange={(e) =>
                       handleInputChange("firstName", e.target.value)
@@ -236,11 +258,11 @@ const RegisterPage: React.FC = () => {
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Sobrenome</Label>
+                  <Label htmlFor="lastName">Last Name</Label>
                   <Input
                     id="lastName"
                     type="text"
-                    placeholder="Seu sobrenome"
+                    placeholder="Your last name"
                     value={formData.lastName}
                     onChange={(e) =>
                       handleInputChange("lastName", e.target.value)
@@ -264,7 +286,7 @@ const RegisterPage: React.FC = () => {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="seu@email.com"
+                    placeholder="your@email.com"
                     value={formData.email}
                     onChange={(e) => handleInputChange("email", e.target.value)}
                     className={`pl-10 ${
@@ -282,7 +304,7 @@ const RegisterPage: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Telefone {getCountryFlag()}</Label>
+                <Label htmlFor="phone">Phone {getCountryFlag()}</Label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground z-10" />
                   <PhoneInput
@@ -303,12 +325,12 @@ const RegisterPage: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Senha</Label>
+                <Label htmlFor="password">Password</Label>
                 <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Mínimo 8 caracteres com maiúscula, minúscula, número e símbolo"
+                    placeholder="Min 8 chars with uppercase, lowercase, number & symbol"
                     value={formData.password}
                     onChange={(e) =>
                       handleInputChange("password", e.target.value)
@@ -338,12 +360,12 @@ const RegisterPage: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirmar Senha</Label>
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
                 <div className="relative">
                   <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Digite a senha novamente"
+                    placeholder="Re-enter your password"
                     value={formData.confirmPassword}
                     onChange={(e) =>
                       handleInputChange("confirmPassword", e.target.value)
@@ -377,23 +399,23 @@ const RegisterPage: React.FC = () => {
             <CardFooter className="flex flex-col space-y-4 pt-6">
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Criar Conta
+                Create Account
               </Button>
 
               <div className="text-center text-xs text-muted-foreground">
-                Ao criar uma conta, você concorda com nossos{" "}
+                By creating an account, you agree to our{" "}
                 <Link
                   to="/terms"
                   className="text-primary hover:text-primary/80"
                 >
-                  Termos de Uso
+                  Terms of Service
                 </Link>{" "}
-                e{" "}
+                and{" "}
                 <Link
                   to="/privacy"
                   className="text-primary hover:text-primary/80"
                 >
-                  Política de Privacidade
+                  Privacy Policy
                 </Link>
               </div>
             </CardFooter>
@@ -402,16 +424,24 @@ const RegisterPage: React.FC = () => {
 
         <div className="text-center">
           <p className="text-sm text-muted-foreground">
-            Quer registrar um negócio?{" "}
+            Want to register a business?{" "}
             <Link
               to="/register/business"
               className="font-medium text-primary hover:text-primary/80"
             >
-              Cadastre sua empresa
+              Register your company
             </Link>
           </p>
         </div>
       </div>
+
+      {/* Email Verification Dialog */}
+      <EmailVerificationDialog
+        open={showVerificationDialog}
+        onOpenChange={setShowVerificationDialog}
+        email={verificationEmail}
+        expiresAt={verificationExpiresAt}
+      />
     </div>
   );
 };

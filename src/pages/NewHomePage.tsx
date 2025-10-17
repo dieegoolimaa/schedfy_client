@@ -23,7 +23,7 @@ import {
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const { locale, setLocale } = useI18n();
+  const { locale, setLocale, t } = useI18n();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const plans = [
@@ -124,19 +124,19 @@ const HomePage = () => {
                 href="#features"
                 className="text-sm font-medium hover:text-primary transition-colors"
               >
-                Features
+                {t("homepage.features")}
               </a>
               <a
                 href="#pricing"
                 className="text-sm font-medium hover:text-primary transition-colors"
               >
-                Pricing
+                {t("homepage.pricing")}
               </a>
               <a
                 href="#about"
                 className="text-sm font-medium hover:text-primary transition-colors"
               >
-                About
+                {t("homepage.about")}
               </a>
             </nav>
 
@@ -149,14 +149,13 @@ const HomePage = () => {
               >
                 <option value="en">🇺🇸 English</option>
                 <option value="pt-BR">🇧🇷 Português</option>
-                <option value="es">🇵🇹 Português (PT)</option>
               </select>
               <ThemeToggle />
               <Button variant="ghost" onClick={() => navigate("/login")}>
-                Sign In
+                {t("homepage.sign_in")}
               </Button>
               <Button onClick={() => navigate("/onboarding/country-selection")}>
-                Get Started
+                {t("homepage.get_started")}
               </Button>
             </div>
 
@@ -188,27 +187,27 @@ const HomePage = () => {
                       onClick={() => setMobileMenuOpen(false)}
                       className="text-base font-medium hover:text-primary transition-colors py-3 border-b"
                     >
-                      Features
+                      {t("homepage.features")}
                     </a>
                     <a
                       href="#pricing"
                       onClick={() => setMobileMenuOpen(false)}
                       className="text-base font-medium hover:text-primary transition-colors py-3 border-b"
                     >
-                      Pricing
+                      {t("homepage.pricing")}
                     </a>
                     <a
                       href="#about"
                       onClick={() => setMobileMenuOpen(false)}
                       className="text-base font-medium hover:text-primary transition-colors py-3 border-b"
                     >
-                      About
+                      {t("homepage.about")}
                     </a>
 
                     {/* Seletor de Idioma */}
                     <div className="pt-6 pb-4 space-y-3">
                       <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                        Idioma / Language
+                        {t("home.language")}
                       </label>
                       <select
                         value={locale}
@@ -216,8 +215,7 @@ const HomePage = () => {
                         className="w-full text-base border rounded-lg px-4 py-3 bg-background"
                       >
                         <option value="en">🇺🇸 English</option>
-                        <option value="pt-BR">🇧🇷 Português (BR)</option>
-                        <option value="es">🇵🇹 Português (PT)</option>
+                        <option value="pt-BR">🇧🇷 Português</option>
                       </select>
                     </div>
 
@@ -232,7 +230,7 @@ const HomePage = () => {
                         }}
                         className="w-full justify-center"
                       >
-                        Sign In
+                        {t("homepage.sign_in")}
                       </Button>
                       <Button
                         size="lg"
@@ -242,7 +240,7 @@ const HomePage = () => {
                         }}
                         className="w-full justify-center bg-gradient-to-r from-primary to-primary/80"
                       >
-                        Get Started
+                        {t("homepage.get_started")}
                       </Button>
                     </div>
                   </nav>
@@ -259,21 +257,21 @@ const HomePage = () => {
           <div className="text-center space-y-8">
             <Badge className="mx-auto" variant="secondary">
               <Sparkles className="w-3 h-3 mr-1" />
-              Trusted by 10,000+ businesses worldwide
+              {t("homepage.trusted_by")}
             </Badge>
 
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
               <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
-                Simplify Scheduling.
+                {t("homepage.hero_title_1")}
               </span>
               <br />
-              <span className="text-foreground">Amplify Growth.</span>
+              <span className="text-foreground">
+                {t("homepage.hero_title_2")}
+              </span>
             </h1>
 
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              The all-in-one booking platform designed for modern businesses.
-              Manage appointments, team, and payments in one beautiful
-              interface.
+              {t("homepage.hero_description")}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -282,7 +280,7 @@ const HomePage = () => {
                 onClick={() => navigate("/onboarding/country-selection")}
                 className="text-lg px-8 py-6 bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all"
               >
-                Get Started
+                {t("homepage.get_started")}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
@@ -290,11 +288,11 @@ const HomePage = () => {
             <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground pt-4">
               <div className="flex items-center gap-2">
                 <Check className="h-4 w-4 text-primary" />
-                14-day free trial
+                {t("homepage.free_trial")}
               </div>
               <div className="flex items-center gap-2">
                 <Check className="h-4 w-4 text-primary" />
-                Cancel anytime
+                {t("homepage.cancel_anytime")}
               </div>
             </div>
           </div>
@@ -500,16 +498,10 @@ const HomePage = () => {
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-12 space-y-4">
             <h2 className="text-4xl md:text-5xl font-bold">
-              About{" "}
-              <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                Schedfy
-              </span>
+              {t("homepage.about_title")}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Schedfy foi criado com um objetivo simples: tornar o agendamento
-              de compromissos algo fácil e eficiente. Nossa plataforma oferece
-              simplicidade na criação de agendamentos e facilidade no
-              gerenciamento dos seus compromissos de negócio.
+              {t("homepage.about_description")}
             </p>
           </div>
 
@@ -519,10 +511,11 @@ const HomePage = () => {
                 <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
                   <Calendar className="h-8 w-8 text-primary" />
                 </div>
-                <h3 className="text-xl font-bold">Agendamento Simplificado</h3>
+                <h3 className="text-xl font-bold">
+                  {t("homepage.feature_simplified_scheduling")}
+                </h3>
                 <p className="text-muted-foreground">
-                  Crie e gerencie agendamentos em poucos cliques, sem
-                  complicação
+                  {t("homepage.feature_simplified_desc")}
                 </p>
               </CardContent>
             </Card>
@@ -532,10 +525,11 @@ const HomePage = () => {
                 <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
                   <Settings className="h-8 w-8 text-primary" />
                 </div>
-                <h3 className="text-xl font-bold">Gestão Facilitada</h3>
+                <h3 className="text-xl font-bold">
+                  {t("homepage.feature_facilitated_management")}
+                </h3>
                 <p className="text-muted-foreground">
-                  Ferramentas intuitivas para gerenciar todos os aspectos do seu
-                  negócio
+                  {t("homepage.feature_facilitated_desc")}
                 </p>
               </CardContent>
             </Card>
@@ -545,10 +539,11 @@ const HomePage = () => {
                 <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
                   <TrendingUp className="h-8 w-8 text-primary" />
                 </div>
-                <h3 className="text-xl font-bold">Crescimento do Negócio</h3>
+                <h3 className="text-xl font-bold">
+                  {t("homepage.feature_business_growth")}
+                </h3>
                 <p className="text-muted-foreground">
-                  Recursos poderosos que ajudam seu negócio a crescer e
-                  prosperar
+                  {t("homepage.feature_growth_desc")}
                 </p>
               </CardContent>
             </Card>
@@ -566,72 +561,76 @@ const HomePage = () => {
                 Schedfy
               </div>
               <p className="text-sm text-muted-foreground">
-                Making scheduling simple for businesses worldwide.
+                {t("homepage.footer_tagline")}
               </p>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Product</h4>
+              <h4 className="font-semibold mb-4">
+                {t("homepage.footer_product")}
+              </h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <a href="#features" className="hover:text-primary">
-                    Features
+                    {t("homepage.footer_features")}
                   </a>
                 </li>
                 <li>
                   <a href="#pricing" className="hover:text-primary">
-                    Pricing
+                    {t("homepage.footer_pricing")}
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-primary">
-                    API
+                    {t("homepage.footer_api")}
                   </a>
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Company</h4>
+              <h4 className="font-semibold mb-4">
+                {t("homepage.footer_company")}
+              </h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <a href="#about" className="hover:text-primary">
-                    About
+                    {t("homepage.footer_about")}
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-primary">
-                    Blog
+                    {t("homepage.footer_blog")}
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-primary">
-                    Careers
+                    {t("homepage.footer_careers")}
                   </a>
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Support</h4>
+              <h4 className="font-semibold mb-4">
+                {t("homepage.footer_support")}
+              </h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <a href="#" className="hover:text-primary">
-                    Help Center
+                    {t("homepage.footer_help_center")}
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-primary">
-                    Contact
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary">
-                    Privacy
+                  <a
+                    href="mailto:contact@schedfy.com"
+                    className="hover:text-primary"
+                  >
+                    {t("homepage.footer_contact")}
                   </a>
                 </li>
               </ul>
             </div>
           </div>
           <div className="border-t pt-8 text-center text-sm text-muted-foreground">
-            <p>© 2025 Schedfy. All rights reserved. Made with ❤️ worldwide.</p>
+            <p>© 2025 Schedfy. {t("home.rights")}. Made with ❤️ worldwide.</p>
           </div>
         </div>
       </footer>

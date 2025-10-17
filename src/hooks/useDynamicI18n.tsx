@@ -3,7 +3,6 @@ import { useLocalization } from "./useLocalization";
 
 // Import dos arquivos de tradução existentes
 import enTranslations from "../i18n/en.json";
-import enCompleteTranslations from "../i18n/en_complete.json";
 import ptBrTranslations from "../i18n/pt-BR.json";
 import ptTranslations from "../i18n/pt.json";
 import esTranslations from "../i18n/es.json";
@@ -50,7 +49,7 @@ interface I18nContextValue {
 const translationResources: TranslationResources = {
   en: {
     common: enTranslations,
-    complete: enCompleteTranslations,
+    complete: enTranslations,
   },
   "pt-BR": {
     common: ptBrTranslations,

@@ -90,26 +90,41 @@ export const useCountryLocalization = () => {
         // Brazilian format: (XX) XXXXX-XXXX or (XX) XXXX-XXXX
         if (numbers.length === 0) return "";
         if (numbers.length <= 2) return `(${numbers}`;
-        if (numbers.length <= 6) return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+        if (numbers.length <= 6)
+          return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
         if (numbers.length <= 10) {
-          return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 6)}-${numbers.slice(6)}`;
+          return `(${numbers.slice(0, 2)}) ${numbers.slice(
+            2,
+            6
+          )}-${numbers.slice(6)}`;
         }
         // 11 digits (with 9)
-        return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`;
+        return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(
+          7,
+          11
+        )}`;
 
       case "PT":
         // Portuguese format: XXX XXX XXX
         if (numbers.length === 0) return "";
         if (numbers.length <= 3) return numbers;
-        if (numbers.length <= 6) return `${numbers.slice(0, 3)} ${numbers.slice(3)}`;
-        return `${numbers.slice(0, 3)} ${numbers.slice(3, 6)} ${numbers.slice(6, 9)}`;
+        if (numbers.length <= 6)
+          return `${numbers.slice(0, 3)} ${numbers.slice(3)}`;
+        return `${numbers.slice(0, 3)} ${numbers.slice(3, 6)} ${numbers.slice(
+          6,
+          9
+        )}`;
 
       case "OTHER":
         // US format: (XXX) XXX-XXXX
         if (numbers.length === 0) return "";
         if (numbers.length <= 3) return `(${numbers}`;
-        if (numbers.length <= 6) return `(${numbers.slice(0, 3)}) ${numbers.slice(3)}`;
-        return `(${numbers.slice(0, 3)}) ${numbers.slice(3, 6)}-${numbers.slice(6, 10)}`;
+        if (numbers.length <= 6)
+          return `(${numbers.slice(0, 3)}) ${numbers.slice(3)}`;
+        return `(${numbers.slice(0, 3)}) ${numbers.slice(3, 6)}-${numbers.slice(
+          6,
+          10
+        )}`;
 
       default:
         return phone;
@@ -129,10 +144,21 @@ export const useCountryLocalization = () => {
         // CNPJ format: XX.XXX.XXX/XXXX-XX (14 digits)
         if (numbers.length === 0) return "";
         if (numbers.length <= 2) return numbers;
-        if (numbers.length <= 5) return `${numbers.slice(0, 2)}.${numbers.slice(2)}`;
-        if (numbers.length <= 8) return `${numbers.slice(0, 2)}.${numbers.slice(2, 5)}.${numbers.slice(5)}`;
-        if (numbers.length <= 12) return `${numbers.slice(0, 2)}.${numbers.slice(2, 5)}.${numbers.slice(5, 8)}/${numbers.slice(8)}`;
-        return `${numbers.slice(0, 2)}.${numbers.slice(2, 5)}.${numbers.slice(5, 8)}/${numbers.slice(8, 12)}-${numbers.slice(12, 14)}`;
+        if (numbers.length <= 5)
+          return `${numbers.slice(0, 2)}.${numbers.slice(2)}`;
+        if (numbers.length <= 8)
+          return `${numbers.slice(0, 2)}.${numbers.slice(2, 5)}.${numbers.slice(
+            5
+          )}`;
+        if (numbers.length <= 12)
+          return `${numbers.slice(0, 2)}.${numbers.slice(2, 5)}.${numbers.slice(
+            5,
+            8
+          )}/${numbers.slice(8)}`;
+        return `${numbers.slice(0, 2)}.${numbers.slice(2, 5)}.${numbers.slice(
+          5,
+          8
+        )}/${numbers.slice(8, 12)}-${numbers.slice(12, 14)}`;
 
       case "PT":
         // NIF format: XXXXXXXXX (9 digits, no formatting)

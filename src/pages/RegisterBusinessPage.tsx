@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { EmailVerificationDialog } from "../components/EmailVerificationDialog";
 import {
   Card,
   CardContent,
@@ -47,7 +48,6 @@ interface BusinessRegisterFormData {
 }
 
 const RegisterBusinessPage: React.FC = () => {
-  const navigate = useNavigate();
   const { registerBusiness, loading, error } = useAuth();
   const {
     localization,
@@ -55,10 +55,6 @@ const RegisterBusinessPage: React.FC = () => {
     validatePhoneNumber,
     getCountryName,
   } = useCountryLocalization();
-
-  const [isOnboardingFlow, setIsOnboardingFlow] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<string>("");
-  const [selectedCountry, setSelectedCountry] = useState<string>("");
 
   const [formData, setFormData] = useState<BusinessRegisterFormData>({
     businessName: "",
@@ -83,17 +79,12 @@ const RegisterBusinessPage: React.FC = () => {
   const [localError, setLocalError] = useState<string | null>(null);
   const [step, setStep] = useState(1);
 
-  // Verificar se está vindo do fluxo de onboarding
-  useEffect(() => {
-    const plan = localStorage.getItem("selectedPlan");
-    const country = localStorage.getItem("selectedCountry");
-
-    if (plan && country) {
-      setIsOnboardingFlow(true);
-      setSelectedPlan(plan);
-      setSelectedCountry(country);
-    }
-  }, []);
+  // Email verification state
+  const [showVerificationDialog, setShowVerificationDialog] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState("");
+  const [verificationExpiresAt, setVerificationExpiresAt] = useState<
+    Date | undefined
+  >();
 
   const handleInputChange = (
     field: keyof BusinessRegisterFormData,
@@ -110,14 +101,14 @@ const RegisterBusinessPage: React.FC = () => {
     const { businessName, businessType, businessEmail, businessPhone } =
       formData;
 
-    if (!businessName.trim()) return "Nome do negócio é obrigatório";
-    if (!businessType.trim()) return "Tipo de negócio é obrigatório";
-    if (!businessEmail.trim()) return "Email do negócio é obrigatório";
+    if (!businessName.trim()) return "Business name is required";
+    if (!businessType.trim()) return "Business type is required";
+    if (!businessEmail.trim()) return "Business email is required";
     if (!businessEmail.includes("@"))
-      return "Por favor, insira um email válido para o negócio";
-    if (!businessPhone.trim()) return "Telefone do negócio é obrigatório";
+      return "Please enter a valid business email";
+    if (!businessPhone.trim()) return "Business phone is required";
     if (!validatePhoneNumber(businessPhone))
-      return `Telefone inválido. Use o formato: ${localization.phoneFormat}`;
+      return `Invalid phone number. Use format: ${localization.phoneFormat}`;
 
     return null;
   };
@@ -131,19 +122,19 @@ const RegisterBusinessPage: React.FC = () => {
       confirmPassword,
     } = formData;
 
-    if (!ownerFirstName.trim()) return "Nome do proprietário é obrigatório";
-    if (!ownerLastName.trim()) return "Sobrenome do proprietário é obrigatório";
-    if (!ownerEmail.trim()) return "Email do proprietário é obrigatório";
-    if (!ownerEmail.includes("@")) return "Por favor, insira um email válido";
-    if (password.length < 8) return "Senha deve ter pelo menos 8 caracteres";
+    if (!ownerFirstName.trim()) return "Owner first name is required";
+    if (!ownerLastName.trim()) return "Owner last name is required";
+    if (!ownerEmail.trim()) return "Owner email is required";
+    if (!ownerEmail.includes("@")) return "Please enter a valid email";
+    if (password.length < 8) return "Password must be at least 8 characters";
     if (
       !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/.test(
         password
       )
     ) {
-      return "Senha deve conter ao menos: 1 letra minúscula, 1 maiúscula, 1 número e 1 caractere especial";
+      return "Password must contain at least: 1 lowercase, 1 uppercase, 1 number and 1 special character";
     }
-    if (password !== confirmPassword) return "Senhas não coincidem";
+    if (password !== confirmPassword) return "Passwords do not match";
 
     return null;
   };
@@ -230,8 +221,15 @@ const RegisterBusinessPage: React.FC = () => {
       };
 
       await registerBusiness(businessData);
-      toast.success("Negócio registrado com sucesso! Bem-vindo ao Schedfy!");
-      navigate("/dashboard");
+
+      // Após registro bem-sucedido, mostrar dialog de verificação de email
+      setVerificationEmail(formData.ownerEmail.trim().toLowerCase());
+      setVerificationExpiresAt(new Date(Date.now() + 10 * 60 * 1000)); // 10 min
+      setShowVerificationDialog(true);
+
+      toast.success(
+        "Business registered! Please check your email for verification code."
+      );
     } catch (error) {
       console.error("Erro no registro do negócio:", error);
       toast.error("Erro ao registrar negócio. Tente novamente.");
@@ -245,15 +243,15 @@ const RegisterBusinessPage: React.FC = () => {
       <div className="max-w-2xl w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">
-            Registre seu Negócio
+            Register Your Business
           </h2>
           <p className="mt-2 text-center text-sm text-muted-foreground">
-            Já tem uma conta?{" "}
+            Already have an account?{" "}
             <Link
               to="/login"
               className="font-medium text-primary hover:text-primary/80"
             >
-              Faça login
+              Sign in
             </Link>
           </p>
         </div>
@@ -262,12 +260,12 @@ const RegisterBusinessPage: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Building className="mr-2 h-5 w-5" />
-              Registro de Negócio - Passo {step} de 2
+              Business Registration - Step {step} of 2
             </CardTitle>
             <CardDescription>
               {step === 1
-                ? "Informações sobre seu negócio"
-                : "Dados do proprietário e acesso"}
+                ? "Information about your business"
+                : "Owner details and access"}
             </CardDescription>
           </CardHeader>
 
@@ -281,11 +279,11 @@ const RegisterBusinessPage: React.FC = () => {
                 )}
 
                 <div className="space-y-3">
-                  <Label htmlFor="businessName">Nome do Negócio *</Label>
+                  <Label htmlFor="businessName">Business Name *</Label>
                   <Input
                     id="businessName"
                     type="text"
-                    placeholder="Ex: Salão Beleza & Cia"
+                    placeholder="e.g., Beauty Salon & Co"
                     value={formData.businessName}
                     onChange={(e) =>
                       handleInputChange("businessName", e.target.value)
@@ -297,11 +295,11 @@ const RegisterBusinessPage: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-3">
-                    <Label htmlFor="businessType">Tipo de Negócio *</Label>
+                    <Label htmlFor="businessType">Business Type *</Label>
                     <Input
                       id="businessType"
                       type="text"
-                      placeholder="Ex: Salão de Beleza, Clínica"
+                      placeholder="e.g., Beauty Salon, Clinic"
                       value={formData.businessType}
                       onChange={(e) =>
                         handleInputChange("businessType", e.target.value)
@@ -338,13 +336,13 @@ const RegisterBusinessPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="businessEmail">Email do Negócio *</Label>
+                  <Label htmlFor="businessEmail">Business Email *</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="businessEmail"
                       type="email"
-                      placeholder="contato@seunegocio.com"
+                      placeholder="contact@yourbusiness.com"
                       value={formData.businessEmail}
                       onChange={(e) =>
                         handleInputChange("businessEmail", e.target.value)
@@ -357,7 +355,7 @@ const RegisterBusinessPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="businessPhone">Telefone do Negócio *</Label>
+                  <Label htmlFor="businessPhone">Business Phone *</Label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -379,13 +377,13 @@ const RegisterBusinessPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="address">Endereço</Label>
+                  <Label htmlFor="address">Address</Label>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="address"
                       type="text"
-                      placeholder="Rua, número, bairro"
+                      placeholder="Street, number, district"
                       value={formData.address}
                       onChange={(e) =>
                         handleInputChange("address", e.target.value)
@@ -398,11 +396,11 @@ const RegisterBusinessPage: React.FC = () => {
 
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-3">
-                    <Label htmlFor="city">Cidade</Label>
+                    <Label htmlFor="city">City</Label>
                     <Input
                       id="city"
                       type="text"
-                      placeholder="São Paulo"
+                      placeholder="City name"
                       value={formData.city}
                       onChange={(e) =>
                         handleInputChange("city", e.target.value)
@@ -411,11 +409,11 @@ const RegisterBusinessPage: React.FC = () => {
                     />
                   </div>
                   <div className="space-y-3">
-                    <Label htmlFor="state">Estado</Label>
+                    <Label htmlFor="state">State</Label>
                     <Input
                       id="state"
                       type="text"
-                      placeholder="SP"
+                      placeholder="State"
                       value={formData.state}
                       onChange={(e) =>
                         handleInputChange("state", e.target.value)
@@ -424,11 +422,23 @@ const RegisterBusinessPage: React.FC = () => {
                     />
                   </div>
                   <div className="space-y-3">
-                    <Label htmlFor="zipCode">CEP</Label>
+                    <Label htmlFor="zipCode">
+                      {localization.country === "BR"
+                        ? "CEP"
+                        : localization.country === "PT"
+                        ? "Postal Code"
+                        : "ZIP Code"}
+                    </Label>
                     <Input
                       id="zipCode"
                       type="text"
-                      placeholder="12345-678"
+                      placeholder={
+                        localization.country === "BR"
+                          ? "12345-678"
+                          : localization.country === "PT"
+                          ? "1234-567"
+                          : "12345"
+                      }
                       value={formData.zipCode}
                       onChange={(e) =>
                         handleInputChange("zipCode", e.target.value)
@@ -442,11 +452,11 @@ const RegisterBusinessPage: React.FC = () => {
               <CardFooter className="flex justify-between pt-6">
                 <Link to="/login">
                   <Button variant="outline" disabled={loading}>
-                    Cancelar
+                    Cancel
                   </Button>
                 </Link>
                 <Button onClick={handleNext} disabled={loading}>
-                  Próximo
+                  Next
                 </Button>
               </CardFooter>
             </div>
@@ -461,13 +471,11 @@ const RegisterBusinessPage: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-3">
-                    <Label htmlFor="ownerFirstName">
-                      Nome do Proprietário *
-                    </Label>
+                    <Label htmlFor="ownerFirstName">Owner First Name *</Label>
                     <Input
                       id="ownerFirstName"
                       type="text"
-                      placeholder="Seu nome"
+                      placeholder="Your first name"
                       value={formData.ownerFirstName}
                       onChange={(e) =>
                         handleInputChange("ownerFirstName", e.target.value)
@@ -477,11 +485,11 @@ const RegisterBusinessPage: React.FC = () => {
                     />
                   </div>
                   <div className="space-y-3">
-                    <Label htmlFor="ownerLastName">Sobrenome *</Label>
+                    <Label htmlFor="ownerLastName">Last Name *</Label>
                     <Input
                       id="ownerLastName"
                       type="text"
-                      placeholder="Seu sobrenome"
+                      placeholder="Your last name"
                       value={formData.ownerLastName}
                       onChange={(e) =>
                         handleInputChange("ownerLastName", e.target.value)
@@ -493,13 +501,13 @@ const RegisterBusinessPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="ownerEmail">Email do Proprietário *</Label>
+                  <Label htmlFor="ownerEmail">Owner Email *</Label>
                   <div className="relative">
                     <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="ownerEmail"
                       type="email"
-                      placeholder="seu@email.com"
+                      placeholder="your@email.com"
                       value={formData.ownerEmail}
                       onChange={(e) =>
                         handleInputChange("ownerEmail", e.target.value)
@@ -512,16 +520,19 @@ const RegisterBusinessPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="ownerPhone">Telefone do Proprietário</Label>
+                  <Label htmlFor="ownerPhone">Owner Phone</Label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="ownerPhone"
                       type="tel"
-                      placeholder="(11) 99999-9999"
+                      placeholder={localization.phonePlaceholder}
                       value={formData.ownerPhone}
                       onChange={(e) =>
-                        handleInputChange("ownerPhone", e.target.value)
+                        handleInputChange(
+                          "ownerPhone",
+                          formatPhoneNumber(e.target.value)
+                        )
                       }
                       className="pl-10"
                       disabled={loading}
@@ -530,12 +541,12 @@ const RegisterBusinessPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="password">Senha *</Label>
+                  <Label htmlFor="password">Password *</Label>
                   <div className="relative">
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
-                      placeholder="Mínimo 8 caracteres com maiúscula, minúscula, número e símbolo"
+                      placeholder="Min 8 chars with uppercase, lowercase, number & symbol"
                       value={formData.password}
                       onChange={(e) =>
                         handleInputChange("password", e.target.value)
@@ -559,12 +570,12 @@ const RegisterBusinessPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="confirmPassword">Confirmar Senha *</Label>
+                  <Label htmlFor="confirmPassword">Confirm Password *</Label>
                   <div className="relative">
                     <Input
                       id="confirmPassword"
                       type={showConfirmPassword ? "text" : "password"}
-                      placeholder="Digite a senha novamente"
+                      placeholder="Re-enter your password"
                       value={formData.confirmPassword}
                       onChange={(e) =>
                         handleInputChange("confirmPassword", e.target.value)
@@ -596,11 +607,11 @@ const RegisterBusinessPage: React.FC = () => {
                   onClick={() => setStep(1)}
                   disabled={loading}
                 >
-                  Voltar
+                  Back
                 </Button>
                 <Button type="submit" disabled={loading}>
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Registrar Negócio
+                  Register Business
                 </Button>
               </CardFooter>
             </form>
@@ -609,16 +620,24 @@ const RegisterBusinessPage: React.FC = () => {
 
         <div className="text-center">
           <p className="text-sm text-muted-foreground">
-            Quer registrar como usuário individual?{" "}
+            Want to register as an individual?{" "}
             <Link
               to="/register"
               className="font-medium text-primary hover:text-primary/80"
             >
-              Criar conta pessoal
+              Create personal account
             </Link>
           </p>
         </div>
       </div>
+
+      {/* Email Verification Dialog */}
+      <EmailVerificationDialog
+        open={showVerificationDialog}
+        onOpenChange={setShowVerificationDialog}
+        email={verificationEmail}
+        expiresAt={verificationExpiresAt}
+      />
     </div>
   );
 };

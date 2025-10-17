@@ -29,7 +29,17 @@ export const I18nProvider = ({
   children: ReactNode;
   defaultLocale?: Locale;
 }) => {
-  const [locale, setLocale] = useState<Locale>(defaultLocale);
+  // Initialize locale from localStorage or use default
+  const [locale, setLocaleState] = useState<Locale>(() => {
+    const saved = localStorage.getItem("locale");
+    return (saved as Locale) || defaultLocale;
+  });
+
+  // Update localStorage when locale changes
+  const setLocale = (newLocale: Locale) => {
+    setLocaleState(newLocale);
+    localStorage.setItem("locale", newLocale);
+  };
 
   const t = (key: string, fallback?: string) => {
     const dict = dictionaries[locale] || dictionaries["en"];

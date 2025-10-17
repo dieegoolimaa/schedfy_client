@@ -1,51 +1,72 @@
 import { apiUtils } from './api';
 import type { ApiResponse, PaginatedResponse } from './api';
 
-// Interfaces para Business
+// Interfaces para Business - Alinhadas com backend
+export interface BusinessHoursDto {
+    day: string;
+    openTime: string; // HH:mm format
+    closeTime: string; // HH:mm format
+    isOpen: boolean;
+}
+
+export interface BusinessSettingsDto {
+    allowOnlineBooking?: boolean;
+    requireApprovalForBookings?: boolean;
+    allowCancellation?: boolean;
+    cancellationDeadlineHours?: number;
+    cancellationFee?: number;
+    emailReminders?: boolean;
+    whatsappReminders?: boolean;
+    reminderHours?: number;
+    defaultBufferTime?: number;
+    maxBookingsPerDay?: number;
+    allowSimultaneousBookings?: boolean;
+}
+
+export interface AddressDto {
+    street: string;
+    number: string;
+    complement?: string;
+    neighborhood: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country?: string;
+}
+
 export interface CreateBusinessDto {
     name: string;
+    slug?: string;
+    description: string;
     category: string;
-    description?: string;
-    email?: string;
-    phone?: string;
+    phone: string;
+    email: string;
     website?: string;
-    address: {
-        street: string;
-        number: string;
-        complement?: string;
-        neighborhood: string;
-        city: string;
-        state: string;
-        zipCode: string;
-        country?: string;
-    };
-    workingHours: WorkingHours;
-    settings?: BusinessSettings;
+    address: AddressDto;
+    businessHours: BusinessHoursDto[]; // Changed from workingHours
+    logo?: string;
+    coverImage?: string;
+    settings?: BusinessSettingsDto;
+    tags?: string[];
 }
 
 export interface UpdateBusinessDto {
     name?: string;
-    category?: string;
+    slug?: string;
     description?: string;
-    email?: string;
+    category?: string;
     phone?: string;
+    email?: string;
     website?: string;
     logo?: string;
-    address?: {
-        street?: string;
-        number?: string;
-        complement?: string;
-        neighborhood?: string;
-        city?: string;
-        state?: string;
-        zipCode?: string;
-        country?: string;
-    };
-    workingHours?: WorkingHours;
-    settings?: Partial<BusinessSettings>;
-    isActive?: boolean;
+    coverImage?: string;
+    address?: AddressDto;
+    businessHours?: BusinessHoursDto[];
+    settings?: Partial<BusinessSettingsDto>;
+    tags?: string[];
 }
 
+// Legacy interfaces for backward compatibility
 export interface WorkingHours {
     monday: DaySchedule;
     tuesday: DaySchedule;

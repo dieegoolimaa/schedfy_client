@@ -1,5 +1,4 @@
 import { apiUtils } from './api';
-import type { ApiResponse } from './api';
 
 // Interfaces de Auth
 export interface LoginDto {
@@ -17,45 +16,30 @@ export interface RegisterDto {
 }
 
 export interface User {
-    _id: string;
+    id: string;
+    name: string;
     email: string;
-    firstName: string;
-    lastName: string;
-    phone?: string;
     role: 'customer' | 'professional' | 'business_owner' | 'admin' | 'platform_admin';
-    isActive: boolean;
+    planType?: string;
+    businessId?: string;
+    professionalId?: string;
     isEmailVerified: boolean;
+    isActive: boolean;
+    phone?: string;
     avatar?: string;
-    planType?: 'business' | 'individual' | 'simple_booking';
-
-    // Profile específico por role
-    professionalProfile?: {
-        _id: string;
-        specialties: string[];
-        bio?: string;
-        experience?: number;
-    };
-
-    businessProfile?: {
-        _id: string;
-        name: string;
-        description?: string;
-        category?: string;
-    };
-
-    createdAt: string;
-    updatedAt: string;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface AuthResponse {
     user: User;
     access_token: string;
     refresh_token?: string;
+    expires_in: number;
 }
 
 export interface UpdateProfileDto {
-    firstName?: string;
-    lastName?: string;
+    name?: string;
     phone?: string;
     avatar?: string;
 }
@@ -82,25 +66,35 @@ class AuthService {
 
     // Login
     async login(credentials: LoginDto): Promise<AuthResponse> {
-        const response = await apiUtils.post<ApiResponse<AuthResponse>>(
+        const response = await apiUtils.post<AuthResponse>(
             `${this.baseUrl}/login`,
             credentials
         );
 
-        const authData = response.data.data;
+        const authData = response.data;
         this.setAuthData(authData);
 
         return authData;
     }
 
-    // Register
-    async register(userData: RegisterDto): Promise<AuthResponse> {
-        const response = await apiUtils.post<ApiResponse<AuthResponse>>(
+    // Register (returns email verification response, not auth tokens)
+    async register(userData: RegisterDto): Promise<{ message: string; email: string; expiresAt: Date }> {
+        const response = await apiUtils.post<{ message: string; email: string; expiresAt: Date }>(
             `${this.baseUrl}/register`,
             userData
         );
 
-        const authData = response.data.data;
+        return response.data;
+    }
+
+    // Verify Email (called after registration with verification code)
+    async verifyEmailWithCode(email: string, code: string): Promise<AuthResponse> {
+        const response = await apiUtils.post<AuthResponse>(
+            `${this.baseUrl}/verify-email`,
+            { email, code }
+        );
+
+        const authData = response.data;
         this.setAuthData(authData);
 
         return authData;
@@ -124,12 +118,12 @@ class AuthService {
             throw new Error('No refresh token available');
         }
 
-        const response = await apiUtils.post<ApiResponse<AuthResponse>>(
+        const response = await apiUtils.post<AuthResponse>(
             `${this.baseUrl}/refresh`,
             { refresh_token: refreshToken }
         );
 
-        const authData = response.data.data;
+        const authData = response.data;
         this.setAuthData(authData);
 
         return authData;
@@ -137,9 +131,9 @@ class AuthService {
 
     // Get Current User Profile
     async getProfile(): Promise<User> {
-        const response = await apiUtils.get<ApiResponse<User>>(`${this.baseUrl}/profile`);
+        const response = await apiUtils.get<User>(`${this.baseUrl}/profile`);
 
-        const user = response.data.data;
+        const user = response.data;
         this.setUser(user);
 
         return user;
@@ -147,12 +141,12 @@ class AuthService {
 
     // Update Profile
     async updateProfile(data: UpdateProfileDto): Promise<User> {
-        const response = await apiUtils.patch<ApiResponse<User>>(
+        const response = await apiUtils.patch<User>(
             `${this.baseUrl}/profile`,
             data
         );
 
-        const user = response.data.data;
+        const user = response.data;
         this.setUser(user);
 
         return user;
@@ -173,14 +167,13 @@ class AuthService {
         await apiUtils.post(`${this.baseUrl}/reset-password`, data);
     }
 
-    // Verify Email
-    async verifyEmail(token: string): Promise<void> {
-        await apiUtils.post(`${this.baseUrl}/verify-email`, { token });
-    }
-
     // Resend Email Verification
-    async resendEmailVerification(): Promise<void> {
-        await apiUtils.post(`${this.baseUrl}/resend-verification`);
+    async resendEmailVerification(email: string): Promise<{ message: string; email: string }> {
+        const response = await apiUtils.post<{ message: string; email: string }>(
+            `${this.baseUrl}/resend-verification`,
+            { email }
+        );
+        return response.data;
     }
 
     // Token Management
@@ -247,12 +240,18 @@ class AuthService {
     // Utilities
     getFullName(): string {
         const user = this.getCurrentUser();
-        return user ? `${user.firstName} ${user.lastName}` : '';
+        return user?.name || '';
     }
 
     getUserInitials(): string {
         const user = this.getCurrentUser();
-        return user ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase() : '';
+        if (!user?.name) return '';
+
+        const nameParts = user.name.trim().split(' ');
+        if (nameParts.length === 1) {
+            return nameParts[0].substring(0, 2).toUpperCase();
+        }
+        return `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`.toUpperCase();
     }
 
     isProfessional(): boolean {

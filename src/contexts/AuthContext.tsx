@@ -73,11 +73,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       setError(null);
 
       if (authService.isAuthenticated()) {
-        const userData = await authService.getCurrentUser();
+        const userData = authService.getCurrentUser();
         if (userData) {
           setUser(userData);
-          // Para business, precisamos buscar do businessProfile se existir
-          setBusiness(userData.businessProfile || null);
+          // Business info can be fetched separately if needed
+          setBusiness(null); // Will be loaded separately when business module is ready
         } else {
           authService.clearTokens();
         }
@@ -98,7 +98,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
       const authData = await authService.login({ email, password });
       setUser(authData.user);
-      setBusiness(authData.user.businessProfile || null);
+      setBusiness(null); // Will be loaded separately when business module is ready
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Erro ao fazer login";
@@ -134,9 +134,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         role: userData.role || "customer",
       };
 
-      const authData = await authService.register(registrationData);
-      setUser(authData.user);
-      setBusiness(null);
+      // O register agora retorna apenas uma resposta de verificação de email
+      // O usuário será definido após a verificação do email via EmailVerificationDialog
+      await authService.register(registrationData);
+
+      // Não definimos user aqui porque o fluxo agora é:
+      // register → verify email → login
+      // O EmailVerificationDialog cuida da verificação e login
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Erro ao registrar usuário";
@@ -154,7 +158,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       setLoading(true);
       setError(null);
 
-      // Por enquanto, registrar como usuário admin até implementar registro de negócios
+      // PASSO 1: Registrar usuário proprietário
       const registerData = {
         name: businessData.ownerName,
         email: businessData.ownerEmail,
@@ -163,9 +167,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         role: "business_owner" as const,
       };
 
-      const authData = await authService.register(registerData);
-      setUser(authData.user);
-      setBusiness(businessData); // Usar os dados temporariamente até integração completa
+      // Registra o usuário (retorna resposta de verificação de email)
+      await authService.register(registerData);
+
+      // PASSO 2: Salvar dados do negócio no localStorage temporariamente
+      // Será criado no banco após verificação de email
+      localStorage.setItem("pendingBusinessData", JSON.stringify(businessData));
+
+      // O fluxo agora é:
+      // 1. register → email enviado
+      // 2. verify email → usuário logado automaticamente
+      // 3. EmailVerificationDialog detecta pendingBusinessData → cria business no banco
+      // 4. Redireciona para dashboard
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Erro ao registrar negócio";

@@ -15,7 +15,8 @@ export const PostalCodeInput: React.FC<PostalCodeInputProps> = ({
   error,
   ...props
 }) => {
-  const { formatPostalCode, getPostalCodePlaceholder } = useCountryLocalization();
+  const { formatPostalCode, getPostalCodePlaceholder } =
+    useCountryLocalization();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
